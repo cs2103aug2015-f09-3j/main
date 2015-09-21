@@ -44,6 +44,6 @@ public class UIController {
 	private String onCommandReceived(String command){
 		//Do whatever you want with the command here. Pass to LogicController to do its stuff.
 		
-		return "Testing\n"; //Stub
+		return LogicController.getInstance().onCommandProcess(command); //Stub
 	}
 }

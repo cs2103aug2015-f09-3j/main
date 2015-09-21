@@ -20,6 +20,7 @@ public class LogicController {
 	public String onCommandProcess(String command){
 		//Implement your logic here. Call parser etc etc.
 		
+		Command cmd = Parser.getInstance().parseCommand(command);
 		
 		return null;
 	}

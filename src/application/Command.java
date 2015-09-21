@@ -1,8 +1,10 @@
 package application;
 
+import java.util.ArrayList;
+
 public class Command {
 	
-	public static final String ADD_COMMAND = "add|+";
+	public static final String ADD_COMMAND = "add:+";
 	public static final String LIST_COMMAND = "list|ls";
 	public static final String CHANGE_STORAGE_COMMAND = "changeStorage|cs";
 	public static final String DELETE_COMMAND = "delete|-";
@@ -20,13 +22,13 @@ public class Command {
 	
 	private Integer type;
 	private String textContent;
-	private Parameter parameter;
+	private ArrayList<Parameter> parameters;
 	
-	public Command(Integer type, String textContent, Parameter parameter) {
+	public Command(Integer type, String textContent, ArrayList<Parameter> parameter) {
 		super();
 		this.type = type;
 		this.textContent = textContent;
-		this.parameter = parameter;
+		this.parameters = parameter;
 	}
 	
 	public Integer getType() {
@@ -41,11 +43,11 @@ public class Command {
 	public void setTextContent(String textContent) {
 		this.textContent = textContent;
 	}
-	public Parameter getParameter() {
-		return parameter;
+	public ArrayList<Parameter> getParameter() {
+		return parameters;
 	}
-	public void setParameter(Parameter parameter) {
-		this.parameter = parameter;
+	public void setParameter(ArrayList<Parameter> parameter) {
+		this.parameters = parameter;
 	}
 	
 	
