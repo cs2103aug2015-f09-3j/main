@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class Command {
 	
 	public static final String ADD_COMMAND = "add:+";
-	public static final String LIST_COMMAND = "list|ls";
-	public static final String CHANGE_STORAGE_COMMAND = "changeStorage|cs";
-	public static final String DELETE_COMMAND = "delete|-";
-	public static final String UNDO_COMMAND = "undo|<";
-	public static final String EDIT_COMMAND = "edit|et";
-	public static final String DONE_COMMAND = "done|ok";
+	public static final String LIST_COMMAND = "list:ls";
+	public static final String CHANGE_STORAGE_COMMAND = "changeStorage:cs";
+	public static final String DELETE_COMMAND = "delete:-";
+	public static final String UNDO_COMMAND = "undo:<";
+	public static final String EDIT_COMMAND = "edit:et";
+	public static final String DONE_COMMAND = "done:ok";
 	
 	public static final Integer ADD_COMMAND_TYPE = 1;
 	public static final Integer LIST_COMMAND_TYPE = 2;
