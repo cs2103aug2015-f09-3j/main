@@ -22,7 +22,7 @@ public class LogicController {
 		
 		Command cmd = Parser.getInstance().parseCommand(command);
 		
-		return null;
+		return "testing";
 	}
 	
 	

@@ -52,8 +52,9 @@ public class Parser {
 			String[] parameterArr = parameterStr.split(" ");
 			for (int i = 0; i < parameterArr.length; i++) {
 				if (parameterArr[i].charAt(0) == '\\') {
+					//TODO : Check whether if the arguments is in correct format.
 					String para = parameterArr[i].substring(1, parameterArr[i].length());
-					parameters.add(new Parameter(mapParameterType(para)));
+					parameters.add(new Parameter(mapParameterType(para), parameterArr[i+1]));
 				}
 			}
 		} else {
