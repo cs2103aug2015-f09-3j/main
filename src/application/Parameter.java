@@ -14,8 +14,13 @@ public class Parameter {
 		this.argument = argument;
 	}
 	
+	public String getParaArg(){
+		return argument;
+	}
 	
-	
+	public Integer getParaType(){
+		return type;
+	}
 	
 
 }
