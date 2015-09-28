@@ -33,6 +33,7 @@ public class LogicController {
 
 			Command cmd = Parser.getInstance().parseCommand(command);
 			int cmdType = cmd.getType();
+
 	        switch (cmdType) {
 	            case 1:  DataManager.getInstance().addNewTask(cmd);
 	            		 return ADDED_SUCCESS + cmd.getTextContent();
@@ -50,7 +51,8 @@ public class LogicController {
 	            			 return DELETE_SUCCESS + cmd.getTextContent();
 	            		 }
 
-	            case 5:  //TODO
+	            case 5:  Command prevCommand = determinePrevCommand();
+	            		 int undoCommand = determineUndoCommand(prevCommand);
 	            		 break;
 
 	            case 6:  int editSuccess = DataManager.getInstance().editTask(cmd);
@@ -71,6 +73,28 @@ public class LogicController {
 
 			return "testing";
 		}
+
+		private Command determinePrevCommand() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+		private int determineUndoCommand(Command prevCommand) {
+			if (prevCommand.getType() == Command.ADD_COMMAND_TYPE){
+				return Command.DELETE_COMMAND_TYPE;
+			} else if (prevCommand.getType() == Command.DELETE_COMMAND_TYPE) {
+				return Command.ADD_COMMAND_TYPE;
+			} else if (prevCommand.getType() == Command.EDIT_COMMAND_TYPE) {
+				return Command.EDIT_COMMAND_TYPE;
+			} else if (prevCommand.getType() == Command.CHANGE_STORAGE_COMMAND_TYPE) {
+				return Command.CHANGE_STORAGE_COMMAND_TYPE;
+			} else if (prevCommand.getType() == Command.DONE_COMMAND_TYPE) {
+				return Command.UNDONE_COMMAND_TYPE;
+			} else if (prevCommand.getType() == Command.UNDONE_COMMAND_TYPE) {
+				return Command.DONE_COMMAND_TYPE;
+			}
+		return 0;
+	}
 
 		private static void printList(ArrayList<String> listAll) {
 			System.out.println(LISTED_ALL_SUCCESS);
