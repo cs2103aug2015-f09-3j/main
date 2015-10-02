@@ -118,4 +118,8 @@ public class DataManager {
 			return 0;
 		}
 	}
+	
+	public void savePossibleItems(){
+		//TODO
+	}
 }
