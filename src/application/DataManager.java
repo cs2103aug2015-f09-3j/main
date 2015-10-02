@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class DataManager {
 	// Integer return values => status codes to be defined
-	
+
 	private LocalStorage file;
 
 	public static DataManager instance = null;
@@ -83,7 +83,7 @@ public class DataManager {
 			return 0;
 		}
 	}
-	
+
 	public Integer setDoneToTask(Command cmd){
 		ArrayList<String> possibleItems = new ArrayList<String>();
 		ArrayList<String> listOfTasks = new ArrayList<String>();
@@ -118,8 +118,8 @@ public class DataManager {
 			return 0;
 		}
 	}
-	
-	public void savePossibleItems(){
+
+	public void savePossibleItems(ArrayList<String> toSave){
 		//TODO
 	}
 }

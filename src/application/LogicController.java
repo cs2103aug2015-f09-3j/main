@@ -1,7 +1,6 @@
 package application;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * This is a singleton class
