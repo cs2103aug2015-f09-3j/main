@@ -52,8 +52,10 @@ public class DataManager {
 		ArrayList<String> possibleItems = new ArrayList<String>();
 		possibleItems = file.search(cmd.getTextContent());
 		if (possibleItems.size() == 1) {
-			file.delete(possibleItems.get(0));
-			return 0;
+			if(file.delete(possibleItems.get(0)))
+				return 0;
+			else
+				return -1;
 		} else if (possibleItems.size() <= 0) {
 			return -1;
 		} else {
