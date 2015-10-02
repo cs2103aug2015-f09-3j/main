@@ -75,6 +75,11 @@ public class LogicController {
 		}
 
 
+		private Command determinePrevCommand() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 		private int determineUndoCommand(Command prevCommand) {
 			if (prevCommand.getType() == Command.ADD_COMMAND_TYPE){
 				return Command.DELETE_COMMAND_TYPE;
@@ -103,10 +108,6 @@ public class LogicController {
 			printList(possibleItems);
 			DataManager.getInstance().savePossibleItems(possibleItems);
 			return -1;
-		}
-
-		public static void newStorageLocation(Command cmd){
-			// TODO
 		}
 
 }
