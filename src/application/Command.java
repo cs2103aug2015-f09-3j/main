@@ -13,14 +13,14 @@ public class Command {
 	public static final String DONE_COMMAND = "done:ok";
 	public static final String UNDONE_COMMAND = "notdone:notok";
 
-	public static final Integer ADD_COMMAND_TYPE = 1;
-	public static final Integer LIST_COMMAND_TYPE = 2;
-	public static final Integer CHANGE_STORAGE_COMMAND_TYPE = 3;
-	public static final Integer DELETE_COMMAND_TYPE = 4;
-	public static final Integer UNDO_COMMAND_TYPE = 5;
-	public static final Integer EDIT_COMMAND_TYPE = 6;
-	public static final Integer DONE_COMMAND_TYPE = 7;
-	public static final Integer UNDONE_COMMAND_TYPE = 8;
+	public static final int ADD_COMMAND_TYPE = 1;
+	public static final int LIST_COMMAND_TYPE = 2;
+	public static final int CHANGE_STORAGE_COMMAND_TYPE = 3;
+	public static final int DELETE_COMMAND_TYPE = 4;
+	public static final int UNDO_COMMAND_TYPE = 5;
+	public static final int EDIT_COMMAND_TYPE = 6;
+	public static final int DONE_COMMAND_TYPE = 7;
+	public static final int UNDONE_COMMAND_TYPE = 8;
 
 	private Integer type;
 	private String textContent;
