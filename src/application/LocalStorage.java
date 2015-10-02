@@ -10,12 +10,17 @@ import java.util.Collections;
 
 
 public class LocalStorage {
+	private static final String TEST_TXT = "test.txt";
 	/*	below is for testing purpose(to be removed)
 	 	Assume that APIs similar to CE2 functionality provided.
 	*/
 	private static File file;
 	private static ArrayList<String> list;
 	private static ArrayList<String> listBackUp;
+	public LocalStorage() {
+		list = new ArrayList<String>();
+		file = new File(TEST_TXT);
+	}
 	
 	public ArrayList<String> readFile(){
 		return list;
