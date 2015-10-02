@@ -37,8 +37,8 @@ public class LogicController {
 	            case Command.ADD_COMMAND_TYPE:  DataManager.getInstance().addNewTask(cmd);
 	            								return ADDED_SUCCESS + cmd.getTextContent();
 
-	            case Command.LIST_COMMAND_TYPE:  printList(DataManager.getInstance().listAll(cmd.getTextContent()));
-	            		 						 return command;
+	            case Command.LIST_COMMAND_TYPE:  String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
+	            		 						 return msg;
 
 	            case Command.CHANGE_STORAGE_COMMAND_TYPE:  DataManager.getInstance().changeStorageLocation(cmd);
 	            		 								   return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
@@ -98,14 +98,19 @@ public class LogicController {
 		return 0;
 	}
 
-		private static void printList(ArrayList<String> listAll) {
-			System.out.println(LISTED_ALL_SUCCESS);
+		private String printList(ArrayList<String> listAll) {
+			//System.out.println(LISTED_ALL_SUCCESS);
+			StringBuilder sb = new StringBuilder();
+			
 			for (int i=0; i<listAll.size(); i++) {
-	            System.out.println(i + ". " + listAll.get(i));
+	           // System.out.println(i + ". " + listAll.get(i));
+				sb.append(i + ". " + listAll.get(i) + "\n");
 	        }
+			
+			return sb.toString();
 		}
 
-		public static int chooseLine(ArrayList<String> possibleItems) {
+		public int chooseLine(ArrayList<String> possibleItems) {
 			printList(possibleItems);
 			DataManager.getInstance().savePossibleItems(possibleItems);
 			return -1;

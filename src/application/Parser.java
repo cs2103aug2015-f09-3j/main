@@ -24,7 +24,7 @@ public class Parser {
 		// Need to parse add, see all, change, delete, undo, edit, done,
 		// prioritise command
 
-		String cmd, text;
+		String cmd, text = "";
 		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
 		int indexOfFirstSpace = 0;
@@ -41,24 +41,32 @@ public class Parser {
 			}
 		}
 
+		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
+			indexOfFirstSpace = command.length();
+		}
+
 		if (indexOfFirstSpace == 0) {
 			return null;
 		}
 
 		cmd = command.substring(0, indexOfFirstSpace);
-		if (indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace) {
-			text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
-			String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
-			String[] parameterArr = parameterStr.split(" ");
-			for (int i = 0; i < parameterArr.length; i++) {
-				if (parameterArr[i].charAt(0) == '\\') {
-					//TODO : Check whether if the arguments is in correct format.
-					String para = parameterArr[i].substring(1, parameterArr[i].length());
-					parameters.add(new Parameter(mapParameterType(para), parameterArr[i+1]));
+		if (indexOfFirstSpace < command.length()) {
+			if (indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace) {
+				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
+				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
+				String[] parameterArr = parameterStr.split(" ");
+				for (int i = 0; i < parameterArr.length; i++) {
+					if (parameterArr[i].charAt(0) == '\\') {
+						// TODO : Check whether if the arguments is in correct
+						// format.
+						String para = parameterArr[i].substring(1, parameterArr[i].length());
+						parameters.add(new Parameter(mapParameterType(para), parameterArr[i + 1]));
+					}
 				}
+			} else {
+
+				text = command.substring(indexOfFirstSpace + 1, command.length());
 			}
-		} else {
-			text = command.substring(indexOfFirstSpace + 1, command.length());
 		}
 
 		int cmdType = mapCommandType(cmd);

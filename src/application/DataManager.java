@@ -59,7 +59,7 @@ public class DataManager {
 		} else if (possibleItems.size() <= 0) {
 			return -1;
 		} else {
-			int lineToDelete = LogicController.chooseLine(possibleItems);
+			int lineToDelete = LogicController.getInstance().chooseLine(possibleItems);
 			file.delete(possibleItems.get(lineToDelete - 1));
 			return 0;
 		}
@@ -78,7 +78,7 @@ public class DataManager {
 		}else if (possibleItems.size() <= 0) {
 			return -1;
 		} else {
-			int lineToEdit = LogicController.chooseLine(possibleItems);
+			int lineToEdit = LogicController.getInstance().chooseLine(possibleItems);
 			//TODO
 			return 0;
 		}
@@ -104,7 +104,7 @@ public class DataManager {
 		}else if(possibleItems.size()<=0){
 			return -1;
 		}else{
-			int lineToSetDone = LogicController.chooseLine(possibleItems);
+			int lineToSetDone = LogicController.getInstance().chooseLine(possibleItems);
 			for(int i=0; i<listOfTasks.size();i++){
 				if(listOfTasks.get(i).equals(possibleItems.get(lineToSetDone-1))){
 					listOfTasks.add(i,listOfTasks.remove(i).concat("-done"));
