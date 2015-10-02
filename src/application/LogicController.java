@@ -104,10 +104,8 @@ public class LogicController {
 		}
 
 		public static int chooseLine(ArrayList<String> possibleItems) {
-			Scanner sc = new Scanner(System.in);
 			printList(possibleItems);
-			Command cmd = Parser.getInstance().parseCommand(sc.nextLine());
-			sc.close();
+			Command cmd = Parser.getInstance().parseCommand();
 			return Integer.valueOf(cmd.getTextContent());
 		}
 
