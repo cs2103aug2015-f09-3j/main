@@ -68,16 +68,12 @@ public class LogicController {
 	            		 } else {
 	            			 return SET_DONE_SUCCESS + cmd.getTextContent();
 	            		 }
-	            default: return "testing";
+	            default: return "testing-lc";
 	        }
 
-			return "testing";
+			return "testing-lc";
 		}
 
-		private Command determinePrevCommand() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 		private int determineUndoCommand(Command prevCommand) {
 			if (prevCommand.getType() == Command.ADD_COMMAND_TYPE){
@@ -105,8 +101,8 @@ public class LogicController {
 
 		public static int chooseLine(ArrayList<String> possibleItems) {
 			printList(possibleItems);
-			Command cmd = Parser.getInstance().parseCommand();
-			return Integer.valueOf(cmd.getTextContent());
+			DataManager.getInstance().savePossibleItems(possibleItems);
+			return -1;
 		}
 
 		public static void newStorageLocation(Command cmd){
