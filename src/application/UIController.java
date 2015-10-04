@@ -17,6 +17,7 @@ public class UIController {
 	private TextField textCommandInput;
 	@FXML
 	private TextArea textConsoleOutput;
+	
 
 	// Event Listener on Button[#btSend].onKeyPressed
 	@FXML
@@ -27,6 +28,7 @@ public class UIController {
 		showToUser(response);
 	}
 	public void showToUser(String response) {
+		System.out.println(response);
 		textConsoleOutput.insertText(textConsoleOutput.getLength(), response);
 		
 	}
@@ -38,6 +40,8 @@ public class UIController {
 		String response = onCommandReceived(textCommandInput.getText());
 		
 		showToUser(response);
+
+		
 	}
 	
 	private String onCommandReceived(String command){
