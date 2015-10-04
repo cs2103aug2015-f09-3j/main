@@ -134,5 +134,29 @@ public class Parser {
 		}
 
 	}
+	
+	public Task convertAddCommandtoTask(Command cmd){
+		
+		Task task = new Task(cmd.getTextContent());
+		
+		ArrayList<Parameter> lists = cmd.getParameter();
+		
+		for(Parameter para: lists){
+			if(para.getParaType() == Parameter.DATE_ARGUMENT_TYPE){
+				task.setDate_argument(para.getParaArg());
+			}else if(para.getParaType() == Parameter.PLACE_ARGUMENT_TYPE){
+				task.setPlace_argument(para.getParaArg());
+			}else if(para.getParaType() == Parameter.PRIORITY_ARGUMENT_TYPE){
+				task.setPriority_argument(para.getParaArg());
+			}else if(para.getParaType() == Parameter.TIME_ARGUMENT_TYPE){
+				task.setTime_argument(para.getParaArg());
+			}else if(para.getParaType() == Parameter.TYPE_ARGUMENT_TYPE){
+				task.setType_argument(para.getParaArg());
+			}			
+		}
+		
+		return task;
+		
+	}
 
 }
