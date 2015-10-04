@@ -25,6 +25,7 @@ public class Command {
 	private Integer type;
 	private String textContent;
 	private ArrayList<Parameter> parameters;
+	
 
 	public Command(Integer type, String textContent, ArrayList<Parameter> parameter) {
 		super();

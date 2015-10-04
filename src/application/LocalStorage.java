@@ -35,7 +35,7 @@ public class LocalStorage {
 			if (text == null) {
 				System.out.println();
 				System.out.println(file.getName() + " is empty");
-				textList = null;
+				//textList = null; bug?
 			} else {
 				while (text != null) {
 					textList.add(text);

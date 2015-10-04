@@ -25,8 +25,9 @@ public class Parser {
 		// prioritise command
 
 		String cmd, text = "";
-		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
+		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+		
 		int indexOfFirstSpace = 0;
 		int indexOfFirstInvertedSlash = 0;
 		boolean passFirstSpace = false;
@@ -50,16 +51,18 @@ public class Parser {
 		}
 
 		cmd = command.substring(0, indexOfFirstSpace);
+		int cmdType = mapCommandType(cmd);
 		if (indexOfFirstSpace < command.length()) {
 			if (indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace) {
 				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
+				
 				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
 				String[] parameterArr = parameterStr.split(" ");
 				for (int i = 0; i < parameterArr.length; i++) {
 					if (parameterArr[i].charAt(0) == '\\') {
 						// TODO : Check whether if the arguments is in correct
 						// format.
-						String para = parameterArr[i].substring(1, parameterArr[i].length());
+						String para = parameterArr[i].substring(1, parameterArr[i].length());		
 						parameters.add(new Parameter(mapParameterType(para), parameterArr[i + 1]));
 					}
 				}
@@ -69,7 +72,7 @@ public class Parser {
 			}
 		}
 
-		int cmdType = mapCommandType(cmd);
+		
 
 		return new Command(cmdType, text, parameters);
 	}
@@ -114,7 +117,17 @@ public class Parser {
 
 		case Parameter.PRIORITY_ARGUMENT:
 			return Parameter.PRIORITY_ARGUMENT_TYPE;
-
+			
+		case Parameter.DATE_ARGUMENT:
+			return Parameter.DATE_ARGUMENT_TYPE;
+			
+		case Parameter.PLACE_ARGUMENT:
+			return Parameter.PLACE_ARGUMENT_TYPE;
+		case Parameter.TIME_ARGUMENT:
+			return Parameter.TIME_ARGUMENT_TYPE;
+		case Parameter.TYPE_ARGUMENT:
+			return Parameter.TYPE_ARGUMENT_TYPE;
+		
 		default:
 			return -1;
 
