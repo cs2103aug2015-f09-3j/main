@@ -1,17 +1,17 @@
 package application;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 public class Task {
 	
 	private String textContent;
 	
-	private boolean isDone;
-	private String priority_argument;
-	private String type_argument;
-	private String date_argument;
-	private String time_argument;
-	private String place_argument;
+	private boolean isDone = false;
+	private String priority_argument = "";
+	private String type_argument = "";
+	private Date start_date;
+	private Date end_date;
+	private String place_argument = "";
 	
 	
 	
@@ -60,23 +60,25 @@ public class Task {
 	}
 
 
-	public String getDate_argument() {
-		return date_argument;
+
+
+	public Date getStart_date() {
+		return start_date;
 	}
 
 
-	public void setDate_argument(String date_argument) {
-		this.date_argument = date_argument;
+	public void setStart_date(Date start_date) {
+		this.start_date = start_date;
 	}
 
 
-	public String getTime_argument() {
-		return time_argument;
+	public Date getEnd_date() {
+		return end_date;
 	}
 
 
-	public void setTime_argument(String time_argument) {
-		this.time_argument = time_argument;
+	public void setEnd_date(Date end_date) {
+		this.end_date = end_date;
 	}
 
 

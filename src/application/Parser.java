@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -118,13 +120,13 @@ public class Parser {
 		case Parameter.PRIORITY_ARGUMENT:
 			return Parameter.PRIORITY_ARGUMENT_TYPE;
 			
-		case Parameter.DATE_ARGUMENT:
-			return Parameter.DATE_ARGUMENT_TYPE;
+		case Parameter.START_DATE_ARGUMENT:
+			return Parameter.START_DATE_ARGUMENT_TYPE;
 			
 		case Parameter.PLACE_ARGUMENT:
 			return Parameter.PLACE_ARGUMENT_TYPE;
-		case Parameter.TIME_ARGUMENT:
-			return Parameter.TIME_ARGUMENT_TYPE;
+		case Parameter.END_DATE_ARGUMENT:
+			return Parameter.END_DATE_ARGUMENT_TYPE;
 		case Parameter.TYPE_ARGUMENT:
 			return Parameter.TYPE_ARGUMENT_TYPE;
 		
@@ -142,14 +144,27 @@ public class Parser {
 		ArrayList<Parameter> lists = cmd.getParameter();
 		
 		for(Parameter para: lists){
-			if(para.getParaType() == Parameter.DATE_ARGUMENT_TYPE){
-				task.setDate_argument(para.getParaArg());
-			}else if(para.getParaType() == Parameter.PLACE_ARGUMENT_TYPE){
+			if(para.getParaType() == Parameter.START_DATE_ARGUMENT_TYPE){
+			
+				try {
+					task.setStart_date(DateFormat.getInstance().parse(para.getParaArg()));
+				} catch (ParseException e) {
+					task.setStart_date(null);
+					e.printStackTrace();
+				}
+		
+			}else if(para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE){
+				try {
+					task.setEnd_date(DateFormat.getInstance().parse(para.getParaArg()));
+				} catch (ParseException e) {
+					task.setEnd_date(null);
+					e.printStackTrace();
+				}
+			}
+			else if(para.getParaType() == Parameter.PLACE_ARGUMENT_TYPE){
 				task.setPlace_argument(para.getParaArg());
 			}else if(para.getParaType() == Parameter.PRIORITY_ARGUMENT_TYPE){
 				task.setPriority_argument(para.getParaArg());
-			}else if(para.getParaType() == Parameter.TIME_ARGUMENT_TYPE){
-				task.setTime_argument(para.getParaArg());
 			}else if(para.getParaType() == Parameter.TYPE_ARGUMENT_TYPE){
 				task.setType_argument(para.getParaArg());
 			}			
