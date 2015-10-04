@@ -29,7 +29,7 @@ public class TasksFormatterTest {
 	public void testFormatType2() {
 		
 		ArrayList<Task> tasks = new ArrayList<Task>();
-		Task task1 = new Task("Buy Milk");
+		Task task1 = new Task("Buy Milk YOYOYOY");
 		task1.setEnd_date(DateFormat.getDateInstance().getCalendar().getTime());
 		task1.setStart_date(DateFormat.getDateInstance().getCalendar().getTime());
 		task1.setPriority_argument("high");
@@ -39,7 +39,7 @@ public class TasksFormatterTest {
 		tasks.add(task1);
 		
 		
-		assertEquals("Description                         Start Date                End Date                  Location                  Type            Priority            \nBuy Milk                            Oct 4, 1935               Oct 4, 1935               bukit panjang             Meeting         high                \nBuy Milk                            Oct 4, 1935               Oct 4, 1935               bukit panjang             Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
+		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \nBuy Milk YOYOYOY               Oct 4, 1935          Oct 4, 1935          bukit panjang        Meeting         high           \nBuy Milk YOYOYOY               Oct 4, 1935          Oct 4, 1935          bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
 	}
 	
 

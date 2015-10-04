@@ -21,7 +21,7 @@ public class TasksFormatter {
 	
 
 	
-	private static final String OUTPUT_FORMAT = "%-35s %-25s %-25s %-25s %-15s %-20s";
+	private static final String OUTPUT_FORMAT = "%-30s %-20s %-20s %-20s %-15s %-15s";
 
 
 	private static final String DETAIL_VIEW_HEADER = String.format(OUTPUT_FORMAT, "Description", "Start Date", "End Date", "Location", "Type", "Priority");

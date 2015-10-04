@@ -19,6 +19,7 @@ public class UIController {
 	private TextArea textConsoleOutput;
 	
 
+
 	// Event Listener on Button[#btSend].onKeyPressed
 	@FXML
 	public void onKeyPressed(KeyEvent event) {
@@ -28,6 +29,7 @@ public class UIController {
 		showToUser(response);
 	}
 	public void showToUser(String response) {
+		textConsoleOutput.setStyle("-fx-font-family: monospace");
 		System.out.println(response);
 		textConsoleOutput.insertText(textConsoleOutput.getLength(), response);
 		
