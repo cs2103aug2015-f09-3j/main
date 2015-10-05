@@ -35,7 +35,7 @@ public class LogicController {
 
 	        switch (cmdType) {
 	            case Command.ADD_COMMAND_TYPE:
-	            	Task taskToAdd = Parser.convertAddCommandtoTask(cmd);
+	            	Task taskToAdd = Parser.getInstance().convertAddCommandtoTask(cmd);
 	            	DataManager.getInstance().addNewTask(taskToAdd);
 	            	return ADDED_SUCCESS + cmd.getTextContent();
 

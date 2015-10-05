@@ -23,11 +23,13 @@ public class DataManager {
 	}
 
 	public String addNewTask(Task taskToAdd) {
-		String details = taskToAdd.getTextContent();
+		String details = taskToAdd.getTextContent();	
+		//TODO : Need a better way to store the task, recommended to use a library google gson
+		// to convert the Task into a text-based json file.
 		for (int i = 0; i < taskToAdd.getParameter().size(); i++) {
 			details = details + " " + '\\' + taskToAdd.getParameter().get(i).getParaArg();
 		}
-		file.writeTask(details);
+		file.writeTask(details); 
 		file.sort();
 		return details;
 	}

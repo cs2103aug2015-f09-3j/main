@@ -17,7 +17,7 @@ public class DataManagerTest {
 		Command cmd = new Command(1,"Hello World", parameters);
 		String test1 = "Hello World " + '\\' + "p " + '\\' + "t";
 		DataManager testObj = DataManager.getInstance();
-		assertEquals(test1,testObj.addNewTask(cmd));
+		assertEquals(test1,testObj.addNewTask(Parser.getInstance().convertAddCommandtoTask(cmd)));
 		test.add("Hello world");
 		test.add("Test case 1");
 		assertEquals(test,testObj.listAll(null));

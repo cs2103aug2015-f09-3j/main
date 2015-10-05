@@ -137,7 +137,7 @@ public class Parser {
 
 	}
 
-	public static Task convertAddCommandtoTask(Command cmd){
+	public Task convertAddCommandtoTask(Command cmd){
 
 		Task task = new Task(cmd.getTextContent());
 

@@ -96,7 +96,7 @@ public class LocalStorage {
 		return tasks;
 	}
 
-	public int changePath(String textContent) {
+	public int changePath(String textContent) { 
 		listBackUp = list;
 		return 1;
 	}
