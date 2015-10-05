@@ -34,41 +34,50 @@ public class LogicController {
 			int cmdType = cmd.getType();
 
 	        switch (cmdType) {
-	            case Command.ADD_COMMAND_TYPE:  DataManager.getInstance().addNewTask(cmd);
-	            								return ADDED_SUCCESS + cmd.getTextContent();
+	            case Command.ADD_COMMAND_TYPE:
+	            	Task taskToAdd = Parser.convertAddCommandtoTask(cmd);
+	            	DataManager.getInstance().addNewTask(taskToAdd);
+	            	return ADDED_SUCCESS + cmd.getTextContent();
 
-	            case Command.LIST_COMMAND_TYPE:  String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
-	            		 						 return msg;
+	            case Command.LIST_COMMAND_TYPE:
+	            	String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
+	            	return msg;
 
-	            case Command.CHANGE_STORAGE_COMMAND_TYPE:  DataManager.getInstance().changeStorageLocation(cmd);
-	            		 								   return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
+	            case Command.CHANGE_STORAGE_COMMAND_TYPE:
+	            	DataManager.getInstance().changeStorageLocation(cmd);
+	            	return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
 
-	            case Command.DELETE_COMMAND_TYPE:  int deleteSuccess= DataManager.getInstance().removeTask(cmd);
-								            	   if (deleteSuccess == -1){
-								            	       return EMPTY_FILE;
-								            	   } else if (deleteSuccess == -2){
-								            		   return "";
-								            	   } else {
-								            		   return DELETE_SUCCESS + cmd.getTextContent();
-								            	   }
+	            case Command.DELETE_COMMAND_TYPE:
+	            	int deleteSuccess= DataManager.getInstance().removeTask(cmd);
+					if (deleteSuccess == -1){
+						return EMPTY_FILE;
+					} else if (deleteSuccess == -2){
+				      		   return "";
+			         	   } else {
+		            		   return DELETE_SUCCESS + cmd.getTextContent();
+		            	   }
 
-	            case Command.UNDO_COMMAND_TYPE:  Command prevCommand = determinePrevCommand();
-							            		 int undoCommand = determineUndoCommand(prevCommand);
-							            		 break;
+	            case Command.UNDO_COMMAND_TYPE:
+	            	Command prevCommand = determinePrevCommand();
+	            	int undoCommand = determineUndoCommand(prevCommand);
+					break;
 
-	            case Command.EDIT_COMMAND_TYPE:  int editSuccess = DataManager.getInstance().editTask(cmd);
-							            		 if (editSuccess == -1){
-							            			 return EMPTY_FILE;
-							            		 } else {
-							            			 return EDIT_SUCCESS + cmd.getTextContent();
-							            		 }
+	            case Command.EDIT_COMMAND_TYPE:
+	            	int editSuccess = DataManager.getInstance().editTask(cmd);
+					if (editSuccess == -1){
+					    return EMPTY_FILE;
+					} else {
+			  			 return EDIT_SUCCESS + cmd.getTextContent();
+		    		 }
 
-	            case Command.DONE_COMMAND_TYPE:  int setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
-							            		 if (setDoneSuccess == -1){
-							            			 return EMPTY_FILE;
-							            		 } else {
-							            			 return SET_DONE_SUCCESS + cmd.getTextContent();
-							            		 }
+	            case Command.DONE_COMMAND_TYPE:
+	            	int setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
+	            	if (setDoneSuccess == -1){
+	            		return EMPTY_FILE;
+	            	} else {
+	            		return SET_DONE_SUCCESS + cmd.getTextContent();
+	            	}
+
 	            default: return "testing-lc";
 	        }
 
@@ -101,12 +110,12 @@ public class LogicController {
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);
 			StringBuilder sb = new StringBuilder();
-			
+
 			for (int i=0; i<listAll.size(); i++) {
 	           // System.out.println(i + ". " + listAll.get(i));
 				sb.append(i + ". " + listAll.get(i) + "\n");
 	        }
-			
+
 			return sb.toString();
 		}
 

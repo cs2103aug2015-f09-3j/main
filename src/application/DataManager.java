@@ -22,10 +22,10 @@ public class DataManager {
 		return instance;
 	}
 
-	public String addNewTask(Command cmd) {
-		String details = cmd.getTextContent();
-		for (int i = 0; i < cmd.getParameter().size(); i++) {
-			details = details + " " + '\\' + cmd.getParameter().get(i).getParaArg();
+	public String addNewTask(Task taskToAdd) {
+		String details = taskToAdd.getTextContent();
+		for (int i = 0; i < taskToAdd.getParameter().size(); i++) {
+			details = details + " " + '\\' + taskToAdd.getParameter().get(i).getParaArg();
 		}
 		file.writeTask(details);
 		file.sort();
