@@ -57,7 +57,7 @@
 					</font>
 				</Label>
 				<Button fx:id="btSend" layoutX="844.0" layoutY="277.0" mnemonicParsing="false" onKeyPressed="#onKeyPressed" onMouseClicked="#onMouseClicked" prefHeight="85.0" prefWidth="139.0" text="Enter" />
-				<TextField id="commandInput" fx:id="textCommandInput" layoutX="14.0" layoutY="277.0" prefHeight="85.0" prefWidth="818.0" />
+				<TextField id="commandInput" fx:id="textCommandInput" layoutX="14.0" layoutY="277.0" onAction="#onEnter" prefHeight="85.0" prefWidth="818.0" />
 				<Line endX="880.0" endY="-1.0" layoutX="115.0" layoutY="264.0" startX="-100.0" />
 				<TextArea id="consoleOutput" fx:id="textConsoleOutput" editable="false" layoutX="14.0" layoutY="13.0" prefHeight="239.0" prefWidth="978.0" wrapText="true">
 					<font>

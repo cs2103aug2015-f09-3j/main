@@ -20,11 +20,11 @@ public class TasksFormatter {
 	private static final int DETAIL_PRIORITY_COUNT = 20;
 	
 
-	
-	private static final String OUTPUT_FORMAT = "%-30s %-20s %-20s %-20s %-15s %-15s";
+	private static final String OUTPUT_FORMAT_HEADER = "%-30s %-20s %-20s %-20s %-15s %-15s";
+	private static final String OUTPUT_FORMAT = "%-3d %-30s %-20s %-20s %-20s %-15s %-15s";
 
 
-	private static final String DETAIL_VIEW_HEADER = String.format(OUTPUT_FORMAT, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
+	private static final String DETAIL_VIEW_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
 	
 	/**
 	 * @param lists
@@ -49,7 +49,8 @@ public class TasksFormatter {
 			sb.append(DETAIL_VIEW_HEADER);
 
 			sb.append("\n");
-			for(Task task: lists){
+			int count = 1;
+			for(Task task: lists){ 
 				
 				String s_date = ""; 
 				String e_date = ""; 
@@ -60,7 +61,7 @@ public class TasksFormatter {
 				if(task.getEnd_date() != null){
 					e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
 				}
-				sb.append(String.format(OUTPUT_FORMAT, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
+				sb.append(String.format(OUTPUT_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
 						,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));
 				
 

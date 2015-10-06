@@ -13,12 +13,12 @@ public class Main extends Application {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI.fxml"));
 			fxmlLoader.setController(new UIController());
 			Parent root = fxmlLoader.load();
-			Scene scene = new Scene(root, 640, 400);
+			Scene scene = new Scene(root, 1007, 400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			e.printStackTrace();
 		}
 	}
