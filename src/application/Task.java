@@ -91,8 +91,19 @@ public class Task {
 		this.place_argument = place_argument;
 	}
 	
-	
-		
+	public String toString(){
+		String format;
+		if(isDone){
+			format = "Task: " + textContent + "  Start Date & Time: " + start_date +
+					"  End Date & Time: " + end_date + "  Type: " + type_argument + 
+					"  Priority: " + priority_argument + "  Location: " + place_argument + "(DONE)";
+		}else{
+			format = "Task: " + textContent + "  Start Date & Time: " + start_date +
+					"  End Date & Time: " + end_date + "  Type: " + type_argument + 
+					"  Priority: " + priority_argument + "  Location: " + place_argument + "(NOT DONE)";
+		}
+		return format;
+	}	
 	
 
 }

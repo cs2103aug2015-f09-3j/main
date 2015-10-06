@@ -1,18 +1,22 @@
 package application;
 
 import java.util.ArrayList;
+import com.google.gson.*;
+
 /*
  * @author: Lim Qi Wen
  */
+
 public class DataManager {
 	// Integer return values => status codes to be defined
 
 	private LocalStorage file;
-
+	private Gson gson;
 	public static DataManager instance = null;
 
 	private DataManager() {
 		file = new LocalStorage();
+		gson = new Gson();
 	}
 
 	public static DataManager getInstance() {
@@ -23,15 +27,8 @@ public class DataManager {
 	}
 
 	public String addNewTask(Task taskToAdd) {
-		String details = taskToAdd.getTextContent();	
-		//TODO : Need a better way to store the task, recommended to use a library google gson
-		// to convert the Task into a text-based json file.
-		/*	
-		for (int i = 0; i < taskToAdd.getParameter().size(); i++) {
-			details = details + " " + '\\' + taskToAdd.getParameter().get(i).getParaArg();
-		}
-		*/
-		file.writeTask(details); 
+		String details = gson.toJson(taskToAdd);
+		file.writeTask(details);
 		file.sort();
 		return details;
 	}
@@ -126,4 +123,6 @@ public class DataManager {
 	public void savePossibleItems(ArrayList<String> toSave){
 		//TODO
 	}
+	
 }
+
