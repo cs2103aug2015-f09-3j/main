@@ -4,11 +4,17 @@ import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import com.google.gson.*;
+
+import com.google.gson.Gson;
 
 public class LocalStorage {
 	private static final String TEST_TXT = "test.txt";
@@ -18,7 +24,6 @@ public class LocalStorage {
 	 */
 	private static File file;
 	private static ArrayList<String> list;
-	private static ArrayList<String> listBackUp;
 
 	public LocalStorage() {
 		file = new File(TEST_TXT);
@@ -26,34 +31,32 @@ public class LocalStorage {
 	}
 
 	public ArrayList<String> readFile() {
-		ArrayList<String> textList = new ArrayList<String>();
-		BufferedReader reader = null;
-		String text = null;
+		ArrayList<String> textLine = new ArrayList<String>();
+		FileInputStream fIn = null;
 		try {
-			reader = new BufferedReader(new FileReader(file));
-			text = reader.readLine();
-			if (text == null) {
-				System.out.println();
-				System.out.println(file.getName() + " is empty");
-				//textList = null; bug?
-			} else {
-				while (text != null) {
-					textList.add(text);
-					text = reader.readLine();
-				}
-			}
-			return textList;
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			textList = null;
-			return textList;
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+			fIn = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+        String aDataRow = "";
+        try {
+			while ((aDataRow = myReader.readLine()) != null) 
+			{
+			    textLine.add(aDataRow);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        try {
+			myReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return textLine;
 	}
 
 	public void writeTask(String details) {
@@ -66,7 +69,7 @@ public class LocalStorage {
 		saveToFile();
 	}
 
-	public int numberOfTasks() {
+	private int numberOfTasks() {
 		return list.size();
 	}
 
@@ -86,26 +89,25 @@ public class LocalStorage {
 		if (textContent == null || textContent.trim().length() == 0) {
 			tasks.add("Invalid search. Please enter keywords");
 		}
-		int numOfFoundedtasks = 0;
 		for (int i = 0; i < numberOfTasks(); i++) {
 			if (list.get(i).contains(textContent)) {
 				tasks.add(list.get(i));
-				numOfFoundedtasks += 1;
 			}
 		}
 		return tasks;
 	}
 
 	public int changePath(String textContent) { 
-		listBackUp = list;
 		return 1;
 	}
 
 	private static void saveToFile() {
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			for (String elem : list) {
-				bw.write(elem);
+				String temp = gson.toJson(elem);
+				bw.append(temp);
 				bw.newLine();
 			}
 			bw.close();
