@@ -121,7 +121,6 @@ public class LogicController {
 
 		public int chooseLine(ArrayList<String> possibleItems) {
 			printList(possibleItems);
-			DataManager.getInstance().savePossibleItems(possibleItems);
 			return -1;
 		}
 

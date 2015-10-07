@@ -23,11 +23,9 @@ public class LocalStorage {
 	 * CE2 functionality provided.
 	 */
 	private static File file;
-	private static ArrayList<String> list;
 
 	public LocalStorage() {
 		file = new File(TEST_TXT);
-		list = readFile();
 	}
 
 	public ArrayList<String> readFile() {
@@ -59,7 +57,7 @@ public class LocalStorage {
         return textLine;
 	}
 
-	public void writeTask(String details) {
+	/*public void writeTask(String details) {
 		list.add(details);
 		saveToFile();
 	}
@@ -77,14 +75,13 @@ public class LocalStorage {
 		boolean result= list.remove(task);
 		saveToFile();
 		return result;
-	}
+	}*/
 
 	public void clear() {
-		list.clear();
-		saveToFile();
+		saveToFile(new ArrayList<String>());
 	}
 
-	public ArrayList<String> search(String textContent) {
+	/*public ArrayList<String> search(String textContent) {
 		ArrayList<String> tasks = new ArrayList<String>();
 		if (textContent == null || textContent.trim().length() == 0) {
 			tasks.add("Invalid search. Please enter keywords");
@@ -95,19 +92,17 @@ public class LocalStorage {
 			}
 		}
 		return tasks;
-	}
+	}*/
 
 	public int changePath(String textContent) { 
 		return 1;
 	}
 
-	private static void saveToFile() {
+	public void saveToFile(ArrayList<String> list) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			for (String elem : list) {
-				String temp = gson.toJson(elem);
-				bw.append(temp);
+			for (String elem : list) {;
+				bw.append(elem);
 				bw.newLine();
 			}
 			bw.close();

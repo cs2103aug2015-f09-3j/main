@@ -8,15 +8,23 @@ import com.google.gson.*;
  */
 
 public class DataManager {
-	// Integer return values => status codes to be defined
-
+	public static final Integer MULTIPLE_MATCHES = -2;
+	public static final Integer TASK_NOT_FOUND = -1;
+	public static final Integer TASK_REMOVED = 1;
+	public static final Integer TASK_SET_TO_DONE = 2;
+	
+	
 	private LocalStorage file;
 	private Gson gson;
+	private ArrayList<Task> taskList;
+	private ArrayList<Task> searchList;
 	public static DataManager instance = null;
 
 	private DataManager() {
 		file = new LocalStorage();
 		gson = new Gson();
+		taskList = initialiseTaskList();
+		searchList = new ArrayList<Task>();
 	}
 
 	public static DataManager getInstance() {
@@ -26,103 +34,115 @@ public class DataManager {
 		return instance;
 	}
 
-	public String addNewTask(Task taskToAdd) {
-		String details = gson.toJson(taskToAdd);
-		file.writeTask(details);
-		file.sort();
-		return details;
+	public void addNewTask(Task taskToAdd) {
+		searchList.clear();
+		taskList.add(taskToAdd);
+		sort();
+		file.clear();
+		file.saveToFile(tasksToStrings());
 	}
 
 	public ArrayList<String> listAll(String para) {
-		ArrayList<String> taskList = new ArrayList<String>();
-		taskList = file.readFile();
-		String taskDetails;
-		for (int i = 0; i < taskList.size(); i++) {
-			taskDetails = taskList.get(i);
-			// TODO filter list by types of task
-			if (taskDetails.contains("" + '\\')) {
-				taskDetails = taskDetails.substring(0, taskDetails.indexOf('\\')).trim();
-				taskList.remove(i);
-				taskList.add(i, taskDetails);
-			}
+		searchList.clear();
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i=0; i<taskList.size();i++){
+			list.add(taskList.get(i).getTextContent());
+			//TODO filter list by parameter;
 		}
-		return taskList;
+		return list;
 	}
 
 	public Integer removeTask(Command cmd) {
-		ArrayList<String> possibleItems = new ArrayList<String>();
-		possibleItems = file.search(cmd.getTextContent());
-		if (possibleItems.size() == 1) {
-			if(file.delete(possibleItems.get(0)))
-				return 0;
-			else
-				return -1;
-		} else if (possibleItems.size() <= 0) {
-			return -1;
-		} else {
-			int lineToDelete = LogicController.getInstance().chooseLine(possibleItems);
-			file.delete(possibleItems.get(lineToDelete - 1));
-			return 0;
-		}
+		searchList.clear();
+		searchTasksForMatches(cmd);
+		switch (searchList.size()){
+			case 0:
+				return TASK_NOT_FOUND;
+			case 1:	
+				taskList.remove(searchList.get(0));
+				file.clear();
+				file.saveToFile(tasksToStrings());
+				return TASK_REMOVED;
+			default:
+				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				return MULTIPLE_MATCHES;
+		}	
+	}
+	
+	public Integer removeTask(int lineNum){
+		taskList.remove(searchList.get(lineNum));
+		file.clear();
+		file.saveToFile(tasksToStrings());
+		return TASK_REMOVED;
+	}
+
+	public Integer editTask(Command cmd) {
+		return 0;
+	}
+
+	public Integer setDoneToTask(Command cmd){
+		searchList.clear();
+		searchTasksForMatches(cmd);
+		switch (searchList.size()){
+			case 0:
+				return TASK_NOT_FOUND;
+			case 1:	
+				int index = taskList.indexOf(searchList.get(0));
+				taskList.get(index).setDone(true);
+				file.clear();
+				file.saveToFile(tasksToStrings());
+				return TASK_SET_TO_DONE;
+			default:
+				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				return MULTIPLE_MATCHES;
+		}	
+	}
+	
+	public Integer setDoneToTask(int lineNum){
+		int index = taskList.indexOf(searchList.get(lineNum));
+		taskList.get(index).setDone(true);
+		return TASK_SET_TO_DONE;
 	}
 
 	public Integer changeStorageLocation(Command cmd) {
 		return file.changePath(cmd.getTextContent());
 	}
-
-	public Integer editTask(Command cmd) {
-		ArrayList<String> possibleItems = new ArrayList<String>();
-		possibleItems = file.search(cmd.getTextContent());
-		if (possibleItems.size() == 1) {
-			//TODO
-			return 0;
-		}else if (possibleItems.size() <= 0) {
-			return -1;
-		} else {
-			int lineToEdit = LogicController.getInstance().chooseLine(possibleItems);
-			//TODO
-			return 0;
+	
+	private ArrayList<String> tasksToStrings(){
+		ArrayList<String> taskStrings = new ArrayList<String>();
+		for(int i=0;i<taskList.size();i++){
+			taskStrings.add(gson.toJson(taskList.get(i)));
 		}
+		return taskStrings;
 	}
-
-	public Integer setDoneToTask(Command cmd){
-		ArrayList<String> possibleItems = new ArrayList<String>();
-		ArrayList<String> listOfTasks = new ArrayList<String>();
-		possibleItems = file.search(cmd.getTextContent());
-		listOfTasks = file.readFile();
-		if(possibleItems.size() == 1){
-			for(int i=0; i<listOfTasks.size();i++){
-				if(listOfTasks.get(i).equals(possibleItems.get(0))){
-					listOfTasks.add(i,listOfTasks.remove(i).concat("-done"));
-					break;
-				}
-			}
-			file.clear();
-			for(int j=0; j<listOfTasks.size(); j++){
-				file.writeTask(listOfTasks.get(j));
-			}
-			return 0;
-		}else if(possibleItems.size()<=0){
-			return -1;
-		}else{
-			int lineToSetDone = LogicController.getInstance().chooseLine(possibleItems);
-			for(int i=0; i<listOfTasks.size();i++){
-				if(listOfTasks.get(i).equals(possibleItems.get(lineToSetDone-1))){
-					listOfTasks.add(i,listOfTasks.remove(i).concat("-done"));
-					break;
-				}
-			}
-			file.clear();
-			for(int j=0; j<listOfTasks.size(); j++){
-				file.writeTask(listOfTasks.get(j));
-			}
-			return 0;
+	
+	private ArrayList<String> tasksToStrings(ArrayList<Task> list){
+		ArrayList<String> taskStrings = new ArrayList<String>();
+		for(int i=0;i<list.size();i++){
+			taskStrings.add(list.get(i).getTextContent());
 		}
+		return taskStrings;
 	}
-
-	public void savePossibleItems(ArrayList<String> toSave){
+	
+	private void sort(){
 		//TODO
 	}
 	
+	private ArrayList<Task> initialiseTaskList(){
+		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<String> stringList = file.readFile();
+		for(int i=0; i<stringList.size();i++){
+			list.add(gson.fromJson(stringList.get(i), Task.class));
+		}
+		return list;
+	}
+
+	private void searchTasksForMatches(Command cmd) {
+		for(int i=0; i<taskList.size();i++){
+			if(taskList.get(i).getTextContent().contains(cmd.getTextContent())){
+				searchList.add(taskList.get(i));
+			}
+		}
+	}
 }
 
