@@ -2,7 +2,9 @@ package application;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * This is a singleton class
@@ -65,7 +67,19 @@ public class Parser {
 						// TODO : Check whether if the arguments is in correct
 						// format.
 						String para = parameterArr[i].substring(1, parameterArr[i].length());
-						parameters.add(new Parameter(mapParameterType(para), parameterArr[i + 1]));
+						//If the next parameter charAt(0) is not \\, then it going to concat together
+						// with this para
+						
+						String paraContent = "";
+						
+						for(int c =i + 1; c < parameterArr.length; c++){
+							if( parameterArr[c].charAt(0) != '\\'){
+								paraContent += " " + parameterArr[c].substring(0, parameterArr[c].length());
+							}
+							
+						}
+						
+						parameters.add(new Parameter(mapParameterType(para), paraContent));
 					}
 				}
 			} else {
@@ -142,12 +156,15 @@ public class Parser {
 		Task task = new Task(cmd.getTextContent());
 
 		ArrayList<Parameter> lists = cmd.getParameter();
+		
+		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
+		
 
 		for(Parameter para: lists){
 			if(para.getParaType() == Parameter.START_DATE_ARGUMENT_TYPE){
 
 				try {
-					task.setStart_date(DateFormat.getInstance().parse(para.getParaArg()));
+					task.setStart_date(df1.parse(para.getParaArg()));
 				} catch (ParseException e) {
 					task.setStart_date(null);
 					e.printStackTrace();
@@ -155,7 +172,7 @@ public class Parser {
 
 			}else if(para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE){
 				try {
-					task.setEnd_date(DateFormat.getInstance().parse(para.getParaArg()));
+					task.setEnd_date(df1.parse(para.getParaArg()));
 				} catch (ParseException e) {
 					task.setEnd_date(null);
 					e.printStackTrace();

@@ -40,7 +40,8 @@ public class LogicController {
 	            	return ADDED_SUCCESS + cmd.getTextContent();
 
 	            case Command.LIST_COMMAND_TYPE:
-	            	String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
+	            	String msg = TasksFormatter.format(DataManager.getInstance().listAll(cmd.getTextContent()), TasksFormatter.DETAIL_VIEW_TYPE);
+	            	//String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
 	            	return msg;
 
 	            case Command.CHANGE_STORAGE_COMMAND_TYPE:

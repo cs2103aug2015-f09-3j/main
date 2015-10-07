@@ -42,14 +42,17 @@ public class DataManager {
 		file.saveToFile(tasksToStrings());
 	}
 
-	public ArrayList<String> listAll(String para) {
+	public ArrayList<Task> listAll(String para) {
 		searchList.clear();
+		/*
 		ArrayList<String> list = new ArrayList<String>();
 		for(int i=0; i<taskList.size();i++){
 			list.add(taskList.get(i).getTextContent());
 			//TODO filter list by parameter;
 		}
 		return list;
+		*/
+		return taskList;
 	}
 
 	public Integer removeTask(Command cmd) {

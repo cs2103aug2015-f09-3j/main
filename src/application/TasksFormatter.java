@@ -1,10 +1,12 @@
 package application;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class TasksFormatter {
 
+	public static final String DATE_FORMAT_TYPE_1 = "dd/MM/yyyy HH:mma";
 	public static final int PLAIN_VIEW_TYPE = 1;
 	public static final int DETAIL_VIEW_TYPE = 2;
 	public static final int TIMELINE_VIEW_TYPE = 3;
@@ -35,6 +37,7 @@ public class TasksFormatter {
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
 		StringBuilder sb = new StringBuilder();
+		DateFormat df1 = new SimpleDateFormat(DATE_FORMAT_TYPE_1);
 		switch (typeOfFormatting) {
 
 		case PLAIN_VIEW_TYPE:
@@ -56,10 +59,12 @@ public class TasksFormatter {
 				String e_date = ""; 
 				
 				if(task.getStart_date() != null){
-					s_date = DateFormat.getDateInstance().format(task.getStart_date());
+					s_date = df1.format(task.getStart_date());
+					//s_date = DateFormat.getDateInstance().format(task.getStart_date());
 				}
 				if(task.getEnd_date() != null){
-					e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
+					e_date = df1.format(task.getEnd_date());
+					//e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
 				}
 				sb.append(String.format(OUTPUT_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
 						,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));

@@ -60,7 +60,7 @@ public class UIController {
 		
 	}
 	private void processUIRequest() {
-		String response = onCommandReceived(textCommandInput.getText());
+		String response = onCommandReceived(textCommandInput.getText()) + "\n";
 		showToUser(response);
 		textCommandInput.clear();
 		
