@@ -2,15 +2,15 @@ package application;
 
 import java.util.Date;
 
-public class Task {
+public class Task implements Comparable<Task>{
 	
 	private String textContent;
 	
 	private boolean isDone = false;
 	private String priority_argument = "";
 	private String type_argument = "";
-	private Date start_date;
-	private Date end_date;
+	private Date start_date = null;
+	private Date end_date = null;
 	private String place_argument = "";
 	
 	
@@ -91,6 +91,7 @@ public class Task {
 		this.place_argument = place_argument;
 	}
 	
+/*	@Override
 	public String toString(){
 		String format;
 		if(isDone){
@@ -103,7 +104,20 @@ public class Task {
 					"  Priority: " + priority_argument + "  Location: " + place_argument + "(NOT DONE)";
 		}
 		return format;
-	}	
+	}*/	
+	
+	@Override
+	 public int compareTo(Task task) {
+	    try{
+	    	return getEnd_date().compareTo(task.getEnd_date());
+	    }catch(NullPointerException ex){
+	    	if (this.getEnd_date()== null){
+	    		return 1;
+	    	}else{
+	    		return -1;
+	    	}
+	    }
+	  }
 	
 
 }

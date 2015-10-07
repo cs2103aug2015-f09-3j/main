@@ -1,6 +1,8 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 import com.google.gson.*;
 
 /*
@@ -166,7 +168,7 @@ public class DataManager {
 	}
 	
 	private void sort(){
-		//TODO
+		Collections.sort(taskList);
 	}
 	
 	private ArrayList<Task> initialiseTaskList(){
