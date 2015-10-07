@@ -26,6 +26,12 @@ public class LocalStorage {
 
 	public LocalStorage() {
 		file = new File(TEST_TXT);
+		try{
+			file.createNewFile();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		
 	}
 
 	public ArrayList<String> readFile() {
