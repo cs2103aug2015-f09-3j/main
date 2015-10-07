@@ -12,6 +12,7 @@ public class DataManager {
 	public static final Integer TASK_NOT_FOUND = -1;
 	public static final Integer TASK_REMOVED = 1;
 	public static final Integer TASK_SET_TO_DONE = 2;
+	public static final Integer TASK_UPDATED = 3;
 	
 	
 	private LocalStorage file;
@@ -80,7 +81,44 @@ public class DataManager {
 	}
 
 	public Integer editTask(Command cmd) {
-		return 0;
+		searchList.clear();
+		searchTasksForMatches(cmd);
+		switch (searchList.size()){
+			case 0:
+				return TASK_NOT_FOUND;
+			case 1:	
+				ArrayList<Parameter> para = new ArrayList<Parameter>();
+				para = cmd.getParameter();
+				for(int i=0; i<para.size(); i++){
+					switch(para.get(i).getParaType()){
+						case Parameter.PRIORITY_ARGUMENT_TYPE:
+							taskList.get(taskList.indexOf(searchList.get(0))).setPriority_argument(para.get(i).getParaArg());
+							break;
+						case Parameter.TYPE_ARGUMENT_TYPE:
+							taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.get(i).getParaArg());
+							break;
+						/*case Parameter.START_DATE_ARGUMENT_TYPE:
+							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(para.get(i).getParaArg());
+							break;
+						case Parameter.END_DATE_ARGUMENT_TYPE:
+							break;*/ //TODO
+						default:
+							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.get(i).getParaArg());
+							break;
+					}
+				}
+				file.clear();
+				file.saveToFile(tasksToStrings());
+				return TASK_UPDATED;
+			default:
+				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				return MULTIPLE_MATCHES;
+		}	
+	}
+	
+	public Integer editTask(int lineNum){
+		//TODO
+		return TASK_UPDATED;
 	}
 
 	public Integer setDoneToTask(Command cmd){
