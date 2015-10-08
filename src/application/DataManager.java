@@ -45,9 +45,9 @@ public class DataManager {
 	public void addNewTask(Task taskToAdd) {
 		searchList.clear();
 		taskList.add(taskToAdd);
-		sort(taskList);
+		sort();
 		file.clear();
-		file.saveToFile(tasksToStrings(taskList));
+		file.saveToFile(tasksToStrings());
 	}
 
 	public ArrayList<Task> listAll(Command cmd) {
@@ -187,9 +187,9 @@ public class DataManager {
 							break;
 					}
 				}
-				sort(taskList);
+				sort();
 				file.clear();
-				file.saveToFile(tasksToStrings(taskList));
+				file.saveToFile(tasksToStrings());
 				return TASK_UPDATED;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
@@ -230,6 +230,13 @@ public class DataManager {
 		return file.changePath(cmd.getTextContent());
 	}
 	
+	private ArrayList<String> tasksToStrings(){
+		ArrayList<String> taskStrings = new ArrayList<String>();
+		for(int i=0;i<taskList.size();i++){
+			taskStrings.add(gson.toJson(taskList.get(i)));
+		}
+		return taskStrings;
+	}
 	
 	private ArrayList<String> tasksToStrings(ArrayList<Task> list){
 		ArrayList<String> taskStrings = new ArrayList<String>();
@@ -239,7 +246,10 @@ public class DataManager {
 		return taskStrings;
 	}
 	
-
+	private void sort(){
+		Collections.sort(taskList);
+	}
+	
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
