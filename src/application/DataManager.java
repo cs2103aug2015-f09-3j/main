@@ -13,11 +13,13 @@ import com.google.gson.*;
  */
 
 public class DataManager {
+	public static final Integer TASK_ALREADY_EXISTS = -3;
 	public static final Integer MULTIPLE_MATCHES = -2;
 	public static final Integer TASK_NOT_FOUND = -1;
 	public static final Integer TASK_REMOVED = 1;
-	public static final Integer TASK_SET_TO_DONE = 2;
-	public static final Integer TASK_UPDATED = 3;
+	public static final Integer TASK_ADDED = 2;
+	public static final Integer TASK_SET_TO_DONE = 3;
+	public static final Integer TASK_UPDATED = 4;
 	
 	
 	private LocalStorage file;
@@ -43,17 +45,18 @@ public class DataManager {
 	public void addNewTask(Task taskToAdd) {
 		searchList.clear();
 		taskList.add(taskToAdd);
-		sort();
+		sort(taskList);
 		file.clear();
-		file.saveToFile(tasksToStrings());
+		file.saveToFile(tasksToStrings(taskList));
 	}
 
 	public ArrayList<Task> listAll(Command cmd) {
 		searchList.clear();
+		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
 		if (cmd.getParameter().size() == 0){
 			return taskList;
 		}else{
-			ArrayList<Task> list = new ArrayList<Task>();
+			ArrayList<Task> filteredList = new ArrayList<Task>();
 			ArrayList<Parameter> para = new ArrayList<Parameter>();
 			para = cmd.getParameter();
 			for(int i=0; i<para.size();i++){
@@ -61,30 +64,62 @@ public class DataManager {
 					case Parameter.PRIORITY_ARGUMENT_TYPE:
 						for(Task task: taskList){
 							if(task.getPriority_argument().equals(para.get(i).getParaArg())){
-								list.add(task);
+								if(!filteredList.contains(task)){
+									filteredList.add(task);
+								}
 							}
 						}
 						break;
 					case Parameter.TYPE_ARGUMENT_TYPE:
 						for(Task task: taskList){
 							if(task.getType_argument().equals(para.get(i).getParaArg())){
-								list.add(task);
+								if(!filteredList.contains(task)){
+									filteredList.add(task);
+								}
 							}
 						}
 						break;
-					case Parameter.PLACE_ARGUMENT_TYPE:
+					case Parameter.START_DATE_ARGUMENT_TYPE:
+						try {
+							for(Task task: taskList){
+								if(task.getStart_date().equals(df1.parse(para.get(i).getParaArg()))){
+									if(!filteredList.contains(task)){
+										filteredList.add(task);
+									}
+								}
+							}
+						}catch (ParseException e) {
+							// Do nothing, task remain the same.
+							e.printStackTrace();
+						}
+							break;
+					case Parameter.END_DATE_ARGUMENT_TYPE:
+						try {
+							for(Task task: taskList){
+								if(task.getEnd_date().equals(df1.parse(para.get(i).getParaArg()))){
+									if(!filteredList.contains(task)){
+										filteredList.add(task);
+									}
+								}
+							}
+						}catch (ParseException e) {
+							// Do nothing, task remain the same.
+							e.printStackTrace();
+						}
+							break;
+					default:
 						for(Task task: taskList){
 							if(task.getPlace_argument().equals(para.get(i).getParaArg())){
-								list.add(task);
+								if(!filteredList.contains(task)){
+									filteredList.add(task);
+								}
 							}
 						}
-						break;
-					default:
 						break;
 				}
 			}
-			sort(list);
-			return list;
+			sort(filteredList);
+			return filteredList;
 		}
 	}
 
@@ -97,7 +132,7 @@ public class DataManager {
 			case 1:	
 				taskList.remove(searchList.get(0));
 				file.clear();
-				file.saveToFile(tasksToStrings());
+				file.saveToFile(tasksToStrings(taskList));
 				return TASK_REMOVED;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
@@ -108,7 +143,7 @@ public class DataManager {
 	public Integer removeTask(int lineNum){
 		taskList.remove(searchList.get(lineNum));
 		file.clear();
-		file.saveToFile(tasksToStrings());
+		file.saveToFile(tasksToStrings(taskList));
 		return TASK_REMOVED;
 	}
 
@@ -152,8 +187,9 @@ public class DataManager {
 							break;
 					}
 				}
+				sort(taskList);
 				file.clear();
-				file.saveToFile(tasksToStrings());
+				file.saveToFile(tasksToStrings(taskList));
 				return TASK_UPDATED;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
@@ -176,7 +212,7 @@ public class DataManager {
 				int index = taskList.indexOf(searchList.get(0));
 				taskList.get(index).setDone(true);
 				file.clear();
-				file.saveToFile(tasksToStrings());
+				file.saveToFile(tasksToStrings(taskList));
 				return TASK_SET_TO_DONE;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
@@ -194,13 +230,6 @@ public class DataManager {
 		return file.changePath(cmd.getTextContent());
 	}
 	
-	private ArrayList<String> tasksToStrings(){
-		ArrayList<String> taskStrings = new ArrayList<String>();
-		for(int i=0;i<taskList.size();i++){
-			taskStrings.add(gson.toJson(taskList.get(i)));
-		}
-		return taskStrings;
-	}
 	
 	private ArrayList<String> tasksToStrings(ArrayList<Task> list){
 		ArrayList<String> taskStrings = new ArrayList<String>();
@@ -210,9 +239,7 @@ public class DataManager {
 		return taskStrings;
 	}
 	
-	private void sort(){
-		Collections.sort(taskList);
-	}
+
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
