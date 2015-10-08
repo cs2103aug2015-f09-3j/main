@@ -91,6 +91,8 @@ public class DataManager {
 						}catch (ParseException e) {
 							// Do nothing, task remain the same.
 							e.printStackTrace();
+						}catch (NullPointerException e){
+							// Do nothing, task remain the same.
 						}
 							break;
 					case Parameter.END_DATE_ARGUMENT_TYPE:
@@ -105,6 +107,8 @@ public class DataManager {
 						}catch (ParseException e) {
 							// Do nothing, task remain the same.
 							e.printStackTrace();
+						}catch (NullPointerException e){
+							// Do nothing, task remain the same.
 						}
 							break;
 					default:
