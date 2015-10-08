@@ -1,5 +1,8 @@
 package application;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -85,6 +88,8 @@ public class DataManager {
 	public Integer editTask(Command cmd) {
 		searchList.clear();
 		searchTasksForMatches(cmd);
+
+		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
@@ -99,11 +104,22 @@ public class DataManager {
 						case Parameter.TYPE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.get(i).getParaArg());
 							break;
-						/*case Parameter.START_DATE_ARGUMENT_TYPE:
-							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(para.get(i).getParaArg());
+						case Parameter.START_DATE_ARGUMENT_TYPE:
+						try {
+							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(df1.parse(para.get(i).getParaArg()));
+						} catch (ParseException e) {
+							// Do nothing, task remain the same.
+							e.printStackTrace();
+						}
 							break;
 						case Parameter.END_DATE_ARGUMENT_TYPE:
-							break;*/ //TODO
+							try {
+								taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(df1.parse(para.get(i).getParaArg()));
+							} catch (ParseException e) {
+								// Do nothing, task remain the same.
+								e.printStackTrace();
+							}
+							break; 
 						default:
 							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.get(i).getParaArg());
 							break;

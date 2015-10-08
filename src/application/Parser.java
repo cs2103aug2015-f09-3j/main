@@ -74,7 +74,11 @@ public class Parser {
 						
 						for(int c =i + 1; c < parameterArr.length; c++){
 							if( parameterArr[c].charAt(0) != '\\'){
-								paraContent += " " + parameterArr[c].substring(0, parameterArr[c].length());
+								paraContent += parameterArr[c].substring(0, parameterArr[c].length()) + " ";
+							}
+							else
+							{
+								break;
 							}
 							
 						}
