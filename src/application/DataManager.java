@@ -48,17 +48,44 @@ public class DataManager {
 		file.saveToFile(tasksToStrings());
 	}
 
-	public ArrayList<Task> listAll(String para) {
+	public ArrayList<Task> listAll(Command cmd) {
 		searchList.clear();
-		/*
-		ArrayList<String> list = new ArrayList<String>();
-		for(int i=0; i<taskList.size();i++){
-			list.add(taskList.get(i).getTextContent());
-			//TODO filter list by parameter;
+		if (cmd.getParameter().size() == 0){
+			return taskList;
+		}else{
+			ArrayList<Task> list = new ArrayList<Task>();
+			ArrayList<Parameter> para = new ArrayList<Parameter>();
+			para = cmd.getParameter();
+			for(int i=0; i<para.size();i++){
+				switch(para.get(i).getParaType()){
+					case Parameter.PRIORITY_ARGUMENT_TYPE:
+						for(Task task: taskList){
+							if(task.getPriority_argument().equals(para.get(i).getParaArg())){
+								list.add(task);
+							}
+						}
+						break;
+					case Parameter.TYPE_ARGUMENT_TYPE:
+						for(Task task: taskList){
+							if(task.getType_argument().equals(para.get(i).getParaArg())){
+								list.add(task);
+							}
+						}
+						break;
+					case Parameter.PLACE_ARGUMENT_TYPE:
+						for(Task task: taskList){
+							if(task.getPlace_argument().equals(para.get(i).getParaArg())){
+								list.add(task);
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			sort(list);
+			return list;
 		}
-		return list;
-		*/
-		return taskList;
 	}
 
 	public Integer removeTask(Command cmd) {
@@ -185,6 +212,9 @@ public class DataManager {
 	
 	private void sort(){
 		Collections.sort(taskList);
+	}
+	private void sort(ArrayList<Task> list){
+		Collections.sort(list);
 	}
 	
 	private ArrayList<Task> initialiseTaskList(){
