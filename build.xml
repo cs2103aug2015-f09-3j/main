@@ -1,6 +1,8 @@
-<project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+
+	<project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<description>
-        travis stuff
+        For Travis CI.
     </description>
 
 	<property name="src" location="src/application" />
@@ -47,7 +49,7 @@
 
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}/lib" />
-		<jar jarfile="${dist}/lib/travis-playground-${DSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/lib/travis-${DSTAMP}.jar" basedir="${build}" />
 	</target>
 
 	<target name="test" depends="compile">
