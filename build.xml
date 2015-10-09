@@ -16,7 +16,7 @@
 		<pathelement location="${test}" />
 		<pathelement location="${build}/main" />
 		<pathelement location="${build}/test" />
-		 />
+		 
 	</path>
 
 	<target name="init">
