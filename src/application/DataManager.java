@@ -136,7 +136,7 @@ public class DataManager {
 			case 1:	
 				taskList.remove(searchList.get(0));
 				file.clear();
-				file.saveToFile(tasksToStrings(taskList));
+				file.saveToFile(tasksToStrings());
 				return TASK_REMOVED;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
