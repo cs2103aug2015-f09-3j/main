@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project xmlns='antlib:org.apache.tools.ant'>
+<target name="junit" depends="compile">
+
+  <junit printsummary="yes" haltonfailure="no">
+
+	<!--
+		<classpath location="lib/junit-4.11.jar" />
+		<classpath location="lib/hamcrest-core-1.3.jar" />
+	-->
+	<classpath refid="test.path" />
+	<classpath location="${test.classes.dir}" />
+		
+	<formatter type="xml" />
+	<formatter type="plain" />
+		
+	<batchtest fork="yes" todir="${report.dir}">
+		<fileset dir="${test.dir}">
+			<include name="**/*Test*.java" />
+		</fileset>
+	</batchtest>
+		
+  </junit>
+</target>
+</project>
