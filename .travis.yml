@@ -9,3 +9,13 @@ install:
     - "sudo apt-get install oracle-java8-installer"
     - "sudo update-java-alternatives -s java-8-oracle"
     - "export JAVA_HOME=/usr/lib/jvm/java-8-oracle"
+
+notifications:
+  email:
+    recipients:
+      - a0125975@u.nus.edu
+      - nghuiyirebecca@hotmail.com
+      - akatsuki421@gmail.com
+      - limqiwen92@gmail.com
+    on_success: [always|never|change] # default: change
+    on_failure: [always|never|change] # default: always
