@@ -12,6 +12,7 @@ public class DataManagerTest {
 	@Test
 	public void test() {
 		//TODO
+		assert(true);
 	}
 
 }

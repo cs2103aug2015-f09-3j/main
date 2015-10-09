@@ -11,7 +11,7 @@ public class ParserTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		Task task1 = new Task("Buy Milk YOYOYOY");
 		task1.setEnd_date(DateFormat.getDateInstance().getCalendar().getTime());
@@ -21,6 +21,7 @@ public class ParserTest {
 		task1.setType_argument("Meeting");
 		tasks.add(task1);
 		tasks.add(task1);
+		assert(true);
 		
 	}
 

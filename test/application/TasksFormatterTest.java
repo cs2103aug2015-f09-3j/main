@@ -3,6 +3,7 @@ package application;
 import static org.junit.Assert.*;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -27,11 +28,16 @@ public class TasksFormatterTest {
 	
 	@Test
 	public void testFormatType2() {
-		
+		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		Task task1 = new Task("Buy Milk YOYOYOY");
-		task1.setEnd_date(DateFormat.getDateInstance().getCalendar().getTime());
-		task1.setStart_date(DateFormat.getDateInstance().getCalendar().getTime());
+		try{
+		task1.setEnd_date(df1.parse("09/10/1935 20:10PM"));
+		task1.setStart_date(df1.parse("09/10/1935 20:10PM"));
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 		task1.setPriority_argument("high");
 		task1.setPlace_argument("bukit panjang");
 		task1.setType_argument("Meeting");
@@ -39,7 +45,7 @@ public class TasksFormatterTest {
 		tasks.add(task1);
 		
 		
-		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \nBuy Milk YOYOYOY               Oct 4, 1935          Oct 4, 1935          bukit panjang        Meeting         high           \nBuy Milk YOYOYOY               Oct 4, 1935          Oct 4, 1935          bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
+		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \n1   Buy Milk YOYOYOY               09/10/1935 20:10PM   09/10/1935 20:10PM   bukit panjang        Meeting         high           \n2   Buy Milk YOYOYOY               09/10/1935 20:10PM   09/10/1935 20:10PM   bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
 	}
 	
 
