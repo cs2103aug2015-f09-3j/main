@@ -7,7 +7,8 @@
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
 	<property name="test" location="test/application" />
-	<property name="junit" location="libs/ant-javafx.jar" />
+	<property name="antlib" location="libs/ant-javafx.jar" />
+	<property name="junit" location="libs/junit.jar" />
 
 
 
@@ -16,7 +17,7 @@
 		<pathelement location="${test}" />
 		<pathelement location="${build}/main" />
 		<pathelement location="${build}/test" />
-		 
+
 	</path>
 
 	<target name="init">
@@ -27,11 +28,19 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile">
-		<javac srcdir="${src}" destdir="${build}/main" />
+		<javac srcdir="${src}" destdir="${build}/main">
+			<classpath>
+				<pathelement location="${antlib}" />
+				<pathelement location="libs/gson lib/gson-2.4.jar" />
+			</classpath>
+		</javac>
+
 		<javac srcdir="${test}" destdir="${build}/test">
 			<classpath>
-				<pathelement location="${junit}" />
+				<pathelement location="${build}/main" />
+				<pathelement location="${antlib}" />
 				<pathelement location="libs/gson lib/gson-2.4.jar" />
+				<pathelement location="${junit}" />
 			</classpath>
 		</javac>
 	</target>

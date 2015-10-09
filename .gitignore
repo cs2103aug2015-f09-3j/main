@@ -1,2 +1,4 @@
 bin
 test.txt
+*.class
+dist
