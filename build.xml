@@ -1,14 +1,14 @@
 
 
-	<project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+<project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<description>
         For Travis CI.
     </description>
 
-	<property name="src" location="src/application" />
+	<property name="src" location="src" />
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
-	<property name="test" location="test/application" />
+	<property name="test" location="test" />
 	<property name="antlib" location="libs/ant-javafx.jar" />
 	<property name="junit" location="libs/junit.jar" />
 
@@ -37,6 +37,12 @@
 			</classpath>
 		</javac>
 
+		
+	</target>
+	
+	<target name="compile-tests" depends="compile" description="compile-tests">
+
+
 		<javac srcdir="${test}" destdir="${build}/test">
 			<classpath>
 				<pathelement location="${build}/main" />
@@ -46,15 +52,18 @@
 			</classpath>
 		</javac>
 	</target>
-
+	
+	
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}/lib" />
 		<jar jarfile="${dist}/lib/travis-${DSTAMP}.jar" basedir="${build}" />
 	</target>
 
-	<target name="test" depends="compile">
-		<junit fork="yes" haltonfailure="true">
+	<target name="test" depends="compile-tests">
+		<junit fork="off" haltonfailure="true">
 			<classpath refid="classpath.test" />
+			<classpath location="${build}/test" />
+
 			<batchtest fork="yes" todir="tres">
 				<formatter type="brief" usefile="false" />
 				<fileset dir="${test}">
