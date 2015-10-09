@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project xmlns='antlib:org.apache.tools.ant'>
-<target name="junit" depends="compile">
+<target name="compile">
 
   <junit printsummary="yes" haltonfailure="no">
 
