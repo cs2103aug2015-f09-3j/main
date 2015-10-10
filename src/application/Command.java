@@ -53,6 +53,24 @@ public class Command {
 		this.parameters = parameter;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
 
+		if(obj instanceof Command){
+			Command cmd = (Command)obj;
+			if(this.parameters.containsAll(cmd.getParameter()) && cmd.getParameter().containsAll(this.parameters) && this.textContent.equals(cmd.getTextContent()) && this.type == cmd.type){
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		return super.equals(obj);
+	}
+
+	
 
 }

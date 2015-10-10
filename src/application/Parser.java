@@ -36,6 +36,7 @@ public class Parser {
 		int indexOfFirstInvertedSlash = 0;
 		boolean passFirstSpace = false;
 
+		// check and find the first space and slash.
 		for (int i = 0; i < command.length(); i++) {
 			if (command.charAt(i) == ' ' && !passFirstSpace) {
 				indexOfFirstSpace = i;
@@ -45,11 +46,12 @@ public class Parser {
 				break;
 			}
 		}
-
+		
+		//check if is a list command with no parameter. e.g list
 		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
 		}
-
+		
 		if (indexOfFirstSpace == 0) {
 			return null;
 		}
@@ -57,44 +59,58 @@ public class Parser {
 		cmd = command.substring(0, indexOfFirstSpace);
 		int cmdType = mapCommandType(cmd);
 		if (indexOfFirstSpace < command.length()) {
-			if (indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace) {
+			if (isValidCommandWithParameter(indexOfFirstSpace, indexOfFirstInvertedSlash)) {
 				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
-
 				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
 				String[] parameterArr = parameterStr.split(" ");
-				for (int i = 0; i < parameterArr.length; i++) {
-					if (parameterArr[i].charAt(0) == '\\') {
-						// TODO : Check whether if the arguments is in correct
-						// format.
-						String para = parameterArr[i].substring(1, parameterArr[i].length());
-						//If the next parameter charAt(0) is not \\, then it going to concat together
-						// with this para
-						
-						String paraContent = "";
-						
-						for(int c =i + 1; c < parameterArr.length; c++){
-							if( parameterArr[c].charAt(0) != '\\'){
-								paraContent += parameterArr[c].substring(0, parameterArr[c].length()) + " ";
-							}
-							else
-							{
-								break;
-							}
-							
-						}
-						
-						parameters.add(new Parameter(mapParameterType(para), paraContent));
-					}
-				}
+				extractParameter(parameters, parameterArr);
 			} else {
 
 				text = command.substring(indexOfFirstSpace + 1, command.length());
 			}
 		}
+		return new Command(cmdType, text.trim(), parameters);
+	}
 
+	/**
+	 * @param indexOfFirstSpace
+	 * @param indexOfFirstInvertedSlash
+	 * @return
+	 */
+	private boolean isValidCommandWithParameter(int indexOfFirstSpace, int indexOfFirstInvertedSlash) {
+		return indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace;
+	}
 
-
-		return new Command(cmdType, text, parameters);
+	/**
+	 * This function will convert raw parameter and add it into arraylist of parameter.
+	 * @param parameters : arraylist to store extracted parameter
+	 * @param parameterArr : raw parameter string to convert into parameter instance.
+	 */
+	private void extractParameter(ArrayList<Parameter> parameters, String[] parameterArr) {
+		for (int i = 0; i < parameterArr.length; i++) {
+			if (parameterArr[i].charAt(0) == '\\') {
+				// TODO : Check whether if the arguments is in correct
+				// format.
+				String para = parameterArr[i].substring(1, parameterArr[i].length());
+				//If the next parameter charAt(0) is not \\, then it going to concat together
+				// with this paragraph
+				
+				String paraContent = "";
+				
+				for(int c =i + 1; c < parameterArr.length; c++){
+					if( parameterArr[c].charAt(0) != '\\'){
+						paraContent += parameterArr[c].substring(0, parameterArr[c].length()) + " ";
+					}
+					else
+					{
+						break;
+					}
+					
+				}
+				
+				parameters.add(new Parameter(mapParameterType(para), paraContent.trim()));
+			}
+		}
 	}
 
 	private Integer mapCommandType(String cmd) {

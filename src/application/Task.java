@@ -118,6 +118,51 @@ public class Task implements Comparable<Task>{
 	    	}
 	    }
 	  }
+
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if(obj instanceof Task){
+			
+			Task taskCmp = (Task)obj;
+			if(this.isDone == taskCmp.isDone 
+					&& this.place_argument.equals(taskCmp.getPlace_argument()) && this.priority_argument.equals(taskCmp.getPriority_argument())
+					 && this.textContent.equals(taskCmp.getTextContent())
+					&& this.type_argument.equals(taskCmp.getType_argument())){
+				
+				if(this.start_date != null && taskCmp.getStart_date() != null){
+					if(this.start_date.equals(taskCmp.getStart_date())){
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				
+				if(this.end_date != null && taskCmp.getEnd_date() != null){
+					if(this.end_date.equals(taskCmp.getEnd_date())){
+						return true;
+					}else{
+						return false;
+					}
+				}
+				
+				return true;
+			}
+			else{
+				return false;
+			}
+			
+			
+		
+		}
+
+		return super.equals(obj);
+	}
+	
 	
 
+	
 }
