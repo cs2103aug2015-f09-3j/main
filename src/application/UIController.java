@@ -57,7 +57,7 @@ public class UIController {
 	@FXML
 	public void onEnter(ActionEvent event) {
 		System.out.println("onEnter");
-		processUIRequest(); 
+		processUIRequest();  
 		
 	}
 	private void processUIRequest() {
