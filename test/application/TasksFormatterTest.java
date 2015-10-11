@@ -28,12 +28,12 @@ public class TasksFormatterTest {
 	
 	@Test
 	public void testFormatType2() {
-		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_1);
+		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_101);
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		Task task1 = new Task("Buy Milk YOYOYOY");
 		try{
-		task1.setEnd_date(df1.parse("09/10/1935 20:10PM"));
-		task1.setStart_date(df1.parse("09/10/1935 20:10PM"));
+		task1.setEnd_date(df1.parse("09/10/1935 8:10PM"));
+		task1.setStart_date(df1.parse("09/10/1935 8:10PM"));
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -43,9 +43,9 @@ public class TasksFormatterTest {
 		task1.setType_argument("Meeting");
 		tasks.add(task1);
 		tasks.add(task1);
+
 		
-		
-		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \n1   Buy Milk YOYOYOY               09/10/1935 20:10PM   09/10/1935 20:10PM   bukit panjang        Meeting         high           \n2   Buy Milk YOYOYOY               09/10/1935 20:10PM   09/10/1935 20:10PM   bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
+		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \n1   Buy Milk YOYOYOY               09/10/35 08:10PM     09/10/35 08:10PM     bukit panjang        Meeting         high           \n2   Buy Milk YOYOYOY               09/10/35 08:10PM     09/10/35 08:10PM     bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
 	}
 	
 

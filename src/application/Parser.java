@@ -197,7 +197,6 @@ public class Parser {
 			if (tmpDate.length() <= type.length() + 3) {
 				try {
 
-					System.out.println("count :" + count + "\nmsg:" + tmpDate);
 
 					date = df1.parse(tmpDate);
 
