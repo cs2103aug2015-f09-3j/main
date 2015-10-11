@@ -28,7 +28,7 @@ public class TasksFormatterTest {
 	
 	@Test
 	public void testFormatType2() {
-		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
+		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_1);
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		Task task1 = new Task("Buy Milk YOYOYOY");
 		try{

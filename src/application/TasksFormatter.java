@@ -8,7 +8,6 @@ import java.util.Date;
 
 public class TasksFormatter {
 
-	public static final String DATE_FORMAT_TYPE_1 = "dd/MM/yyyy HH:mma";
 	public static final int PLAIN_VIEW_TYPE = 1;
 	public static final int DETAIL_VIEW_TYPE = 2;
 	public static final int TIMELINE_VIEW_TYPE = 3;
@@ -39,7 +38,7 @@ public class TasksFormatter {
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
 		StringBuilder sb = new StringBuilder();
-		DateFormat df1 = new SimpleDateFormat(DATE_FORMAT_TYPE_1);
+		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_101);
 		switch (typeOfFormatting) {
 
 		case PLAIN_VIEW_TYPE:

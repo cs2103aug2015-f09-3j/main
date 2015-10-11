@@ -52,7 +52,7 @@ public class DataManager {
 
 	public ArrayList<Task> listAll(Command cmd) {
 		searchList.clear();
-		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
+		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_1);
 		if (cmd.getParameter().size() == 0){
 			return taskList;
 		}else{
@@ -82,15 +82,12 @@ public class DataManager {
 					case Parameter.START_DATE_ARGUMENT_TYPE:
 						try {
 							for(Task task: taskList){
-								if(task.getStart_date().equals(df1.parse(para.get(i).getParaArg()))){
+								if(task.getStart_date().equals(Parser.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
 								}
 							}
-						}catch (ParseException e) {
-							// Do nothing, task remain the same.
-							e.printStackTrace();
 						}catch (NullPointerException e){
 							// Do nothing, task remain the same.
 						}
@@ -98,15 +95,12 @@ public class DataManager {
 					case Parameter.END_DATE_ARGUMENT_TYPE:
 						try {
 							for(Task task: taskList){
-								if(task.getEnd_date().equals(df1.parse(para.get(i).getParaArg()))){
+								if(task.getEnd_date().equals(Parser.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
 								}
 							}
-						}catch (ParseException e) {
-							// Do nothing, task remain the same.
-							e.printStackTrace();
 						}catch (NullPointerException e){
 							// Do nothing, task remain the same.
 						}
@@ -155,7 +149,7 @@ public class DataManager {
 		searchList.clear();
 		searchTasksForMatches(cmd);
 
-		DateFormat df1 = new SimpleDateFormat(TasksFormatter.DATE_FORMAT_TYPE_1);
+		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_1);
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;

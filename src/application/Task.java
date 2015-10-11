@@ -198,12 +198,12 @@ public class Task implements Comparable<Task>{
 		}
 		
 		if(this.start_date!= null){
-			sb.append(" Start Date: " + this.getSDateInStr(TasksFormatter.DATE_FORMAT_TYPE_1));
+			sb.append(" Start Date: " + this.getSDateInStr(Parser.DATE_FORMAT_TYPE_1));
 			
 		}
 		
 		if(this.end_date!= null){
-			sb.append(" End date : " + this.getEDateInStr(TasksFormatter.DATE_FORMAT_TYPE_1));
+			sb.append(" End date : " + this.getEDateInStr(Parser.DATE_FORMAT_TYPE_1));
 		}
 		
 		return sb.toString();

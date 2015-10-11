@@ -2,3 +2,4 @@ bin
 test.txt
 *.class
 dist
+*.log
