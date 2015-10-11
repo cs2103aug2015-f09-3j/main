@@ -12,7 +12,7 @@ import org.junit.Test;
 public class ParserTest {
 
 	@Test
-	public void testParseCommand1() {
+	public void testParseCommand1() throws InvalidCommandException {
 		
 		Command cmd = Parser.getInstance().parseCommand("add buy milk for mom \\p high \\t personal \\sdate 15/1/2015 13:00pm \\edate 13/2/2015 12:00pm \\place clementi ntuc");
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
@@ -28,7 +28,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testParseCommand2() {
+	public void testParseCommand2() throws InvalidCommandException {
 		
 		Command cmd = Parser.getInstance().parseCommand("list");
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
@@ -40,7 +40,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testParseCommand3() {
+	public void testParseCommand3() throws InvalidCommandException {
 		
 		Command cmd = Parser.getInstance().parseCommand("edit lala world");
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();

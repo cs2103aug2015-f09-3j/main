@@ -51,7 +51,15 @@ public class UIController {
 	private String onCommandReceived(String command){
 		//Do whatever you want with the command here. Pass to LogicController to do its stuff.
 		
-		return LogicController.getInstance().onCommandProcess(command); //Stub
+		String feedback;
+		
+		try {
+			feedback = LogicController.getInstance().onCommandProcess(command);
+		} catch (InvalidCommandException e) {
+			feedback = e.getMessage();
+		}
+		
+		return feedback;
 	}
 
 	@FXML

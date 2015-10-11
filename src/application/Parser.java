@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -24,7 +25,7 @@ public class Parser {
 		return instance;
 	}
 
-	public Command parseCommand(String command) {
+	public Command parseCommand(String command) throws InvalidCommandException {
 		// Need to parse add, see all, change, delete, undo, edit, done,
 		// prioritise command
 
@@ -52,12 +53,17 @@ public class Parser {
 			indexOfFirstSpace = command.length();
 		}
 		
-		if (indexOfFirstSpace == 0) {
+		if (indexOfFirstSpace == 0) {			
 			return null;
 		}
 
 		cmd = command.substring(0, indexOfFirstSpace);
 		int cmdType = mapCommandType(cmd);
+		
+		if(cmdType == -1){
+			throw new InvalidCommandException(command);
+		}
+		
 		if (indexOfFirstSpace < command.length()) {
 			if (isValidCommandWithParameter(indexOfFirstSpace, indexOfFirstInvertedSlash)) {
 				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
@@ -108,10 +114,22 @@ public class Parser {
 					
 				}
 				
-				parameters.add(new Parameter(mapParameterType(para), paraContent.trim()));
+				int paraType = mapParameterType(para);
+				if(paraType != -1){
+					parameters.add(new Parameter(paraType, paraContent.trim()));
+				}
 			}
 		}
 	}
+	
+	public Date ParseDate(String dateStr, String type) throws ParseException{
+		
+		DateFormat df1 = new SimpleDateFormat(type);
+		Date date = df1.parse(dateStr);
+		
+		return date;
+	}
+
 
 	private Integer mapCommandType(String cmd) {
 

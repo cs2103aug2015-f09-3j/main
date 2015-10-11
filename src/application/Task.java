@@ -1,5 +1,8 @@
 package application;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Task implements Comparable<Task>{
@@ -160,6 +163,50 @@ public class Task implements Comparable<Task>{
 		}
 
 		return super.equals(obj);
+	}
+	
+
+	public String getEDateInStr(String type){
+		
+		DateFormat df1 = new SimpleDateFormat(type);
+		String dateStr = df1.format(this.getEnd_date());
+		return dateStr;
+	}
+	
+	public String getSDateInStr(String type){
+		
+		DateFormat df1 = new SimpleDateFormat(type);
+		String dateStr = df1.format(this.getStart_date());
+		return dateStr;
+	}
+
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		StringBuilder sb = new StringBuilder();
+		sb.append("Description: " + this.textContent);
+		if(!this.type_argument.equals("")){
+			sb.append(" Type: " + this.type_argument);
+		}
+		if(!this.priority_argument.equals("")){
+			sb.append(" Priority: " + this.priority_argument);
+		}
+		
+		if(!this.place_argument.equals("")){
+			sb.append(" Location: " + this.place_argument);
+		}
+		
+		if(this.start_date!= null){
+			sb.append(" Start Date: " + this.getSDateInStr(TasksFormatter.DATE_FORMAT_TYPE_1));
+			
+		}
+		
+		if(this.end_date!= null){
+			sb.append(" End date : " + this.getEDateInStr(TasksFormatter.DATE_FORMAT_TYPE_1));
+		}
+		
+		return sb.toString();
 	}
 	
 	

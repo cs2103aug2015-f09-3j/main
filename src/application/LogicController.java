@@ -28,7 +28,7 @@ public class LogicController {
 	}
 
 	// @nghuiyirebecca
-		public String onCommandProcess(String command){
+		public String onCommandProcess(String command) throws InvalidCommandException{
 
 			Command cmd = Parser.getInstance().parseCommand(command);
 			int cmdType = cmd.getType();
@@ -37,7 +37,7 @@ public class LogicController {
 	            case Command.ADD_COMMAND_TYPE:
 	            	Task taskToAdd = Parser.getInstance().convertAddCommandtoTask(cmd);
 	            	DataManager.getInstance().addNewTask(taskToAdd);
-	            	return ADDED_SUCCESS + cmd.getTextContent();
+	            	return ADDED_SUCCESS + taskToAdd.toString();
 
 	            case Command.LIST_COMMAND_TYPE:
 	            	String msg = TasksFormatter.format(DataManager.getInstance().listAll(cmd), TasksFormatter.DETAIL_VIEW_TYPE);
