@@ -8,15 +8,16 @@ import java.util.ArrayList;
  * @author youlianglim
  *
  */
+// @nghuiyirebecca
 public class LogicController {
 
-	private static final String ADDED_SUCCESS = "Added ";
-	private static final String LISTED_ALL_SUCCESS = "Results: ";
-	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
-	private static final String EMPTY_FILE = "There are no tasks to delete";
-	private static final String DELETE_SUCCESS = "Successfully deleted: ";
-	private static final String EDIT_SUCCESS = "Successfully edited: ";
-	private static final String SET_DONE_SUCCESS = "Done task: ";
+//	private static final String ADDED_SUCCESS = "Added ";
+//	private static final String LISTED_ALL_SUCCESS = "Results: ";
+//	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
+//	private static final String EMPTY_FILE = "There are no tasks to delete";
+//	private static final String DELETE_SUCCESS = "Successfully deleted: ";
+//	private static final String EDIT_SUCCESS = "Successfully edited: ";
+//	private static final String SET_DONE_SUCCESS = "Done task: ";
 	private static LogicController instance;
 
 	public static LogicController getInstance(){
@@ -27,12 +28,14 @@ public class LogicController {
 		return instance;
 	}
 
-	// @nghuiyirebecca
+
 		public String onCommandProcess(String command) throws InvalidCommandException{
 
 			Command cmd = Parser.getInstance().parseCommand(command);
-			int cmdType = cmd.getType();
 
+			return CommandManager.executeCommand(cmd);
+
+/*
 	        switch (cmdType) {
 	            case Command.ADD_COMMAND_TYPE:
 	            	Task taskToAdd = Parser.getInstance().convertAddCommandtoTask(cmd);
@@ -83,13 +86,15 @@ public class LogicController {
 	        }
 
 			return "testing-lc";
+		*/
 		}
 
-
+		/* FOR UNDO PURPOSES
 		private Command determinePrevCommand() {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
 
 		private int determineUndoCommand(Command prevCommand) {
 			if (prevCommand.getType() == Command.ADD_COMMAND_TYPE){
@@ -107,6 +112,7 @@ public class LogicController {
 			}
 		return 0;
 	}
+		 */
 
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);
