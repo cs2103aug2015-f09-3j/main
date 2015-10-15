@@ -331,7 +331,7 @@ class Data{
 	
 	private void limitHistory(){
 		Stack<ArrayList<Task>> tempStack = new Stack<ArrayList<Task>>();
-		if(histCount > 10){	
+		if(histCount > DataManager.MAX_HISTORY){	
 			while(!history.empty()){
 				tempStack.push(history.pop());
 			}

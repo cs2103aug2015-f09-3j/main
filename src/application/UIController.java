@@ -69,10 +69,14 @@ public class UIController {
 		
 	}
 	private void processUIRequest() {
-		String response = onCommandReceived(textCommandInput.getText()) + "\n";
-		showToUser(response);
-		textCommandInput.clear();
-		
+		try{
+			String response = onCommandReceived(textCommandInput.getText()) + "\n";
+			showToUser(response);
+		}catch(NullPointerException ex){
+			showToUser("Please try again with command details. \n");
+		}finally{
+			textCommandInput.clear();
+		}	
 	}
 	
 	
