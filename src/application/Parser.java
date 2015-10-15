@@ -273,6 +273,8 @@ public class Parser {
 	}
 
 	public Task convertAddCommandtoTask(Command cmd) {
+		
+		assert cmd != null;
 
 		Task task = new Task(cmd.getTextContent());
 
