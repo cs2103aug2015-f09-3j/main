@@ -110,6 +110,7 @@ public class LogicController {
 
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);
+			assert listAll.size() != 0;
 			StringBuilder sb = new StringBuilder();
 
 			for (int i=0; i<listAll.size(); i++) {
