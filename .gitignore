@@ -3,3 +3,4 @@ test.txt
 *.class
 dist
 *.log
+log.txt

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+
 
 /**
  * This is a singleton class
@@ -203,6 +205,7 @@ public class Parser {
 					break;
 				} catch (ParseException e) {
 					// continue parsing
+					LogManager.getInstance().log("Parse exception at date parsing");
 				}
 			}
 			count++;
