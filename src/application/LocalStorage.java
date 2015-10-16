@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalStorage {
 	private static final String TEST_TXT = "test.txt";
+	private static Logger logger = Logger.getLogger("LocalStorage");
 	/*
 	 * below is for testing purpose(to be removed) Assume that APIs similar to
 	 * CE2 functionality provided.
@@ -46,13 +49,11 @@ public class LocalStorage {
 			    textLine.add(aDataRow);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         try {
 			myReader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return textLine;
@@ -75,6 +76,19 @@ public class LocalStorage {
 			}
 			bw.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
+	
+	public void bar(ArrayList<String> list) {
+		// log a message at INFO level
+		logger.log(Level.INFO, "going to start processing");
+		try{
+			saveToFile(list);
+		} catch (Exception ex) {
+		//log a message at WARNING level
+			logger.log(Level.WARNING, "processing error", ex);
+		}
+		logger.log(Level.INFO, "end of processing");
 	}
 }
