@@ -10,6 +10,7 @@ public class CommandManager {
 	private static final String SET_DONE_SUCCESS = "Done task: ";
 
 	public static String executeCommand(Command cmd){
+		assert cmd != null;
 		int cmdType = cmd.getType();
 
 		switch (cmdType) {
