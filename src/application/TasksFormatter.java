@@ -37,6 +37,7 @@ public class TasksFormatter {
 	 * @return the formatted text in String format.
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
+		assert false;
 		StringBuilder sb = new StringBuilder();
 		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_101);
 		switch (typeOfFormatting) {

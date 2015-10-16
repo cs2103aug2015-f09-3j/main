@@ -64,6 +64,7 @@ public class LogicController {
 
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);
+			assert false;
 			assert listAll.size() != 0;
 			StringBuilder sb = new StringBuilder();
 

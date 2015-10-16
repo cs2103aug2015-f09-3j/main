@@ -11,7 +11,7 @@ import com.google.gson.*;
  */
 
 public class DataManager {
-	
+
 	public static final Integer NO_PREV_COMMAND = -4;
 	public static final Integer TASK_ALREADY_EXISTS = -3;
 	public static final Integer MULTIPLE_MATCHES = -2;
@@ -22,8 +22,8 @@ public class DataManager {
 	public static final Integer TASK_UPDATED = 4;
 	public static final Integer PREV_COMMAND_UNDONE = 5;
 	public static final Integer MAX_HISTORY = 10;
-	
-	private Data data;
+
+	private static Data data;
 	public static DataManager instance = null;
 
 	private DataManager() {
@@ -124,15 +124,15 @@ public class DataManager {
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
-			case 1:	
+			case 1:
 				data.removeFromData(searchList.get(0));
 				return TASK_REMOVED;
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
 				return MULTIPLE_MATCHES;
-		}	
+		}
 	}
-	
+
 	public Integer removeTask(int lineNum){
 		data.removeFromData(data.getSearchList().get(lineNum));
 		return TASK_REMOVED;
@@ -145,7 +145,7 @@ public class DataManager {
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
-			case 1:	
+			case 1:
 				ArrayList<Parameter> para = new ArrayList<Parameter>();
 				para = cmd.getParameter();
 				ArrayList<Task> taskList = data.getTaskList();
@@ -164,7 +164,7 @@ public class DataManager {
 						case Parameter.END_DATE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(
 									Parser.getInstance().parseDate(para.get(i).getParaArg()));
-							break; 
+							break;
 						default:
 							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.get(i).getParaArg());
 							break;
@@ -175,9 +175,9 @@ public class DataManager {
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
 				return MULTIPLE_MATCHES;
-		}	
+		}
 	}
-	
+
 	public Integer editTask(int lineNum){
 		//TODO
 		return TASK_UPDATED;
@@ -191,7 +191,7 @@ public class DataManager {
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
-			case 1:	
+			case 1:
 				int index = taskList.indexOf(searchList.get(0));
 				taskList.get(index).setDone(true);
 				data.updateStorage();
@@ -199,9 +199,9 @@ public class DataManager {
 			default:
 				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
 				return MULTIPLE_MATCHES;
-		}	
+		}
 	}
-	
+
 	public Integer setDoneToTask(int lineNum){
 		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum));
 		data.getTaskList().get(index).setDone(true);
@@ -212,11 +212,11 @@ public class DataManager {
 	public Integer changeStorageLocation(Command cmd) {
 		return data.changeFileLocation(cmd.getTextContent());
 	}
-	
-	public Integer undoPrevCommand(){
+
+	public static Integer undoPrevCommand(){
 		return data.undo();
 	}
-	
+
 	private ArrayList<String> tasksToStrings(ArrayList<Task> list){
 		ArrayList<String> taskStrings = new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
@@ -234,7 +234,7 @@ public class DataManager {
 		}
 		return searchList;
 	}
-	
+
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
@@ -247,7 +247,7 @@ class Data{
 	private StorageInterface storageIO;
 	private Gson gson;
 	private int histCount;
-	
+
 	public Data(){
 		storageIO = new StorageInterface();
 		gson = new Gson();
@@ -256,22 +256,22 @@ class Data{
 		history = new Stack<ArrayList<Task>>();
 		histCount = 0;
 	}
-	
-	
+
+
 	public ArrayList<Task> getTaskList(){
 		return taskList;
 	}
 	public ArrayList<Task> getSearchList(){
 		return searchList;
 	}
-	
+
 	public void saveToSearchList(ArrayList<Task> list){
 		searchList = list;
 	}
 	public void clearSearchList(){
 		searchList.clear();
 	}
-	
+
 	public void addToData(Task taskToAdd){
 		taskList.add(taskToAdd);
 		updateStorage();
@@ -301,26 +301,26 @@ class Data{
 			return DataManager.PREV_COMMAND_UNDONE;
 		}
 	}
-	
+
 	public Integer changeFileLocation(String location){
 		return storageIO.changeFilePath(location);
 	}
-	
+
 	private ArrayList<Task> initializeTaskList(){
 		ArrayList<String> listString = storageIO.readFromStorage();
 		ArrayList<Task> listTask = new ArrayList<Task>();
-		
+
 		for(int i=0; i<listString.size(); i++){
 			listTask.add(gson.fromJson(listString.get(i),Task.class));
 		}
-		
+
 		return listTask;
 	}
-	
+
 	private void sort(){
 		Collections.sort(taskList);
 	}
-	
+
 	private ArrayList<String> tasksToStrings(){
 		ArrayList<String> taskStrings = new ArrayList<String>();
 		for(int i=0;i<taskList.size();i++){
@@ -328,10 +328,10 @@ class Data{
 		}
 		return taskStrings;
 	}
-	
+
 	private void limitHistory(){
 		Stack<ArrayList<Task>> tempStack = new Stack<ArrayList<Task>>();
-		if(histCount > DataManager.MAX_HISTORY){	
+		if(histCount > DataManager.MAX_HISTORY){
 			while(!history.empty()){
 				tempStack.push(history.pop());
 			}
@@ -346,23 +346,23 @@ class Data{
 
 class StorageInterface{
 	private LocalStorage file;
-	
+
 	public StorageInterface(){
 		file = new LocalStorage();
 	}
-	
+
 	public ArrayList<String> readFromStorage(){
 		return file.readFile();
 	}
-	
+
 	public void saveToStorage(ArrayList<String> list){
 		file.clear();
 		file.saveToFile(list);
 	}
-	
+
 	public Integer changeFilePath(String path){
 		return file.changePath(path);
 	}
-	
-	
+
+
 }

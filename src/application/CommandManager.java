@@ -39,8 +39,7 @@ public class CommandManager {
 		        	   }
 
 		    case Command.UNDO_COMMAND_TYPE:
-		    	//Command prevCommand = determinePrevCommand();
-		    	//int undoCommand = determineUndoCommand(prevCommand);
+		    	DataManager.undoPrevCommand();
 				break;
 
 		    case Command.EDIT_COMMAND_TYPE:
