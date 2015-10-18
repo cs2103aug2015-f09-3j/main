@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.parser;
 
 import java.util.Date;
 

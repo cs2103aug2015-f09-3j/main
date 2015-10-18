@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.controller.parser.ParserFacade;
 import application.model.Command;
 import application.model.Task;
 import application.utils.TasksFormatter;
@@ -19,7 +20,7 @@ public class CommandManager {
 
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
-		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
+		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);	    	
 		    	DataManager.getInstance().addNewTask(taskToAdd);
 		    	return ADDED_SUCCESS + taskToAdd.toString();
 

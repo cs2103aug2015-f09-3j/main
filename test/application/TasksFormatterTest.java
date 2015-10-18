@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import application.controller.ParserFacade;
+import application.controller.parser.ParserFacade;
 import application.model.Task;
 import application.utils.TasksFormatter;
 

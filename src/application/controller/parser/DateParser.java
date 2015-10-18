@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.parser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import application.controller.LogManager;
 
 public class DateParser{
 	
@@ -33,7 +35,7 @@ public class DateParser{
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_105);
 	}
 	
-	public static DateParser getInstance(){
+	 static DateParser getInstance(){
 		if (instance == null) {
 			instance = new DateParser();
 		}

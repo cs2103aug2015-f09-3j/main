@@ -11,7 +11,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import application.controller.ParserFacade;
+import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
 import application.model.Command;
 import application.model.Parameter;

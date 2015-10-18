@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import application.controller.ParserFacade;
+import application.controller.parser.ParserFacade;
 
 public class Task implements Comparable<Task>{
 	

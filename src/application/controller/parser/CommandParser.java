@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.parser;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ public class CommandParser {
 	private static CommandParser instance;
 
 
-	public static CommandParser getInstance() {
+	 static CommandParser getInstance() {
 		if (instance == null) {
 			instance = new CommandParser();
 		}
