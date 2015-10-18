@@ -1,4 +1,4 @@
-package application;
+package application.exception;
 
 @SuppressWarnings("serial")
 public class InvalidCommandException extends Exception {

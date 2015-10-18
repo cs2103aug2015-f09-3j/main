@@ -1,8 +1,7 @@
-package application;
+package application.view;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-
+import application.controller.LogicController;
+import application.exception.InvalidCommandException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

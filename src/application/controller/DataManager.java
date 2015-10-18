@@ -1,10 +1,15 @@
-package application;
+package application.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
 import com.google.gson.*;
+
+import application.model.Command;
+import application.model.LocalStorage;
+import application.model.Parameter;
+import application.model.Task;
 
 /*
  * @author: Lim Qi Wen
@@ -78,7 +83,7 @@ public class DataManager {
 					case Parameter.START_DATE_ARGUMENT_TYPE:
 						try {
 							for(Task task: data.getTaskList()){
-								if(task.getStart_date().equals(Parser.getInstance().parseDate(para.get(i).getParaArg()))){
+								if(task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
@@ -91,7 +96,7 @@ public class DataManager {
 					case Parameter.END_DATE_ARGUMENT_TYPE:
 						try {
 							for(Task task: data.getTaskList()){
-								if(task.getEnd_date().equals(Parser.getInstance().parseDate(para.get(i).getParaArg()))){
+								if(task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
@@ -159,11 +164,11 @@ public class DataManager {
 							break;
 						case Parameter.START_DATE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(
-									Parser.getInstance().parseDate(para.get(i).getParaArg()));
+									ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
 							break;
 						case Parameter.END_DATE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(
-									Parser.getInstance().parseDate(para.get(i).getParaArg()));
+									ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
 							break;
 						default:
 							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.get(i).getParaArg());

@@ -1,6 +1,9 @@
-package application;
+package application.controller;
 
 import java.util.ArrayList;
+
+import application.exception.InvalidCommandException;
+import application.model.Command;
 
 /**
  * This is a singleton class
@@ -31,7 +34,7 @@ public class LogicController {
 
 		public String onCommandProcess(String command) throws InvalidCommandException{
 
-			Command cmd = Parser.getInstance().parseCommand(command);
+			Command cmd = ParserFacade.getInstance().parseCommand(command);
 
 			return CommandManager.executeCommand(cmd);
 

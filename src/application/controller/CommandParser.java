@@ -1,13 +1,11 @@
-package application;
+package application.controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.logging.Level;
+
+import application.exception.InvalidCommandException;
+import application.model.Command;
+import application.model.Parameter;
+import application.model.Task;
 
 
 /**
@@ -16,59 +14,21 @@ import java.util.logging.Level;
  * @author youlianglim
  *
  */
-public class Parser {
+public class CommandParser {
 
-	private static Parser instance;
+	private static CommandParser instance;
 
-	// From 1 to 99, after and on yyyy are all virtual, user does not type them.
-	// It is used to faciliate parsing.
-	public static final String DATE_FORMAT_TYPE_1 = "dd/MM ha yyyy";
-	public static final String DATE_FORMAT_TYPE_2 = "EEEEE ha yyyy M W";
-	public static final String DATE_FORMAT_TYPE_3 = "dd MMM yyyy";
-	public static final String DATE_FORMAT_TYPE_4 = "EEEEE yyyy M W";
-	public static final String DATE_FORMAT_TYPE_5 = "dd/MM yyyy";
-	public static final String DATE_FORMAT_TYPE_6 = "dd/MM hh:mma yyyy";
-	public static final String DATE_FORMAT_TYPE_7 = "dd/MM HH:mm yyyy";
-	public static final String DATE_FORMAT_TYPE_8 = "EEEEE hh:mma yyyy M W";
 
-	// From 100 onward, it is normal parsing, user type as expected.
-	public static final String DATE_FORMAT_TYPE_100 = "dd/MM/yy HH:mm";
-	public static final String DATE_FORMAT_TYPE_101 = "dd/MM/yy hh:mma";
-	public static final String DATE_FORMAT_TYPE_102 = "dd.MM.yy HH:mm";
-	public static final String DATE_FORMAT_TYPE_103 = "dd.MM.yy hh:mma";
-	public static final String DATE_FORMAT_TYPE_104 = "dd/MM/yy ha";
-	public static final String DATE_FORMAT_TYPE_105 = "dd.MM.yy ha";
-
-	
-
-	ArrayList<String> listsOfDateFormat;
-
-	public static Parser getInstance() {
+	public static CommandParser getInstance() {
 		if (instance == null) {
-			instance = new Parser();
-
+			instance = new CommandParser();
 		}
 		return instance;
 	}
 
-	public Parser() {
+	public CommandParser() {
 		super();
-		listsOfDateFormat = new ArrayList<String>();
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_1);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_2);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_3);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_4);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_5);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_6);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_7);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_8);
 
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_100);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_101);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_102);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_103);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_104);
-		listsOfDateFormat.add(DATE_FORMAT_TYPE_105);
 	}
 
 	public Command parseCommand(String command) throws InvalidCommandException {
@@ -123,6 +83,38 @@ public class Parser {
 		}
 		return new Command(cmdType, text.trim(), parameters);
 	}
+	
+	public Task convertAddCommandtoTask(Command cmd) {
+		
+		assert cmd != null;
+
+		Task task = new Task(cmd.getTextContent());
+
+		ArrayList<Parameter> lists = cmd.getParameter();
+
+
+		for (Parameter para : lists) {
+			if (para.getParaType() == Parameter.START_DATE_ARGUMENT_TYPE) {
+
+				task.setStart_date(DateParser.getInstance().parseDate(para.getParaArg()));
+
+			} else if (para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE) {
+
+				task.setEnd_date(DateParser.getInstance().parseDate(para.getParaArg()));
+
+			} else if (para.getParaType() == Parameter.PLACE_ARGUMENT_TYPE) {
+				task.setPlace_argument(para.getParaArg());
+			} else if (para.getParaType() == Parameter.PRIORITY_ARGUMENT_TYPE) {
+				task.setPriority_argument(para.getParaArg());
+			} else if (para.getParaType() == Parameter.TYPE_ARGUMENT_TYPE) {
+				task.setType_argument(para.getParaArg());
+			}
+		}
+
+		return task;
+
+	}
+	
 
 	/**
 	 * @param indexOfFirstSpace
@@ -160,9 +152,7 @@ public class Parser {
 					} else {
 						break;
 					}
-
 				}
-
 				int paraType = mapParameterType(para);
 				if (paraType != -1) {
 					parameters.add(new Parameter(paraType, paraContent.trim()));
@@ -171,48 +161,6 @@ public class Parser {
 		}
 	}
 
-	public Date parseDate(String dateStr) {
-
-		DateFormat df1;
-		Date date = null;
-		int count = 1;
-
-		for (String type : this.listsOfDateFormat) {
-
-			df1 = new SimpleDateFormat(type);
-			df1.setLenient(false);
-			
-			String tmpDate = "";
-			if (count <= 8) {
-				tmpDate = dateStr + " " + Calendar.getInstance().get(Calendar.YEAR);
-			}else{
-				tmpDate = dateStr;
-			}
-			
-			if (count == 2 || count == 4 || count == 8) {
-				tmpDate += " " + (Calendar.getInstance().get(Calendar.MONTH) + 1) + " "
-						+ Calendar.getInstance().get(Calendar.WEEK_OF_MONTH);
-
-			}
-
-			// 3 is the max char difference allowance.
-			if (tmpDate.length() <= type.length() + 3) {
-				try {
-
-
-					date = df1.parse(tmpDate);
-
-					break;
-				} catch (ParseException e) {
-					// continue parsing
-					LogManager.getInstance().log("Parse exception at date parsing");
-				}
-			}
-			count++;
-			
-		}
-		return date;
-	}
 
 	private Integer mapCommandType(String cmd) {
 
@@ -272,36 +220,6 @@ public class Parser {
 
 	}
 
-	public Task convertAddCommandtoTask(Command cmd) {
-		
-		assert cmd != null;
-
-		Task task = new Task(cmd.getTextContent());
-
-		ArrayList<Parameter> lists = cmd.getParameter();
-
-		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_1);
-
-		for (Parameter para : lists) {
-			if (para.getParaType() == Parameter.START_DATE_ARGUMENT_TYPE) {
-
-				task.setStart_date(parseDate(para.getParaArg()));
-
-			} else if (para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE) {
-
-				task.setEnd_date(parseDate(para.getParaArg()));
-
-			} else if (para.getParaType() == Parameter.PLACE_ARGUMENT_TYPE) {
-				task.setPlace_argument(para.getParaArg());
-			} else if (para.getParaType() == Parameter.PRIORITY_ARGUMENT_TYPE) {
-				task.setPriority_argument(para.getParaArg());
-			} else if (para.getParaType() == Parameter.TYPE_ARGUMENT_TYPE) {
-				task.setType_argument(para.getParaArg());
-			}
-		}
-
-		return task;
-
-	}
+	
 
 }

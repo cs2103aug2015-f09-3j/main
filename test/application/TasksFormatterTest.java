@@ -8,6 +8,10 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import application.controller.ParserFacade;
+import application.model.Task;
+import application.utils.TasksFormatter;
+
 public class TasksFormatterTest {
 
 	@Test
@@ -28,7 +32,7 @@ public class TasksFormatterTest {
 	
 	@Test
 	public void testFormatType2() {
-		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_101);
+		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		Task task1 = new Task("Buy Milk YOYOYOY");
 		try{

@@ -1,10 +1,11 @@
-package application;
+package application.utils;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+
+import application.controller.ParserFacade;
+import application.model.Task;
 
 public class TasksFormatter {
 
@@ -16,8 +17,6 @@ public class TasksFormatter {
 	public static final int PLACE_VIEW_TYPE = 6;
 
 	private static final int DETAIL_DESCRIPTION_COUNT = 35;
-	private static final int DETAIL_START_DATE_COUNT = 25;
-	private static final int DETAIL_END_DATE_COUNT = 25;
 	private static final int DETAIL_LOCATION_COUNT = 25;
 	private static final int DETAIL_TYPE_COUNT = 15;
 	private static final int DETAIL_PRIORITY_COUNT = 20;
@@ -38,7 +37,7 @@ public class TasksFormatter {
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
 		StringBuilder sb = new StringBuilder();
-		DateFormat df1 = new SimpleDateFormat(Parser.DATE_FORMAT_TYPE_101);
+		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
 		switch (typeOfFormatting) {
 
 		case PLAIN_VIEW_TYPE:

@@ -4,3 +4,4 @@ test.txt
 dist
 *.log
 log.txt
+log.txt.lck

@@ -1,9 +1,10 @@
-package application;
+package application.model;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import application.controller.ParserFacade;
 
 public class Task implements Comparable<Task>{
 	
@@ -198,12 +199,12 @@ public class Task implements Comparable<Task>{
 		}
 		
 		if(this.start_date!= null){
-			sb.append(" Start Date: " + this.getSDateInStr(Parser.DATE_FORMAT_TYPE_1));
+			sb.append(" Start Date: " + this.getSDateInStr(ParserFacade.DATE_FORMAT_TYPE_1));
 			
 		}
 		
 		if(this.end_date!= null){
-			sb.append(" End date : " + this.getEDateInStr(Parser.DATE_FORMAT_TYPE_1));
+			sb.append(" End date : " + this.getEDateInStr(ParserFacade.DATE_FORMAT_TYPE_1));
 		}
 		
 		return sb.toString();
