@@ -76,6 +76,10 @@ public class CommandManager {
 		    	return results;
 		    	}
 
+		    case Command.LIST_TODAY_COMMAND_TYPE:
+		    	String today = TasksFormatter.format(DataManager.getInstance().listToday(cmd), TasksFormatter.TIMELINE_VIEW_TYPE);
+		    	return today;
+
 		    default: return "testing-lc";
 		}
 		return "testing";

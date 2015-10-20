@@ -13,6 +13,7 @@ public class Command {
 	public static final String DONE_COMMAND = "done:ok";
 	public static final String UNDONE_COMMAND = "notdone:notok";
 	public static final String SEARCH_COMMAND = "search:s";
+	public static final String LIST_TODAY_COMMAND = "today:now";
 
 	public static final int ADD_COMMAND_TYPE = 1;
 	public static final int LIST_COMMAND_TYPE = 2;
@@ -23,6 +24,7 @@ public class Command {
 	public static final int DONE_COMMAND_TYPE = 7;
 	public static final int UNDONE_COMMAND_TYPE = 8;
 	public static final int SEARCH_COMMAND_TYPE = 9;
+	public static final int LIST_TODAY_COMMAND_TYPE = 10;
 
 	private Integer type;
 	private String textContent;

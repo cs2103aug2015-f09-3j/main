@@ -59,6 +59,11 @@ public class CommandParser {
 			indexOfFirstSpace = command.length();
 		}
 
+		// check if is a list command with no parameter. e.g list
+		if (isCommandType(Command.LIST_TODAY_COMMAND, command.trim())) {
+			indexOfFirstSpace = command.length();
+		}
+
 		if (indexOfFirstSpace == 0) {
 			return null;
 		}
@@ -180,6 +185,9 @@ public class CommandParser {
 			return Command.UNDO_COMMAND_TYPE;
 		} else if (isCommandType(Command.SEARCH_COMMAND, cmd)) {
 			return Command.SEARCH_COMMAND_TYPE;
+		} else if (isCommandType(Command.LIST_TODAY_COMMAND, cmd)) {
+			return Command.LIST_TODAY_COMMAND_TYPE;
+
 		} else {
 			return -1;
 		}
