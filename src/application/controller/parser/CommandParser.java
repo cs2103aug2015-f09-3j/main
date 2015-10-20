@@ -83,9 +83,9 @@ public class CommandParser {
 		}
 		return new Command(cmdType, text.trim(), parameters);
 	}
-	
+
 	public Task convertAddCommandtoTask(Command cmd) {
-		
+
 		assert cmd != null;
 
 		Task task = new Task(cmd.getTextContent());
@@ -114,7 +114,7 @@ public class CommandParser {
 		return task;
 
 	}
-	
+
 
 	/**
 	 * @param indexOfFirstSpace
@@ -128,7 +128,7 @@ public class CommandParser {
 	/**
 	 * This function will convert raw parameter and add it into arraylist of
 	 * parameter.
-	 * 
+	 *
 	 * @param parameters
 	 *            : arraylist to store extracted parameter
 	 * @param parameterArr
@@ -178,6 +178,8 @@ public class CommandParser {
 			return Command.LIST_COMMAND_TYPE;
 		} else if (isCommandType(Command.UNDO_COMMAND, cmd)) {
 			return Command.UNDO_COMMAND_TYPE;
+		} else if (isCommandType(Command.SEARCH_COMMAND, cmd)) {
+			return Command.SEARCH_COMMAND_TYPE;
 		} else {
 			return -1;
 		}
@@ -220,6 +222,6 @@ public class CommandParser {
 
 	}
 
-	
+
 
 }

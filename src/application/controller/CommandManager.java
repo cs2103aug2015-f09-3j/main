@@ -1,5 +1,7 @@
 package application.controller;
 
+import java.util.ArrayList;
+
 import application.controller.parser.ParserFacade;
 import application.model.Command;
 import application.model.Task;
@@ -13,6 +15,8 @@ public class CommandManager {
 	private static final String DELETE_SUCCESS = "Successfully deleted: ";
 	private static final String EDIT_SUCCESS = "Successfully edited: ";
 	private static final String SET_DONE_SUCCESS = "Done task: ";
+	private static final String SEARCH_RESULTS_NULL = "There are no tasks matching your search.";
+
 
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
@@ -20,7 +24,7 @@ public class CommandManager {
 
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
-		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);	    	
+		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
 		    	DataManager.getInstance().addNewTask(taskToAdd);
 		    	return ADDED_SUCCESS + taskToAdd.toString();
 
@@ -61,6 +65,15 @@ public class CommandManager {
 		    		return EMPTY_FILE;
 		    	} else {
 		    		return SET_DONE_SUCCESS + cmd.getTextContent();
+		    	}
+
+		    case Command.SEARCH_COMMAND_TYPE:
+		    	ArrayList<Task> searchResults = DataManager.getInstance().searchTasksForMatches(cmd);
+		    	if (searchResults.size() == 0){
+		    		return SEARCH_RESULTS_NULL;
+		    	} else {
+		    		String results = TasksFormatter.format(searchResults, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	return results;
 		    	}
 
 		    default: return "testing-lc";
