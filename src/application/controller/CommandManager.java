@@ -68,7 +68,7 @@ public class CommandManager {
 		    	}
 
 		    case Command.SEARCH_COMMAND_TYPE:
-		    	ArrayList<Task> searchResults = DataManager.getInstance().searchTasksForMatches(cmd);
+		    	ArrayList<Task> searchResults = DataManager.getInstance().searchTasks(cmd);
 		    	if (searchResults.size() == 0){
 		    		return SEARCH_RESULTS_NULL;
 		    	} else {

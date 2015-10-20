@@ -231,7 +231,7 @@ public class DataManager {
 		return taskStrings;
 	}
 
-	public ArrayList<Task> searchTasksForMatches(Command cmd) {
+	private ArrayList<Task> searchTasksForMatches(Command cmd) {
 		ArrayList<Task> searchList = new ArrayList<Task>();
 		for(int i=0; i<data.getTaskList().size();i++){
 			if(data.getTaskList().get(i).getTextContent().contains(cmd.getTextContent())){
