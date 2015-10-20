@@ -244,6 +244,16 @@ public class DataManager {
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
+
+	public ArrayList<Task> listToday(Command cmd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ArrayList<Task> searchTasks(Command cmd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 
 class Data{
