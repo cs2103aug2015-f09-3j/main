@@ -363,9 +363,10 @@ class Data{
 
 class StorageInterface{
 	private LocalStorage file;
+	private static final String TEST_TXT = "test.txt";
 
 	public StorageInterface(){
-		file = new LocalStorage();
+		file = new LocalStorage(TEST_TXT);
 	}
 
 	public ArrayList<String> readFromStorage(){
@@ -377,8 +378,8 @@ class StorageInterface{
 		file.saveToFile(list);
 	}
 
-	public Integer changeFilePath(String path){
-		return file.changePath(path);
+	public Integer changeFilePath(String newPath){
+		return file.changePath(newPath);
 	}
 
 
