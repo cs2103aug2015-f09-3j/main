@@ -46,15 +46,15 @@ public class HelpCommands {
 		sb.append("\n");
 		sb.append(PARAMETER_TABLE_HEADER);
 		sb.append("\n");
-		sb.append(String.format(OUTPUT_FORMAT, count++, "Location", "/place", LOCATION_DESC));
+		sb.append(String.format(OUTPUT_FORMAT, count++, "Location", "\\place", LOCATION_DESC));
 		sb.append("\n");
-		sb.append(String.format(OUTPUT_FORMAT, count++, "Type", "/t", TYPE_DESC));
+		sb.append(String.format(OUTPUT_FORMAT, count++, "Type", "\\t", TYPE_DESC));
 		sb.append("\n");
-		sb.append(String.format(OUTPUT_FORMAT, count++, "Start date", "/sdate", SDATE_DESC));
+		sb.append(String.format(OUTPUT_FORMAT, count++, "Start date", "\\sdate", SDATE_DESC));
 		sb.append("\n");
-		sb.append(String.format(OUTPUT_FORMAT, count++, "End date", "/edate", EDATE_DESC));
+		sb.append(String.format(OUTPUT_FORMAT, count++, "End date", "\\edate", EDATE_DESC));
 		sb.append("\n");
-		sb.append(String.format(OUTPUT_FORMAT, count++, "Priority", "/p", PRIORITY_DESC));
+		sb.append(String.format(OUTPUT_FORMAT, count++, "Priority", "\\p", PRIORITY_DESC));
 		sb.append("\n");
 	}
 
