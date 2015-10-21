@@ -26,16 +26,32 @@ public class DateParser{
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_6);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_7);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_8);
-
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_9);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_10);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_11);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_12);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_13);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_14);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_15);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_16);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_17);
+		
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_100);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_101);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_102);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_103);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_104);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_105);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_106);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_107);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_108);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_109);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_110);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_111);
+		
 	}
 	
-	 static DateParser getInstance(){
+	 static DateParser getInstance(){ 
 		if (instance == null) {
 			instance = new DateParser();
 		}
@@ -55,7 +71,7 @@ public class DateParser{
 			df1.setLenient(false);
 			
 			String tmpDate = "";
-			if (count <= 8) {
+			if (count <= 17) {  
 				tmpDate = dateStr + " " + Calendar.getInstance().get(Calendar.YEAR);
 			}else{
 				tmpDate = dateStr;
@@ -65,10 +81,14 @@ public class DateParser{
 				tmpDate += " " + (Calendar.getInstance().get(Calendar.MONTH) + 1) + " "
 						+ Calendar.getInstance().get(Calendar.WEEK_OF_MONTH);
 
+			}else if(count == 15 || count == 16 || count == 17){
+				tmpDate += " " + (Calendar.getInstance().get(Calendar.MONTH) + 1) + " " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 			}
+			
+			
 
 			// 3 is the max char difference allowance.
-			if (tmpDate.length() <= type.length() + 3) {
+			if (tmpDate.length() <= type.length() + 3) {  
 				try {
 
 					date = df1.parse(tmpDate);
