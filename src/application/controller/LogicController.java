@@ -33,7 +33,7 @@ public class LogicController {
 	}
 
 
-		public String onCommandProcess(String command) throws InvalidCommandException{
+		public static String onCommandProcess(String command) throws InvalidCommandException{
 
 			Command cmd = ParserFacade.getInstance().parseCommand(command);
 
