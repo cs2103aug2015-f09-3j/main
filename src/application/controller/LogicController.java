@@ -41,13 +41,11 @@ public class LogicController {
 
 		}
 
-		/* FOR UNDO PURPOSES
+		/* Unused code as we changed our method of undo
 		private Command determinePrevCommand() {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-
 		private int determineUndoCommand(Command prevCommand) {
 			if (prevCommand.getType() == Command.ADD_COMMAND_TYPE){
 				return Command.DELETE_COMMAND_TYPE;
@@ -63,8 +61,7 @@ public class LogicController {
 				return Command.DONE_COMMAND_TYPE;
 			}
 		return 0;
-	}
-		 */
+	}*/
 
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);

@@ -3,6 +3,7 @@ package application.utils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import application.controller.parser.ParserFacade;
 import application.model.Task;
@@ -81,31 +82,6 @@ public class TasksFormatter {
 			break;
 
 		case TIMELINE_VIEW_TYPE:
-			sb.append(TIMELINE_VIEW_HEADER);
-
-			sb.append("\n");
-			int numTask = 1;
-			for(Task task: lists){
-				String s_date = "";
-				String e_date = "";
-
-				if(task.getStart_date() != null){
-					s_date = df1.format(task.getStart_date());
-					//s_date = DateFormat.getDateInstance().format(task.getStart_date());
-				}
-				if(task.getEnd_date() != null){
-					e_date = df1.format(task.getEnd_date());
-					//e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
-				}
-
-
-				sb.append(String.format(OUTPUT_FORMAT, numTask++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
-						,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));
-
-
-				sb.append("\n");
-			}
-
 			break;
 
 		case TYPE_VIEW_TYPE:
