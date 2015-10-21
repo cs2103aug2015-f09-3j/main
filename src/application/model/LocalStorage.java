@@ -14,16 +14,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LocalStorage {
-	private static final String TEST_TXT = "test.txt";
+
 	private static Logger logger = Logger.getLogger("LocalStorage");
 	/*
 	 * below is for testing purpose(to be removed) Assume that APIs similar to
 	 * CE2 functionality provided.
 	 */
 	private static File file;
+	private String fileName;
+	
+	public String getFileName() {
+		return fileName;
+	}
 
-	public LocalStorage() {
-		file = new File(TEST_TXT);
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	//change file name
+	public int changePath(String newPath) {
+		File newFile = new File(newPath);
+		fileName = newPath;
+		file = newFile;
+		return 1;		
+	}
+	
+	public LocalStorage(String path) {
+		fileName = path;
+		file = new File(fileName);
 		try{
 			file.createNewFile();
 		}catch(IOException ex){
@@ -63,10 +81,6 @@ public class LocalStorage {
 		saveToFile(new ArrayList<String>());
 	}
 
-	public int changePath(String textContent) { 
-		return 1;
-	}
-
 	public void saveToFile(ArrayList<String> list) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
@@ -80,7 +94,7 @@ public class LocalStorage {
 		}
 	}
 	
-	public void bar(ArrayList<String> list) {
+	public void logging(ArrayList<String> list) {
 		// log a message at INFO level
 		logger.log(Level.INFO, "going to start processing");
 		try{

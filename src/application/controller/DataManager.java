@@ -251,8 +251,7 @@ public class DataManager {
 	}
 
 	public ArrayList<Task> searchTasks(Command cmd) {
-		// TODO Auto-generated method stub
-		return null;
+		return searchTasksForMatches(cmd);
 	}
 }
 
@@ -270,7 +269,8 @@ class Data{
 		taskList = initializeTaskList();
 		searchList = new ArrayList<Task>();
 		history = new Stack<ArrayList<Task>>();
-		histCount = 0;
+		history.push(taskList);
+		histCount = 1;
 	}
 
 
@@ -308,10 +308,11 @@ class Data{
 		storageIO.saveToStorage(tasksToStrings());
 	}
 	public Integer undo(){
-		if(history.empty()){
+		if(histCount == 1){
 			return DataManager.NO_PREV_COMMAND;
 		}else{
-			taskList = history.pop();
+			history.pop();
+			taskList = history.peek();
 			histCount --;
 			storageIO.saveToStorage(tasksToStrings());
 			return DataManager.PREV_COMMAND_UNDONE;
@@ -362,9 +363,10 @@ class Data{
 
 class StorageInterface{
 	private LocalStorage file;
+	private static final String TEST_TXT = "test.txt";
 
 	public StorageInterface(){
-		file = new LocalStorage();
+		file = new LocalStorage(TEST_TXT);
 	}
 
 	public ArrayList<String> readFromStorage(){
@@ -376,8 +378,8 @@ class StorageInterface{
 		file.saveToFile(list);
 	}
 
-	public Integer changeFilePath(String path){
-		return file.changePath(path);
+	public Integer changeFilePath(String newPath){
+		return file.changePath(newPath);
 	}
 
 
