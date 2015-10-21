@@ -67,6 +67,10 @@ public class CommandParser {
 			indexOfFirstSpace = command.length();
 		}
 
+		if (isCommandType(Command.HELP_COMMAND, command.trim())) {
+			indexOfFirstSpace = command.length();
+		}
+
 		if (indexOfFirstSpace == 0) {
 			return null;
 		}
@@ -192,6 +196,8 @@ public class CommandParser {
 			return Command.LIST_TODAY_COMMAND_TYPE;
 		} else if (isCommandType(Command.LIST_NEXT_COMMAND, cmd)) {
 			return Command.LIST_NEXT_COMMAND_TYPE;
+		} else if (isCommandType(Command.HELP_COMMAND, cmd)) {
+			return Command.HELP_COMMAND_TYPE;
 		} else {
 			return -1;
 		}

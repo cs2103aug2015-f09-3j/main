@@ -15,6 +15,7 @@ public class Command {
 	public static final String SEARCH_COMMAND = "search:s";
 	public static final String LIST_TODAY_COMMAND = "today:now";
 	public static final String LIST_NEXT_COMMAND = "next:nxt";
+	public static final String HELP_COMMAND = "help:?";
 
 	public static final int ADD_COMMAND_TYPE = 1;
 	public static final int LIST_COMMAND_TYPE = 2;
@@ -27,6 +28,7 @@ public class Command {
 	public static final int SEARCH_COMMAND_TYPE = 9;
 	public static final int LIST_TODAY_COMMAND_TYPE = 10;
 	public static final int LIST_NEXT_COMMAND_TYPE = 11;
+	public static final int HELP_COMMAND_TYPE = 12;
 
 	private Integer type;
 	private String textContent;

@@ -1,11 +1,13 @@
 package application.controller;
 
+
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Stack;
 
 import application.controller.parser.ParserFacade;
 import application.model.Command;
 import application.model.Task;
+import application.utils.HelpCommands;
 import application.utils.TasksFormatter;
 
 public class CommandManager {
@@ -47,7 +49,7 @@ public class CommandManager {
 		    		history.clear();
 		    		return INVALID_COMMAND;
 		    	} else{
-		    		ArrayList<Task> allPossibleTasks = DataManager.getInstance().listAll(cmd);
+		    		//ArrayList<Task> allPossibleTasks = DataManager.getInstance().listAll(cmd);
 		    		ArrayList<Task> nextTasks = history;
 		    		assert nextTasks.size() != 0;
 		    		limitNumberOfTasks(nextTasks);
@@ -102,18 +104,20 @@ public class CommandManager {
 		    	String today = TasksFormatter.format(DataManager.getInstance().listToday(cmd), TasksFormatter.TIMELINE_VIEW_TYPE);
 		    	return today;
 
+		    case Command.HELP_COMMAND_TYPE:
+		    	String help = HelpCommands.displayHelp();
+		    	return help;
+
 		    default: return "testing-lc";
 		}
 		return "testing";
 	}
 
 
-	private static boolean checkDuplicateTask(ArrayList<Task> listTasks) {
-		for (int i=0; i<listTasks.size(); i++){
-			for (int j=0; j<history.size(); j++){
-				if (history.get(j) == listTasks.get(i)){
-					return true;
-				}
+	private static boolean checkDuplicateTask(Task task) {
+		for (int j=0; j<history.size(); j++){
+			if (history.get(j) == task){
+				return true;
 			}
 		}
 		return false;
@@ -123,8 +127,8 @@ public class CommandManager {
 	private static void limitNumberOfTasks(ArrayList<Task> allTasks) {
 		boolean flag = false;
 		if (allTasks.size() > TASK_VIEW_LIMIT){
-			for (int i = 10 ; i < allTasks.size(); i++){
-				flag = checkDuplicateTask(allTasks);
+			for (int i = allTasks.size()-1; i>=TASK_VIEW_LIMIT; i--){
+				flag = checkDuplicateTask(allTasks.get(i));
 				if (flag==false){
 					history.add(allTasks.remove(i));
 				} else {

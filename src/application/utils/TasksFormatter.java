@@ -72,7 +72,7 @@ public class TasksFormatter {
 					e_date = df1.format(task.getEnd_date());
 					//e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
 				}
-				sb.append(String.format(TIMELINE_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
+				sb.append(String.format(OUTPUT_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
 						,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));
 
 
