@@ -251,8 +251,7 @@ public class DataManager {
 	}
 
 	public ArrayList<Task> searchTasks(Command cmd) {
-		// TODO Auto-generated method stub
-		return null;
+		return searchTasksForMatches(cmd);
 	}
 }
 
@@ -270,7 +269,8 @@ class Data{
 		taskList = initializeTaskList();
 		searchList = new ArrayList<Task>();
 		history = new Stack<ArrayList<Task>>();
-		histCount = 0;
+		history.push(taskList);
+		histCount = 1;
 	}
 
 
@@ -308,10 +308,11 @@ class Data{
 		storageIO.saveToStorage(tasksToStrings());
 	}
 	public Integer undo(){
-		if(history.empty()){
+		if(histCount == 1){
 			return DataManager.NO_PREV_COMMAND;
 		}else{
-			taskList = history.pop();
+			history.pop();
+			taskList = history.peek();
 			histCount --;
 			storageIO.saveToStorage(tasksToStrings());
 			return DataManager.PREV_COMMAND_UNDONE;
