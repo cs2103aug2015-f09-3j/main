@@ -18,6 +18,8 @@ import application.model.Parameter;
 import application.model.Task;
 
 public class ParserTest {
+	
+
 
 	@Test
 	public void testParseCommand1() throws InvalidCommandException {
@@ -32,7 +34,7 @@ public class ParserTest {
 		paras.add(new Parameter(Parameter.TYPE_ARGUMENT_TYPE, "personal"));
 		Command cmdCmp = new Command(Command.ADD_COMMAND_TYPE, "buy milk for mom", paras);
 
-		assertEquals(cmd, cmdCmp);
+		assertEquals(cmd, cmdCmp);  
 
 	}
 
@@ -49,7 +51,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void testParseCommand3() throws InvalidCommandException {
+	public void testParseCommand3() throws InvalidCommandException { 
 
 		Command cmd = ParserFacade.getInstance().parseCommand("edit lala world");
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
@@ -60,6 +62,7 @@ public class ParserTest {
 
 	}
 
+	//Boundary/Equivalence Testing, testing it now with zero parameter.
 	@Test
 	public void testConvertAddCommandtoTask1() {
 
@@ -67,38 +70,42 @@ public class ParserTest {
 
 		Task taskCmp = new Task("test 123");
 
-		Task tmpTask;
+		Task tmpTask; 
 		tmpTask = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
 
 		assertEquals(tmpTask, taskCmp);
 
 	}
-
+	
+	//Boundary/Equivalence Testing, Testing it with one parameter.
 	@Test
 	public void testConvertAddCommandtoTask2() throws ParseException {
 
 		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_100);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
 		paras.add(new Parameter(Parameter.START_DATE_ARGUMENT_TYPE, "13/12/2015 9:00am"));
-		paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "14/12/2015 13:00pm"));
-		paras.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, "bpp"));
-		paras.add(new Parameter(Parameter.PRIORITY_ARGUMENT_TYPE, "high"));
-		paras.add(new Parameter(Parameter.TYPE_ARGUMENT_TYPE, "meeting"));
+		//paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "14/12/2015 13:00pm"));
+		//paras.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, "bpp"));
+		//paras.add(new Parameter(Parameter.PRIORITY_ARGUMENT_TYPE, "high"));
+		//paras.add(new Parameter(Parameter.TYPE_ARGUMENT_TYPE, "meeting"));
 
 		Command cmd = new Command(Command.ADD_COMMAND_TYPE, "test 123", paras);
 
 		Task taskCmp = new Task("test 123");
-		taskCmp.setEnd_date(df1.parse("14/12/2015 13:00pm"));
+		//taskCmp.setEnd_date(df1.parse("14/12/2015 13:00pm"));
 		taskCmp.setStart_date(df1.parse("13/12/2015 9:00am"));
-		taskCmp.setPlace_argument("bpp");
-		taskCmp.setPriority_argument("high");
-		taskCmp.setType_argument("meeting");
+		//taskCmp.setPlace_argument("bpp");
+		//taskCmp.setPriority_argument("high");
+		//taskCmp.setType_argument("meeting");
 		Task tmpTask;
 		tmpTask = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
 		assertEquals(tmpTask, taskCmp);
 
 	}
 
+	
+	//Equivalence testing involved from testParseDate1() to testParseDate105()
+	//For e.g : parsing 1/2 2am is enough, parsing 3/2 3am will most likely to pass. 
 	@Test
 	public void testParseDate1() throws ParseException {
 		Date date = ParserFacade.getInstance().parseDate("1/2 2am");
@@ -179,7 +186,7 @@ public class ParserTest {
 
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DATE, 25);
-		cal.set(Calendar.MONTH, 11);
+		cal.set(Calendar.MONTH, 11); 
 		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 30);
 		cal.set(Calendar.SECOND, 0);
