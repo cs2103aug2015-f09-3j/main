@@ -10,18 +10,32 @@ public class Task implements Comparable<Task>{
 	
 	private String textContent;
 	
-	private boolean isDone = false;
-	private String priority_argument = "";
-	private String type_argument = "";
-	private Date start_date = null;
-	private Date end_date = null;
-	private String place_argument = "";
+	private boolean isDone;
+	private String priority_argument;
+	private String type_argument;
+	private Date start_date;
+	private Date end_date;
+	private String place_argument;
 	
 	
-	
+	public Task(){
+		isDone = false;
+		textContent = new String("");
+		priority_argument = new String("normal");
+		type_argument = new String("normal");
+		place_argument = new String("");
+		start_date = null;
+		end_date = null;
+	}
 	public Task(String textContent) {
-		super();
 		this.textContent = textContent;
+		isDone = false;
+		textContent = new String("");
+		priority_argument = new String("normal");
+		type_argument = new String("normal");
+		place_argument = new String("");
+		start_date = null;
+		end_date = null;
 	}
 
 

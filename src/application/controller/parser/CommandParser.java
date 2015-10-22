@@ -71,6 +71,10 @@ public class CommandParser {
 			indexOfFirstSpace = command.length();
 		}
 
+		if (isCommandType(Command.UNDO_COMMAND, command.trim())) {
+			indexOfFirstSpace = command.length();
+		}
+		
 		if (indexOfFirstSpace == 0) {
 			return null;
 		}

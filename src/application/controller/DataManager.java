@@ -136,7 +136,7 @@ public class DataManager {
 				data.removeFromData(searchList.get(0));
 				return TASK_REMOVED;
 			default:
-				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				//LogicController.getInstance().chooseLine(searchList);
 				return MULTIPLE_MATCHES;
 		}
 	}
@@ -181,7 +181,7 @@ public class DataManager {
 				data.updateStorage();
 				return TASK_UPDATED;
 			default:
-				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				//LogicController.getInstance().chooseLine(searchList);
 				return MULTIPLE_MATCHES;
 		}
 	}
@@ -205,7 +205,7 @@ public class DataManager {
 				data.updateStorage();
 				return TASK_SET_TO_DONE;
 			default:
-				LogicController.getInstance().chooseLine(tasksToStrings(searchList));
+				//LogicController.getInstance().chooseLine(searchList);
 				return MULTIPLE_MATCHES;
 		}
 	}
@@ -289,7 +289,7 @@ class Data{
 		taskList = initializeTaskList();
 		searchList = new ArrayList<Task>();
 		history = new Stack<ArrayList<Task>>();
-		history.push(taskList);
+		addToHistory();
 		histCount = 1;
 	}
 
@@ -310,31 +310,32 @@ class Data{
 
 	public void addToData(Task taskToAdd){
 		taskList.add(taskToAdd);
+		sort();
 		updateStorage();
 	}
 	public void updateStorage(){
-		sort();
-		history.push(taskList);
+		
+		addToHistory();
 		histCount ++;
 		limitHistory();
 		storageIO.saveToStorage(tasksToStrings());
 	}
 	public void removeFromData(Task taskToRemove){
 		taskList.remove(taskToRemove);
-		storageIO.saveToStorage(tasksToStrings());
+		updateStorage();
 	}
 	public void removeFromData(int lineNum){
 		taskList.remove(lineNum);
-		storageIO.saveToStorage(tasksToStrings());
+		updateStorage();
 	}
 	public Integer undo(){
 		if(histCount == 1){
 			return DataManager.NO_PREV_COMMAND;
 		}else{
 			history.pop();
-			taskList = history.peek();
-			histCount --;
-			storageIO.saveToStorage(tasksToStrings());
+			taskList = history.pop();
+			histCount -= 2;
+			updateStorage();
 			return DataManager.PREV_COMMAND_UNDONE;
 		}
 	}
@@ -353,7 +354,26 @@ class Data{
 
 		return listTask;
 	}
+	
 
+	private void addToHistory(){
+		ArrayList<Task> list = new ArrayList<Task>();
+		Task task = new Task();
+		Task temp;
+		for(int i=0; i<taskList.size();i++){
+			temp = taskList.get(i);
+			task = new Task(temp.getTextContent());
+			task.setDone(temp.isDone());
+			task.setPriority_argument(new String(temp.getPriority_argument()));
+			task.setType_argument(new String(temp.getType_argument()));
+			task.setPlace_argument(new String(temp.getPlace_argument()));	
+			task.setStart_date(temp.getStart_date());
+			task.setEnd_date(temp.getEnd_date());
+			list.add(task);
+		}
+		history.push(list);
+	}
+	
 	private void sort(){
 		Collections.sort(taskList);
 	}

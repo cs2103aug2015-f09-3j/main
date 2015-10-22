@@ -72,8 +72,10 @@ public class CommandManager {
 		        	   }
 
 		    case Command.UNDO_COMMAND_TYPE:
-		    	DataManager.undoPrevCommand();
-				break;
+		    	if(DataManager.undoPrevCommand() == DataManager.NO_PREV_COMMAND)
+		    		return "no previous command";
+		    	else
+		    		return "previous command undone";	
 
 		    case Command.EDIT_COMMAND_TYPE:
 		    	int editSuccess = DataManager.getInstance().editTask(cmd);
@@ -110,7 +112,7 @@ public class CommandManager {
 
 		    default: return "testing-lc";
 		}
-		return "testing";
+		//return "testing";
 	}
 
 
