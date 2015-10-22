@@ -32,10 +32,12 @@ public class DataManager {
 	public static final Integer MAX_HISTORY = 10;
 
 	private static Data data;
+	private ArrayList<Parameter> para;
 	public static DataManager instance = null;
 
 	private DataManager() {
 		data = new Data();
+		para = null;
 	}
 
 	public static DataManager getInstance() {
@@ -150,12 +152,11 @@ public class DataManager {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchTasksForMatches(cmd);
 		data.saveToSearchList(searchList);
+		para = cmd.getParameter();
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
 			case 1:
-				ArrayList<Parameter> para = new ArrayList<Parameter>();
-				para = cmd.getParameter();
 				ArrayList<Task> taskList = data.getTaskList();
 				for(int i=0; i<para.size(); i++){
 					switch(para.get(i).getParaType()){
@@ -187,7 +188,30 @@ public class DataManager {
 	}
 
 	public Integer editTask(int lineNum){
-		//TODO
+		ArrayList<Task> taskList = data.getTaskList();
+		ArrayList<Task> searchList = data.getSearchList();
+		for(int i=0; i<para.size(); i++){
+			switch(para.get(i).getParaType()){
+				case Parameter.PRIORITY_ARGUMENT_TYPE:
+					taskList.get(taskList.indexOf(searchList.get(lineNum))).setPriority_argument(para.get(i).getParaArg());
+					break;
+				case Parameter.TYPE_ARGUMENT_TYPE:
+					taskList.get(taskList.indexOf(searchList.get(lineNum))).setType_argument(para.get(i).getParaArg());
+					break;
+				case Parameter.START_DATE_ARGUMENT_TYPE:
+					taskList.get(taskList.indexOf(searchList.get(lineNum))).setStart_date(
+							ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+					break;
+				case Parameter.END_DATE_ARGUMENT_TYPE:
+					taskList.get(taskList.indexOf(searchList.get(lineNum))).setEnd_date(
+							ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+					break;
+				default:
+					taskList.get(taskList.indexOf(searchList.get(lineNum))).setPlace_argument(para.get(i).getParaArg());
+					break;
+			}
+		}
+		data.updateStorage();
 		return TASK_UPDATED;
 	}
 
