@@ -61,7 +61,7 @@ public class LogicController {
 				return Command.DONE_COMMAND_TYPE;
 			}
 		return 0;
-	}*/
+	} */
 
 		private String printList(ArrayList<String> listAll) {
 			//System.out.println(LISTED_ALL_SUCCESS);
