@@ -101,7 +101,7 @@ public class CommandManager {
 		    	}
 
 		    case Command.LIST_TODAY_COMMAND_TYPE:
-		    	String today = TasksFormatter.format(DataManager.getInstance().listToday(cmd), TasksFormatter.TIMELINE_VIEW_TYPE);
+		    	String today = TasksFormatter.format(DataManager.getInstance().listToday(cmd), TasksFormatter.DETAIL_VIEW_TYPE);
 		    	return today;
 
 		    case Command.HELP_COMMAND_TYPE:

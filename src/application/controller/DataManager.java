@@ -2,6 +2,8 @@ package application.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Stack;
 
 import com.google.gson.*;
@@ -244,10 +246,28 @@ public class DataManager {
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
-
+	
+	
+	@SuppressWarnings("deprecation")
 	public ArrayList<Task> listToday(Command cmd) {
-		//TODO
-		return null;
+		Date today = new Date();
+		ArrayList<Task> tasksDueToday = new ArrayList<Task>();
+		Task task;
+
+		for(int i=0; i< data.getTaskList().size(); i++){
+			task = data.getTaskList().get(i);
+			if(task.getEnd_date().getYear() == today.getYear()){
+				if(task.getEnd_date().getMonth() == today.getMonth()){
+					if(task.getEnd_date().getDate() == today.getDate()){
+						tasksDueToday.add(task);
+					}
+				}
+			}
+			if(tasksDueToday.size() > 10){
+				break;
+			}
+		}
+		return tasksDueToday;
 	}
 
 	public ArrayList<Task> searchTasks(Command cmd) {
