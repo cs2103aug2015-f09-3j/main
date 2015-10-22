@@ -19,6 +19,10 @@
 		<pathelement location="${test}" />
 		<pathelement location="${build}/main" />
 		<pathelement location="${build}/test" />
+		
+		  <fileset dir="libs/">
+				    <include name="**/*.jar"/>
+			</fileset>
 
 	</path>
 
@@ -54,6 +58,7 @@
 	</target>
 	
 	
+	
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}/lib" />
 		<jar jarfile="${dist}/lib/travis-${DSTAMP}.jar" basedir="${build}" />
@@ -63,6 +68,9 @@
 		<junit fork="off" haltonfailure="true">
 			<classpath refid="classpath.test" />
 			<classpath location="${build}/test" />
+
+		
+
 
 			<batchtest fork="yes" todir="tres">
 				<formatter type="brief" usefile="false" />

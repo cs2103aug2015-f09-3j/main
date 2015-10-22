@@ -96,10 +96,10 @@ public class DateParser{
 					break;
 				} catch (ParseException e) {
 					// continue parsing
-					LogManager.getInstance().log("Parse exception at date parsing");
+					//LogManager.getInstance().log("Parse exception at date parsing");
 				}
 			}
-			count++;
+			count++; 
 			
 		}
 		return date;
