@@ -12,6 +12,7 @@ import application.utils.TasksFormatter;
 
 public class CommandManager {
 
+	private static final String EMPTY_STRING = "";
 	private static final String INVALID_COMMAND = "Invalid command";
 	private static final int TASK_VIEW_LIMIT = 10;
 	private static final String ADDED_SUCCESS = "Added ";
@@ -36,15 +37,20 @@ public class CommandManager {
 		    case Command.LIST_COMMAND_TYPE:
 		    	history.clear();
 		    	ArrayList<Task> allTasks = DataManager.getInstance().listAll(cmd);
-		    	limitNumberOfTasks(allTasks);
-		    	String msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
-		    	//String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
-		    	for (int i=0; i<history.size(); i++){
-		    		allTasks.add(history.get(i));
+		    	if (cmd.getTextContent() != EMPTY_STRING){
+		    		int limit = Integer.parseInt(cmd.getTextContent());
+		    		limitNumberOfTasks(allTasks, limit);
 		    	}
+		    	String msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	if (cmd.getTextContent() != EMPTY_STRING){
+		    		for (int i=0; i<history.size(); i++){
+		    			allTasks.add(history.get(i));
+		    		}
+		    	}
+		    	//String msg = printList(DataManager.getInstance().listAll(cmd.getTextContent()));
 		    	return msg;
 
-		    case Command.LIST_NEXT_COMMAND_TYPE:
+		   /* case Command.LIST_NEXT_COMMAND_TYPE:
 		    	if (history.size() == 0 || DataManager.getInstance().listAll(cmd).size() <= TASK_VIEW_LIMIT){
 		    		history.clear();
 		    		return INVALID_COMMAND;
@@ -55,7 +61,7 @@ public class CommandManager {
 		    		limitNumberOfTasks(nextTasks);
 			    	String listnext = TasksFormatter.format(nextTasks, TasksFormatter.DETAIL_VIEW_TYPE);
 			    	return listnext;
-		    	}
+		    	} */
 
 		    case Command.CHANGE_STORAGE_COMMAND_TYPE:
 		    	DataManager.getInstance().changeStorageLocation(cmd);
@@ -66,7 +72,7 @@ public class CommandManager {
 				if (deleteSuccess == -1){
 					return EMPTY_FILE;
 				} else if (deleteSuccess == -2){
-			      		   return "";
+			      		   return EMPTY_STRING;
 		         	   } else {
 		        		   return DELETE_SUCCESS + cmd.getTextContent();
 		        	   }
@@ -75,7 +81,7 @@ public class CommandManager {
 		    	if(DataManager.undoPrevCommand() == DataManager.NO_PREV_COMMAND)
 		    		return "no previous command";
 		    	else
-		    		return "previous command undone";	
+		    		return "previous command undone";
 
 		    case Command.EDIT_COMMAND_TYPE:
 		    	int editSuccess = DataManager.getInstance().editTask(cmd);
@@ -126,10 +132,10 @@ public class CommandManager {
 	}
 
 
-	private static void limitNumberOfTasks(ArrayList<Task> allTasks) {
+	private static void limitNumberOfTasks(ArrayList<Task> allTasks, int limit) {
 		boolean flag = false;
-		if (allTasks.size() > TASK_VIEW_LIMIT){
-			for (int i = allTasks.size()-1; i>=TASK_VIEW_LIMIT; i--){
+		if (allTasks.size() > limit){
+			for (int i = allTasks.size()-1; i>=limit; i--){
 				flag = checkDuplicateTask(allTasks.get(i));
 				if (flag==false){
 					history.add(allTasks.remove(i));
