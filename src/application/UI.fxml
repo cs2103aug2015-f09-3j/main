@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.input.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.control.*?>
@@ -18,7 +19,10 @@
 						<MenuItem mnemonicParsing="false" text="Open…" />
 						<Menu mnemonicParsing="false" text="Open Recent" />
 						<SeparatorMenuItem mnemonicParsing="false" />
-						<MenuItem mnemonicParsing="false" text="Close" />
+						<MenuItem fx:id="minimizeMenuItem" mnemonicParsing="false" onAction="#onMinimize" text="Minimize">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
 						<MenuItem mnemonicParsing="false" text="Save" />
 						<MenuItem mnemonicParsing="false" text="Save As…" />
 						<MenuItem mnemonicParsing="false" text="Revert" />
@@ -56,7 +60,7 @@
 						<Font size="18.0" />
 					</font>
 				</Label>
-				<Button fx:id="btSend" layoutX="844.0" layoutY="277.0" mnemonicParsing="false" onKeyPressed="#onKeyPressed" onMouseClicked="#onMouseClicked" prefHeight="85.0" prefWidth="139.0" text="Enter" />
+				<Button fx:id="btSend" layoutX="844.0" layoutY="277.0" mnemonicParsing="false" onMouseClicked="#onMouseClicked" prefHeight="85.0" prefWidth="139.0" text="Enter" />
 				<TextField id="commandInput" fx:id="textCommandInput" layoutX="14.0" layoutY="277.0" onAction="#onEnter" prefHeight="85.0" prefWidth="818.0" />
 				<Line endX="880.0" endY="-1.0" layoutX="115.0" layoutY="264.0" startX="-100.0" />
 				<TextArea id="consoleOutput" fx:id="textConsoleOutput" editable="false" layoutX="14.0" layoutY="13.0" prefHeight="239.0" prefWidth="978.0" wrapText="true">
