@@ -61,6 +61,7 @@ public class DataManager {
 	public ArrayList<Task> listAll(Command cmd) {
 		if (cmd.getParameter().size() == 0){
 			return data.getTaskList();
+			
 		}else{
 			ArrayList<Task> filteredList = new ArrayList<Task>();
 			ArrayList<Parameter> para = new ArrayList<Parameter>();
