@@ -10,7 +10,6 @@ import application.controller.DataManager;
 import application.controller.LogicController;
 import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
-import application.model.Command;
 import application.model.Task;
 import application.utils.TasksFormatter;
 

@@ -3,8 +3,6 @@ package application.utils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-
 import application.controller.parser.ParserFacade;
 import application.model.Task;
 

@@ -1,22 +1,37 @@
 package application;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+import com.melloware.jintellitype.JIntellitype;
+
 import application.view.UIController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-import javax.swing.*;
 
 public class Main extends Application {
+	
+	boolean firstTime;
+	 private TrayIcon trayIcon;
+	 public Stage stage;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI.fxml"));
-			UIController uiControl = new UIController();
+			UIController uiControl = UIController.getInstance();
 			
 			fxmlLoader.setController(uiControl);
 			
@@ -24,9 +39,16 @@ public class Main extends Application {
 			Scene scene = new Scene(root, 1007, 400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
-			
+			uiControl.setMainApp(this);
+			firstTime = true;
+		    Platform.setImplicitExit(false);  
 			primaryStage.show();
+			
 			createAndShowGUI();
+			this.stage = primaryStage;
+			
+		
+			
 			
 		} catch (Exception e) { 
 			e.printStackTrace();
@@ -34,22 +56,27 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
+		
 		launch(args);
 	}
 	
-	 private static void createAndShowGUI() {
+	/**
+	 * DISCLAIMER: this code is adapted from java official code examples.
+	 */
+	 private void createAndShowGUI() {
 	        //Check the SystemTray support
 	        if (!SystemTray.isSupported()) {
 	            System.out.println("SystemTray is not supported");
 	            return;
 	        }
 	        final PopupMenu popup = new PopupMenu();
-	        final TrayIcon trayIcon =
-	                new TrayIcon(createImage("~/images/bulb.gif", "tray icon"));
-	        final SystemTray tray = SystemTray.getSystemTray();
+	        trayIcon =
+	                new TrayIcon(createImage("bulb.gif", "tray icon"));
+	        final SystemTray tray = SystemTray.getSystemTray(); 
 	        
 	        // Create a popup menu components
-	        MenuItem aboutItem = new MenuItem("About");
+	        /*
+	        MenuItem aboutItem = new MenuItem("About"); 
 	        CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
 	        CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
 	        Menu displayMenu = new Menu("Display");
@@ -57,8 +84,9 @@ public class Main extends Application {
 	        MenuItem warningItem = new MenuItem("Warning");
 	        MenuItem infoItem = new MenuItem("Info");
 	        MenuItem noneItem = new MenuItem("None");
+	        */
 	        MenuItem exitItem = new MenuItem("Exit");
-	        
+	       /* 
 	        //Add components to popup menu
 	        popup.add(aboutItem);
 	        popup.addSeparator();
@@ -70,6 +98,7 @@ public class Main extends Application {
 	        displayMenu.add(warningItem);
 	        displayMenu.add(infoItem);
 	        displayMenu.add(noneItem);
+	        */
 	        popup.add(exitItem);
 	        
 	        trayIcon.setPopupMenu(popup);
@@ -80,16 +109,26 @@ public class Main extends Application {
 	            System.out.println("TrayIcon could not be added.");
 	            return;
 	        }
+	      
 	        
-	        trayIcon.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
-	                JOptionPane.showMessageDialog(null,
-	                        "This dialog box is run from System Tray");
+	        trayIcon.addActionListener(new ActionListener() { 
+	            @Override
+				public void actionPerformed(ActionEvent e) {
+	               // JOptionPane.showMessageDialog(null,
+	                //        "This dialog box is run from System Tray");
+	            	 Platform.runLater(new Runnable() {   
+	                        @Override
+	                        public void run() { 
+	                            stage.show();
+	                        }
+	                    });
+	            	
 	            }
 	        });
-	        
+	        /*
 	        aboutItem.addActionListener(new ActionListener() {
 	            public void actionPerformed(ActionEvent e) {
+	            
 	                JOptionPane.showMessageDialog(null,
 	                        "This dialog box is run from the About menu item");
 	            }
@@ -144,31 +183,39 @@ public class Main extends Application {
 	                }
 	            }
 	        };
-	        
+	        */
+	        /*
 	        errorItem.addActionListener(listener);
 	        warningItem.addActionListener(listener);
 	        infoItem.addActionListener(listener);
 	        noneItem.addActionListener(listener);
 	        
+	        */
+	        
 	        exitItem.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
+	            @Override
+				public void actionPerformed(ActionEvent e) {
 	                tray.remove(trayIcon);
+	                JIntellitype.getInstance().cleanUp();
 	                System.exit(0);
 	            }
 	        });
-	    }
+	    } 
 	    
 	    //Obtain the image URL
-	    protected static Image createImage(String path, String description) {
+	    protected static Image createImage(String path, String description) {  
 	    	
 	        URL imageURL = Main.class.getResource(path); 
 	        
-	        if (imageURL == null) {
+	        if (imageURL == null) {  
 	            System.err.println("Resource not found: " + path);
-	            return null;
+	            return null;  
 	        } else {
 	            return (new ImageIcon(imageURL, description)).getImage();
 	        }
 	    }
+
+
+	   
 	
 }

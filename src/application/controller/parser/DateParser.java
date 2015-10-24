@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import application.controller.LogManager;
-
 public class DateParser{
 	
 	
@@ -31,7 +29,7 @@ public class DateParser{
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_11);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_12);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_13);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_14);
+		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_14); 
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_15);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_16);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_17);
