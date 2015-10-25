@@ -2,6 +2,7 @@ package application.controller;
 
 
 import java.util.ArrayList;
+
 import application.controller.parser.ParserFacade;
 import application.model.Command;
 import application.model.Task;
@@ -20,6 +21,7 @@ public class CommandManager {
 	private static final String EDIT_SUCCESS = "Successfully edited: ";
 	private static final String SET_DONE_SUCCESS = "Done task: ";
 	private static final String SEARCH_RESULTS_NULL = "There are no tasks matching your search.";
+	private static final String TASK_ALREADY_EXISTS = "The exact same task already exists in system.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
 
 	public static String executeCommand(Command cmd){
@@ -29,9 +31,11 @@ public class CommandManager {
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
 		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
-		    	DataManager.getInstance().addNewTask(taskToAdd);
-		    	return ADDED_SUCCESS + taskToAdd.toString();
-
+		    	if(DataManager.getInstance().addNewTask(taskToAdd) == DataManager.TASK_ADDED){
+		    		return ADDED_SUCCESS + taskToAdd.toString();
+		    	}else{
+		    		return TASK_ALREADY_EXISTS;
+		    	}
 		    case Command.LIST_COMMAND_TYPE:
 		    	history.clear();
 		    	ArrayList<Task> allTasks = DataManager.getInstance().listAll(cmd);

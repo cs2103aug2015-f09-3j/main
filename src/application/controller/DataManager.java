@@ -46,23 +46,25 @@ public class DataManager {
 		return instance;
 	}
 
-	public void addNewTask(Task taskToAdd) {
+	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
-		if(taskToAdd.getPriority_argument().equals("")){
-			taskToAdd.setPriority_argument("Normal");
+		if(data.getTaskList().contains(taskToAdd)){
+			return TASK_ALREADY_EXISTS;
+		}else{
+			data.addToData(taskToAdd);
+			return TASK_ADDED;
 		}
-		if(taskToAdd.getType_argument().equals("")){
-			taskToAdd.setType_argument("Normal");
-		}
-		data.addToData(taskToAdd);
 	}
 
 	public ArrayList<Task> listAll(Command cmd) {
+		ArrayList<Task> filteredList = new ArrayList<Task>();
 		if (cmd.getParameter().size() == 0){
-			return data.getTaskList();
-			
+			for(Task task: data.getTaskList()){
+				if(!task.isDone()){
+					filteredList.add(task);
+				}
+			}			
 		}else{
-			ArrayList<Task> filteredList = new ArrayList<Task>();
 			ArrayList<Parameter> para = new ArrayList<Parameter>();
 			para = cmd.getParameter();
 			for(int i=0; i<para.size();i++){
@@ -86,31 +88,27 @@ public class DataManager {
 						}
 						break;
 					case Parameter.START_DATE_ARGUMENT_TYPE:
-						try {
-							for(Task task: data.getTaskList()){
+						for(Task task: data.getTaskList()){
+							if(task.getStart_date() != null){
 								if(task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
-								}
+								}	
 							}
-						}catch (NullPointerException e){
-							// Do nothing, task remain the same.
 						}
-							break;
+						break;
 					case Parameter.END_DATE_ARGUMENT_TYPE:
-						try {
-							for(Task task: data.getTaskList()){
+						for(Task task: data.getTaskList()){
+							if(task.getEnd_date() != null){
 								if(task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
 								}
 							}
-						}catch (NullPointerException e){
-							// Do nothing, task remain the same.
 						}
-							break;
+						break;
 					default:
 						for(Task task: data.getTaskList()){
 							if(task.getPlace_argument().equals(para.get(i).getParaArg())){
@@ -122,15 +120,14 @@ public class DataManager {
 						break;
 				}
 			}
-			sort(filteredList);
-			return filteredList;
 		}
+		sort(filteredList);
+		return filteredList;
 	}
 
 	public Integer removeTask(Command cmd) {
 		data.clearSearchList();
-		ArrayList<Task> searchList = searchTasksForMatches(cmd);
-		data.saveToSearchList(searchList);
+		ArrayList<Task> searchList = searchTasksForMatches(cmd);	
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
@@ -138,8 +135,72 @@ public class DataManager {
 				data.removeFromData(searchList.get(0));
 				return TASK_REMOVED;
 			default:
-				//LogicController.getInstance().chooseLine(searchList);
-				return MULTIPLE_MATCHES;
+				ArrayList<Parameter> para = cmd.getParameter();
+				ArrayList<Task> taskToRemove = new ArrayList<Task>();
+				for(Parameter p: para){
+					switch(p.getParaType()){
+						case Parameter.PRIORITY_ARGUMENT_TYPE:
+							for(Task task: searchList){
+								if (!task.getPriority_argument().equals(p.getParaArg())){
+									if(!taskToRemove.contains(task)){
+										taskToRemove.add(task);
+									}
+								}
+							}
+							break;
+						case Parameter.TYPE_ARGUMENT_TYPE:
+							for(Task task: searchList){
+								if (!task.getType_argument().equals(p.getParaArg())){
+									if(!taskToRemove.contains(task)){
+										taskToRemove.add(task);
+									}
+								}
+							}
+							break;
+						case Parameter.END_DATE_ARGUMENT_TYPE:
+							for(Task task: searchList){
+								if(task.getEnd_date() != null){
+									if (!task.getEnd_date().equals
+											(ParserFacade.getInstance().parseDate(p.getParaArg()))){
+										if(!taskToRemove.contains(task)){
+											taskToRemove.add(task);
+										}
+									}
+								}
+							}
+							break;
+						case Parameter.START_DATE_ARGUMENT_TYPE:
+							for(Task task: searchList){
+								if(task.getStart_date() != null){
+									if (!task.getStart_date().equals
+											(ParserFacade.getInstance().parseDate(p.getParaArg()))){
+										if(!taskToRemove.contains(task)){
+											taskToRemove.add(task);
+										}
+									}
+								}
+							}
+							break;
+						default:
+							for(Task task: searchList){
+								if (!task.getPlace_argument().equals(p.getParaArg())){
+									if(!taskToRemove.contains(task)){
+										taskToRemove.add(task);
+									}
+								}
+							}
+					}
+				}
+				for(Task task: taskToRemove){
+					searchList.remove(task);
+				}
+				if(searchList.size() == 1){
+					data.removeFromData(searchList.get(0));
+					return TASK_REMOVED;
+				}else{
+					data.saveToSearchList(searchList);
+					return MULTIPLE_MATCHES;
+				}
 		}
 	}
 
@@ -280,15 +341,17 @@ public class DataManager {
 
 		for(int i=0; i< data.getTaskList().size(); i++){
 			task = data.getTaskList().get(i);
-			if(task.getEnd_date().getYear() == today.getYear()){
-				if(task.getEnd_date().getMonth() == today.getMonth()){
-					if(task.getEnd_date().getDate() == today.getDate()){
-						tasksDueToday.add(task);
+			if(task.getEnd_date() != null){
+				if(task.getEnd_date().getYear() == today.getYear()){
+					if(task.getEnd_date().getMonth() == today.getMonth()){
+						if(task.getEnd_date().getDate() == today.getDate()){
+							tasksDueToday.add(task);
+						}
 					}
 				}
-			}
-			if(tasksDueToday.size() > 10){
-				break;
+				if(tasksDueToday.size() > 10){
+					break;
+				}
 			}
 		}
 		return tasksDueToday;
