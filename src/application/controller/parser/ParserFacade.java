@@ -30,7 +30,7 @@ public class ParserFacade {
 	public static final String DATE_FORMAT_TYPE_13 = "HH:mm dd/MM yyyy";
 	public static final String DATE_FORMAT_TYPE_14 = "hh:mma EEEEE yyyy M W";
 	
-	public static final String DATE_FORMAT_TYPE_15 = "ha yyyy M dd";
+	public static final String DATE_FORMAT_TYPE_15 = "ha yyyy M dd"; 
 	public static final String DATE_FORMAT_TYPE_16 = "HH:mm yyyy M dd";
 	public static final String DATE_FORMAT_TYPE_17 = "hh:mma yyyy M dd";
 

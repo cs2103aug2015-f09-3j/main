@@ -11,6 +11,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import application.controller.parser.DateParser;
 import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
 import application.model.Command;
@@ -181,6 +182,8 @@ public class ParserTest {
 		assertEquals(cal.getTime(), date);
 
 	}
+	
+	
 
 	@Test
 	public void testParseDate5() throws ParseException {
@@ -239,6 +242,35 @@ public class ParserTest {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		assertEquals(cal.getTime(), date);
+
+	}
+	
+	@Test
+	public void testParseDate9() throws ParseException {
+		Date date = ParserFacade.getInstance().parseDate("next monday");
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		assertEquals(new Date(cal.getTime().getTime() + DateParser.ONE_WEEK_IN_MS), date);
+
+	}
+	
+	@Test
+	public void testParseDate10() throws ParseException {
+		Date date = ParserFacade.getInstance().parseDate("next tuesday 3:45pm");
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+
+		cal.set(Calendar.HOUR_OF_DAY, 15);
+		cal.set(Calendar.MINUTE, 45);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		assertEquals(new Date(cal.getTime().getTime() + DateParser.ONE_WEEK_IN_MS), date);
 
 	}
 
