@@ -61,6 +61,23 @@ public class ParserTest {
 		assertEquals(cmd, cmdCmp);
 
 	}
+	
+	@Test
+	public void testSmartParseCommand1() throws InvalidCommandException{
+		
+		Command cmd = ParserFacade.getInstance().parseCommand(
+				"add buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm \\p high \\t personal \\sdate 15/1/2015 13:00pm");
+		ArrayList<Parameter> paras = new ArrayList<Parameter>();
+		paras.add(new Parameter(Parameter.START_DATE_ARGUMENT_TYPE, "15/1/2015 13:00pm"));
+		paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "13/2/2015 12:00pm"));
+		paras.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, "clementi ntuc"));
+		paras.add(new Parameter(Parameter.PRIORITY_ARGUMENT_TYPE, "high"));
+		paras.add(new Parameter(Parameter.TYPE_ARGUMENT_TYPE, "personal"));
+		Command cmdCmp = new Command(Command.ADD_COMMAND_TYPE, "buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm", paras);
+
+		assertEquals(cmd, cmdCmp);    
+		
+	}
 
 	//Boundary/Equivalence Testing, testing it now with zero parameter.
 	@Test

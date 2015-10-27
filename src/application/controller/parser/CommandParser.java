@@ -7,7 +7,6 @@ import application.model.Command;
 import application.model.Parameter;
 import application.model.Task;
 
-
 /**
  * This is a singleton class
  *
@@ -18,8 +17,7 @@ public class CommandParser {
 
 	private static CommandParser instance;
 
-
-	 static CommandParser getInstance() {
+	static CommandParser getInstance() {
 		if (instance == null) {
 			instance = new CommandParser();
 		}
@@ -54,6 +52,110 @@ public class CommandParser {
 			}
 		}
 
+		indexOfFirstSpace = setIndexOfFirstSpaceForCommandWithoutParameter(command, indexOfFirstSpace);
+
+		if (indexOfFirstSpace == 0) {
+			return null;
+		}
+
+		cmd = command.substring(0, indexOfFirstSpace);
+		int cmdType = mapCommandType(cmd);
+
+		if (cmdType == -1) {
+			throw new InvalidCommandException(command);
+		}
+
+		performSmartParsing(command, parameters);
+		text = extractTextAndPerformParameterParsing(command, text, parameters, indexOfFirstSpace,
+				indexOfFirstInvertedSlash);
+
+		return new Command(cmdType, text.trim(), parameters);
+	}
+
+	/**
+	 * @param command
+	 * @param text
+	 * @param parameters
+	 * @param indexOfFirstSpace
+	 * @param indexOfFirstInvertedSlash
+	 * @return
+	 */
+	private String extractTextAndPerformParameterParsing(String command, String text, ArrayList<Parameter> parameters,
+			int indexOfFirstSpace, int indexOfFirstInvertedSlash) {
+		if (indexOfFirstSpace < command.length()) {
+			if (isValidCommandWithParameter(indexOfFirstSpace, indexOfFirstInvertedSlash)) {
+				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
+				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
+				String[] parameterArr = parameterStr.split(" ");
+				extractParameter(parameters, parameterArr);
+			} else {
+
+				text = command.substring(indexOfFirstSpace + 1, command.length());
+			}
+		}
+		return text;
+	}
+
+	/**
+	 * @param command
+	 * @param parameters
+	 */
+	private void performSmartParsing(String command, ArrayList<Parameter> parameters) {
+		if (command.toUpperCase().contains(" AT ") || command.contains("@")) {
+
+			// Find if at or @ appear first
+			int indexAt = command.toUpperCase().indexOf("AT");
+			int indexAnd = command.lastIndexOf("@");
+
+			if (((indexAt != -1) && (indexAnd != -1)) && (indexAt < indexAnd)) {
+
+				String[] strArr = command.split("(?i)at");
+				// use the first at, which the content is at [1]
+				// try to find @ if there is any
+				String[] strArr2;
+				if (strArr.length > 1) {
+					strArr2 = strArr[1].split(" @ | @|@ ");
+					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr2[0].trim()));
+				} else {
+					strArr2 = strArr[0].split(" @ | @|@ ");
+				}
+				String[] strArr3;
+				// task location is at strArr2[0], time is at strArr2[1]
+
+				if (strArr2.length > 1) {
+					strArr3 = strArr2[1].split("\\\\");
+					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr3[0].trim()));
+				}
+			} else {
+				// @ appear first then at
+				String[] strArr = command.split(" @ | @|@ ");
+				// use the first at, which the content is at [1]
+				// try to find @ if there is any
+				String[] strArr2;
+				if (strArr.length > 1) {
+					strArr2 = strArr[1].split("(?i)at");
+					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
+				} else {
+					strArr2 = strArr[0].split("(?i)at");
+				}
+				String[] strArr3; 
+				// task location is at strArr2[0], time is at strArr2[1]
+
+				if (strArr2.length > 1) {
+					strArr3 = strArr2[1].split("\\\\");
+					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr3[0].trim()));
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * @param command
+	 * @param indexOfFirstSpace
+	 * @return
+	 */
+	private int setIndexOfFirstSpaceForCommandWithoutParameter(String command, int indexOfFirstSpace) {
 		// check if is a list command with no parameter. e.g list
 		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
@@ -74,30 +176,7 @@ public class CommandParser {
 		if (isCommandType(Command.UNDO_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
 		}
-		
-		if (indexOfFirstSpace == 0) {
-			return null;
-		}
-
-		cmd = command.substring(0, indexOfFirstSpace);
-		int cmdType = mapCommandType(cmd);
-
-		if (cmdType == -1) {
-			throw new InvalidCommandException(command);
-		}
-
-		if (indexOfFirstSpace < command.length()) {
-			if (isValidCommandWithParameter(indexOfFirstSpace, indexOfFirstInvertedSlash)) {
-				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
-				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
-				String[] parameterArr = parameterStr.split(" ");
-				extractParameter(parameters, parameterArr);
-			} else {
-
-				text = command.substring(indexOfFirstSpace + 1, command.length());
-			}
-		}
-		return new Command(cmdType, text.trim(), parameters);
+		return indexOfFirstSpace;
 	}
 
 	public Task convertAddCommandtoTask(Command cmd) {
@@ -107,7 +186,6 @@ public class CommandParser {
 		Task task = new Task(cmd.getTextContent());
 
 		ArrayList<Parameter> lists = cmd.getParameter();
-
 
 		for (Parameter para : lists) {
 			if (para.getParaType() == Parameter.START_DATE_ARGUMENT_TYPE) {
@@ -130,7 +208,6 @@ public class CommandParser {
 		return task;
 
 	}
-
 
 	/**
 	 * @param indexOfFirstSpace
@@ -176,7 +253,6 @@ public class CommandParser {
 			}
 		}
 	}
-
 
 	private Integer mapCommandType(String cmd) {
 
@@ -243,7 +319,5 @@ public class CommandParser {
 		}
 
 	}
-
-
 
 }

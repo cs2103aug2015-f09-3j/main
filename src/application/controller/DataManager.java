@@ -314,7 +314,7 @@ public class DataManager {
 		ArrayList<String> taskStrings = new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
 			taskStrings.add(list.get(i).getTextContent());
-		}
+		} 
 		return taskStrings;
 	}
 

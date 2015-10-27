@@ -45,7 +45,7 @@ public class UIController implements HotkeyListener{
 		JIntellitype.getInstance().addHotKeyListener(this);
 	}
 	
-	public void setMainApp(Main app){ 
+	public void setMainApp(Main app){  
 		this.mainApp = app;
 		
 		
@@ -67,7 +67,7 @@ public class UIController implements HotkeyListener{
 
 	// Event Listener on MenuItem[#minimizeMenuItem].onAction
 	@FXML
-	public void onMinimize(ActionEvent event) { 
+	public void onMinimize(ActionEvent event) {  
 		//Minimize the program here.
 		System.out.println("hello");  
 		//getWindow().hide(); 
