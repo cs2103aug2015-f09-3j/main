@@ -6,14 +6,14 @@
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/gson lib/gson-2.4.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-api-client-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-api-services-calendar-v3-rev87-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-api-services-tasks-v1-rev38-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-http-client-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-http-client-jackson2-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-oauth-client-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-oauth-client-java6-1.19.0.jar"/>
-	<classpathentry kind="lib" path="D:/NUS/1516SEM1/CS2103/F09-3j/main/libs/google-oauth-client-jetty-1.19.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jintel"/>
+	<classpathentry kind="lib" path="libs/google-api-client-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-api-services-tasks-v1-rev38-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-http-client-jackson2-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-oauth-client-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-oauth-client-jetty-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-api-services-calendar-v3-rev87-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-http-client-1.19.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-oauth-client-java6-1.19.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
