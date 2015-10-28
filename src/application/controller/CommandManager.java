@@ -26,7 +26,8 @@ public class CommandManager {
 	private static final String SEARCH_RESULTS_NULL = "There are no tasks matching your search.";
 	private static final String TASK_ALREADY_EXISTS = "The exact same task already exists in system.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
-
+	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
+	
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
 		int cmdType = cmd.getType();
@@ -82,7 +83,7 @@ public class CommandManager {
 				if (deleteSuccess == DataManager.TASK_NOT_FOUND){
 					return EMPTY_FILE;
 				} else if (deleteSuccess == DataManager.MULTIPLE_MATCHES){
-						String multipleTasks = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
+						String multipleTasks = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
 				      	return MUL_MATCH_MSG + NEW_LINE + multipleTasks;
 			         	} else {
 			        		return DELETE_SUCCESS + cmd.getTextContent();
@@ -170,5 +171,9 @@ public class CommandManager {
 				flag = false;
 			}
 		}
+	}
+	
+	public static void setMultipleMatchList(ArrayList<Task> list){
+		multipleMatchList = list;
 	}
 }
