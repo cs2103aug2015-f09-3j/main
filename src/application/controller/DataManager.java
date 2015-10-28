@@ -63,7 +63,7 @@ public class DataManager {
 				if(!task.isDone()){
 					filteredList.add(task);
 				}
-			}			
+			}
 		}else{
 			ArrayList<Parameter> para = new ArrayList<Parameter>();
 			para = cmd.getParameter();
@@ -94,7 +94,7 @@ public class DataManager {
 									if(!filteredList.contains(task)){
 										filteredList.add(task);
 									}
-								}	
+								}
 							}
 						}
 						break;
@@ -127,7 +127,7 @@ public class DataManager {
 
 	public Integer removeTask(Command cmd) {
 		data.clearSearchList();
-		ArrayList<Task> searchList = searchTasksForMatches(cmd);	
+		ArrayList<Task> searchList = searchTasksForMatches(cmd);
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
@@ -314,7 +314,7 @@ public class DataManager {
 		ArrayList<String> taskStrings = new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
 			taskStrings.add(list.get(i).getTextContent());
-		} 
+		}
 		return taskStrings;
 	}
 
@@ -331,8 +331,8 @@ public class DataManager {
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
-	
-	
+
+
 	@SuppressWarnings("deprecation")
 	public ArrayList<Task> listToday(Command cmd) {
 		Date today = new Date();
@@ -364,7 +364,7 @@ public class DataManager {
 
 class Data{
 	private ArrayList<Task> taskList;
-	private ArrayList<Task> searchList;
+	private static ArrayList<Task> searchList;
 	private Stack<ArrayList<Task>> history;
 	private StorageInterface storageIO;
 	private Gson gson;
@@ -384,7 +384,7 @@ class Data{
 	public ArrayList<Task> getTaskList(){
 		return taskList;
 	}
-	public ArrayList<Task> getSearchList(){
+	public static ArrayList<Task> getSearchList(){
 		return searchList;
 	}
 
@@ -401,7 +401,7 @@ class Data{
 		updateStorage();
 	}
 	public void updateStorage(){
-		
+
 		addToHistory();
 		histCount ++;
 		limitHistory();
@@ -441,7 +441,7 @@ class Data{
 
 		return listTask;
 	}
-	
+
 
 	private void addToHistory(){
 		ArrayList<Task> list = new ArrayList<Task>();
@@ -453,14 +453,14 @@ class Data{
 			task.setDone(temp.isDone());
 			task.setPriority_argument(new String(temp.getPriority_argument()));
 			task.setType_argument(new String(temp.getType_argument()));
-			task.setPlace_argument(new String(temp.getPlace_argument()));	
+			task.setPlace_argument(new String(temp.getPlace_argument()));
 			task.setStart_date(temp.getStart_date());
 			task.setEnd_date(temp.getEnd_date());
 			list.add(task);
 		}
 		history.push(list);
 	}
-	
+
 	private void sort(){
 		Collections.sort(taskList);
 	}

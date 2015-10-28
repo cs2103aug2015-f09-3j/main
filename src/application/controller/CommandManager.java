@@ -11,9 +11,12 @@ import application.utils.TasksFormatter;
 
 public class CommandManager {
 
+	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
 	private static final String EMPTY_STRING = "";
+	private static final String NEW_LINE = "\n";
 	private static final String INVALID_COMMAND = "Invalid command";
 	private static final int TASK_VIEW_LIMIT = 10;
+	private static final int ZERO_INT = 0;
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
 	private static final String EMPTY_FILE = "There are no tasks to delete";
@@ -70,14 +73,21 @@ public class CommandManager {
 		    	return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
 
 		    case Command.DELETE_COMMAND_TYPE:
-		    	int deleteSuccess= DataManager.getInstance().removeTask(cmd);
-				if (deleteSuccess == -1){
+		    	int deleteSuccess = ZERO_INT;
+		    	if (isInteger(cmd)){
+		    		deleteSuccess = DataManager.getInstance().removeTask(Integer.parseInt(cmd.getTextContent()));
+		    	} else {
+			    	deleteSuccess= DataManager.getInstance().removeTask(cmd);
+		    	}
+				if (deleteSuccess == DataManager.TASK_NOT_FOUND){
 					return EMPTY_FILE;
-				} else if (deleteSuccess == -2){
-			      		   return EMPTY_STRING;
-		         	   } else {
-		        		   return DELETE_SUCCESS + cmd.getTextContent();
-		        	   }
+				} else if (deleteSuccess == DataManager.MULTIPLE_MATCHES){
+						String multipleTasks = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
+				      	return MUL_MATCH_MSG + NEW_LINE + multipleTasks;
+			         	} else {
+			        		return DELETE_SUCCESS + cmd.getTextContent();
+			        	  }
+
 
 		    case Command.UNDO_COMMAND_TYPE:
 		    	if(DataManager.undoPrevCommand() == DataManager.NO_PREV_COMMAND)
@@ -121,6 +131,19 @@ public class CommandManager {
 		    default: return "testing-lc";
 		}
 		//return "testing";
+	}
+
+
+	private static boolean isInteger(Command cmd) {
+		boolean isInt = false;
+		try {
+			Integer.parseInt(cmd.getTextContent());
+			isInt = true;
+		}
+		catch (NumberFormatException e) {
+
+		}
+		return isInt;
 	}
 
 
