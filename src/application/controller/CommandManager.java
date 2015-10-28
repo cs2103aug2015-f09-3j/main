@@ -12,7 +12,6 @@ import application.utils.TasksFormatter;
 public class CommandManager {
 
 	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
-	private static final String MUL_MATCH_INSTRUCTIONS = "Type the command followed by the number next to the task.";
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = "\n";
 	private static final String INVALID_COMMAND = "Invalid command";
@@ -20,16 +19,15 @@ public class CommandManager {
 	private static final int ZERO_INT = 0;
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
-	private static final String EMPTY_FILE_DELETE = "There are no tasks to delete.";
-	private static final String EMPTY_FILE_EDIT = "There are no tasks to edit.";
+	private static final String EMPTY_FILE = "There are no tasks to delete";
 	private static final String DELETE_SUCCESS = "Successfully deleted: ";
 	private static final String EDIT_SUCCESS = "Successfully edited: ";
 	private static final String SET_DONE_SUCCESS = "Done task: ";
 	private static final String SEARCH_RESULTS_NULL = "There are no tasks matching your search.";
 	private static final String TASK_ALREADY_EXISTS = "The exact same task already exists in system.";
-	private static final String EMPTY_FILE_DONE = "There are no tasks that match your keyword.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
-
+	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
+	
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
 		int cmdType = cmd.getType();
@@ -83,10 +81,10 @@ public class CommandManager {
 			    	deleteSuccess= DataManager.getInstance().removeTask(cmd);
 		    	}
 				if (deleteSuccess == DataManager.TASK_NOT_FOUND){
-					return EMPTY_FILE_DELETE;
+					return EMPTY_FILE;
 				} else if (deleteSuccess == DataManager.MULTIPLE_MATCHES){
-						String multipleTasksToRemove = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
-				      	return MUL_MATCH_MSG + NEW_LINE + MUL_MATCH_INSTRUCTIONS + NEW_LINE + multipleTasksToRemove;
+						String multipleTasks = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
+				      	return MUL_MATCH_MSG + NEW_LINE + multipleTasks;
 			         	} else {
 			        		return DELETE_SUCCESS + cmd.getTextContent();
 			        	  }
@@ -99,36 +97,19 @@ public class CommandManager {
 		    		return "previous command undone";
 
 		    case Command.EDIT_COMMAND_TYPE:
-		    	int editSuccess = ZERO_INT;
-		    	if (isInteger(cmd)){
-		    		editSuccess = DataManager.getInstance().editTask(Integer.parseInt(cmd.getTextContent()));
-		    	} else {
-		    		editSuccess = DataManager.getInstance().editTask(cmd);
-		    	}
-
-				if (editSuccess == DataManager.TASK_NOT_FOUND){
-					return EMPTY_FILE_EDIT;
-				} else if (editSuccess == DataManager.TASK_UPDATED){
-					return EDIT_SUCCESS + cmd.getTextContent();
-				} else if (editSuccess == DataManager.MULTIPLE_MATCHES){
-					String multipleTasksToEdit = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
-					return MUL_MATCH_MSG + NEW_LINE + MUL_MATCH_INSTRUCTIONS + NEW_LINE + multipleTasksToEdit;
+		    	int editSuccess = DataManager.getInstance().editTask(cmd);
+				if (editSuccess == -1){
+				    return EMPTY_FILE;
+				} else {
+		  			 return EDIT_SUCCESS + cmd.getTextContent();
 				}
 
 		    case Command.DONE_COMMAND_TYPE:
-		    	int setDoneSuccess = ZERO_INT;
-		    	if (isInteger(cmd)){
-		    		setDoneSuccess = DataManager.getInstance().setDoneToTask(Integer.parseInt(cmd.getTextContent()));
+		    	int setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
+		    	if (setDoneSuccess == -1){
+		    		return EMPTY_FILE;
 		    	} else {
-		    		setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
-		    	}
-		    	if (setDoneSuccess == DataManager.TASK_NOT_FOUND){
-		    		return EMPTY_FILE_DONE;
-		    	} else if (setDoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    		return SET_DONE_SUCCESS + cmd.getTextContent();
-		    	} else if (setDoneSuccess == DataManager.MULTIPLE_MATCHES){
-		    		String multipleTasksToSetDone = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
-		    		return MUL_MATCH_MSG + NEW_LINE + MUL_MATCH_INSTRUCTIONS + NEW_LINE + multipleTasksToSetDone;
 		    	}
 
 		    case Command.SEARCH_COMMAND_TYPE:
@@ -190,5 +171,9 @@ public class CommandManager {
 				flag = false;
 			}
 		}
+	}
+	
+	public static void setMultipleMatchList(ArrayList<Task> list){
+		multipleMatchList = list;
 	}
 }

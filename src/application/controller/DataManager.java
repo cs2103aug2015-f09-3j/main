@@ -199,13 +199,14 @@ public class DataManager {
 					return TASK_REMOVED;
 				}else{
 					data.saveToSearchList(searchList);
+					CommandManager.setMultipleMatchList(searchList);
 					return MULTIPLE_MATCHES;
 				}
 		}
 	}
 
 	public Integer removeTask(int lineNum){
-		data.removeFromData(data.getSearchList().get(lineNum));
+		data.removeFromData(data.getSearchList().get(lineNum-1));
 		return TASK_REMOVED;
 	}
 
@@ -310,13 +311,13 @@ public class DataManager {
 		return data.undo();
 	}
 
-	private ArrayList<String> tasksToStrings(ArrayList<Task> list){
+	/*private ArrayList<String> tasksToStrings(ArrayList<Task> list){
 		ArrayList<String> taskStrings = new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
 			taskStrings.add(list.get(i).getTextContent());
 		}
 		return taskStrings;
-	}
+	}*/
 
 	private ArrayList<Task> searchTasksForMatches(Command cmd) {
 		ArrayList<Task> searchList = new ArrayList<Task>();
@@ -364,7 +365,7 @@ public class DataManager {
 
 class Data{
 	private ArrayList<Task> taskList;
-	private static ArrayList<Task> searchList;
+	private  ArrayList<Task> searchList;
 	private Stack<ArrayList<Task>> history;
 	private StorageInterface storageIO;
 	private Gson gson;
@@ -384,7 +385,7 @@ class Data{
 	public ArrayList<Task> getTaskList(){
 		return taskList;
 	}
-	public static ArrayList<Task> getSearchList(){
+	public ArrayList<Task> getSearchList(){
 		return searchList;
 	}
 
