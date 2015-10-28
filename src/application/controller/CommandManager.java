@@ -116,11 +116,19 @@ public class CommandManager {
 				}
 
 		    case Command.DONE_COMMAND_TYPE:
-		    	int setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
-		    	if (setDoneSuccess == -1){
-		    		return EMPTY_FILE_DONE;
+		    	int setDoneSuccess = ZERO_INT;
+		    	if (isInteger(cmd)){
+		    		setDoneSuccess = DataManager.getInstance().setDoneToTask(Integer.parseInt(cmd.getTextContent()));
 		    	} else {
+		    		setDoneSuccess = DataManager.getInstance().setDoneToTask(cmd);
+		    	}
+		    	if (setDoneSuccess == DataManager.TASK_NOT_FOUND){
+		    		return EMPTY_FILE_DONE;
+		    	} else if (setDoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    		return SET_DONE_SUCCESS + cmd.getTextContent();
+		    	} else if (setDoneSuccess == DataManager.MULTIPLE_MATCHES){
+		    		String multipleTasksToSetDone = TasksFormatter.format(Data.getSearchList(), TasksFormatter.DETAIL_VIEW_TYPE);
+		    		return MUL_MATCH_MSG + NEW_LINE + MUL_MATCH_INSTRUCTIONS + NEW_LINE + multipleTasksToSetDone;
 		    	}
 
 		    case Command.SEARCH_COMMAND_TYPE:
