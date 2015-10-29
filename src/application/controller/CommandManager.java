@@ -26,6 +26,8 @@ public class CommandManager {
 	private static final String SEARCH_RESULTS_NULL = "There are no tasks matching your search.";
 	private static final String TASK_ALREADY_EXISTS = "The exact same task already exists in system.";
 	private static final String EMPTY_FILE_EDIT = "There are no tasks to edit";
+	private static final String WRONG_LINE_NUM	= "Wrong line number entered.";
+	
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
 
@@ -87,9 +89,11 @@ public class CommandManager {
 					return EMPTY_FILE;
 				} else if (deleteSuccess == DataManager.MULTIPLE_MATCHES){
 						String multipleTasks = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
-				      	return MUL_MATCH_MSG + NEW_LINE + multipleTasks;
-			         	} else {
+				      	return MUL_MATCH_MSG + NEW_LINE + NEW_LINE + multipleTasks;
+			         	} else if(deleteSuccess == DataManager.TASK_REMOVED){
 			        		return DELETE_SUCCESS + cmd.getTextContent();
+			        	  }else{
+			        		  return WRONG_LINE_NUM;
 			        	  }
 
 
@@ -111,8 +115,10 @@ public class CommandManager {
 				} else if (editSuccess == DataManager.MULTIPLE_MATCHES){
 					String multipleTasksToEdit = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
 				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToEdit;
-			    } else {
+			    } else if (editSuccess == DataManager.TASK_UPDATED){
 			        return EDIT_SUCCESS + cmd.getTextContent();
+			    }else{
+			    	return WRONG_LINE_NUM;
 			    }
 
 		    case Command.DONE_COMMAND_TYPE:
@@ -127,8 +133,10 @@ public class CommandManager {
 				} else if (setDoneSuccess == DataManager.MULTIPLE_MATCHES){
 					String multipleTasksToSetDone = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
 				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetDone;
-			    } else {
+			    } else if(setDoneSuccess == DataManager.TASK_SET_TO_DONE){
 			        return SET_DONE_SUCCESS + cmd.getTextContent();
+			    }else{
+			    	return WRONG_LINE_NUM;
 			    }
 
 		    case Command.SEARCH_COMMAND_TYPE:

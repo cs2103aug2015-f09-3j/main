@@ -19,7 +19,7 @@ import application.model.Task;
  */
 
 public class DataManager {
-
+	public static final Integer WRONG_LINE_NUM = -5;
 	public static final Integer NO_PREV_COMMAND = -4;
 	public static final Integer TASK_ALREADY_EXISTS = -3;
 	public static final Integer MULTIPLE_MATCHES = -2;
@@ -149,6 +149,9 @@ public class DataManager {
 	}
 
 	public Integer removeTask(int lineNum){
+		if(lineNum > data.getSearchList().size()){
+			return WRONG_LINE_NUM;
+		}
 		data.removeFromData(data.getSearchList().get(lineNum-1));
 		return TASK_REMOVED;
 	}
@@ -193,6 +196,9 @@ public class DataManager {
 	}
 
 	public Integer editTask(int lineNum){
+		if(lineNum > data.getSearchList().size()){
+			return WRONG_LINE_NUM;
+		}
 		ArrayList<Task> taskList = data.getTaskList();
 		ArrayList<Task> searchList = data.getSearchList();
 		for(Parameter para:	paraList){
@@ -240,6 +246,9 @@ public class DataManager {
 	}
 
 	public Integer setDoneToTask(int lineNum){
+		if(lineNum > data.getSearchList().size()){
+			return WRONG_LINE_NUM;
+		}
 		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum-1));
 		data.getTaskList().get(index).setDone(true);
 		data.updateStorage();
