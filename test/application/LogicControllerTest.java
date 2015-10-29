@@ -12,7 +12,9 @@ import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
 import application.model.LocalStorage;
 import application.model.Task;
+import application.model.Command;
 import application.utils.TasksFormatter;
+
 
 public class LogicControllerTest {
 	LocalStorage file;
