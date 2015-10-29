@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 
 public class LocalStorage {
 
+	public static final Integer WRONG_DIRECTORY = -1;
+	public static final Integer CHANGE_PATH_SUCCESS = 1;
+	
 	private static Logger logger = Logger.getLogger("LocalStorage");
 
 	private static File file;
@@ -34,14 +37,14 @@ public class LocalStorage {
 		try{
 			newFile.createNewFile();
 		}catch(IOException ex){
-			return -1;
+			return WRONG_DIRECTORY;
 		}
 		clear(newFile);
 		saveToFile(readFile(),newFile);
 		fileName = newPath;
 		file.delete();
 		file = newFile;
-		return 1;		
+		return CHANGE_PATH_SUCCESS;		
 	}
 	
 	public LocalStorage(String path) {

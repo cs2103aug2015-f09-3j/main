@@ -468,16 +468,39 @@ class StorageInterface{
 
 	public Integer changeFilePath(String newPath){
 		BufferedWriter wr = null;
+		BufferedReader br = null;
+		String oldPath = null;
 		try{
+			br = new BufferedReader(new FileReader(filePath));
+			oldPath = br.readLine();
 			wr = new BufferedWriter(new FileWriter(filePath,false));
 			wr.close();
 			wr = new BufferedWriter(new FileWriter(filePath,true));
 			wr.append(newPath);
+			br.close();
 			wr.close();
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}
-		return file.changePath(newPath);
+		int success = file.changePath(newPath);
+		if(success == LocalStorage.WRONG_DIRECTORY){
+			try{
+				if(oldPath == null){
+					oldPath = DEFAULT_FILE;
+				}
+				wr = new BufferedWriter(new FileWriter(filePath,false));
+				wr.close();
+				wr = new BufferedWriter(new FileWriter(filePath,true));
+				wr.append(oldPath);
+				wr.close();
+				return LocalStorage.WRONG_DIRECTORY;
+			}catch(IOException ex){
+				ex.printStackTrace();
+				return LocalStorage.WRONG_DIRECTORY;
+			}
+		}else{
+			return LocalStorage.CHANGE_PATH_SUCCESS;
+		}
 	}
 	
 	private String determineFilePath(){

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import application.controller.parser.ParserFacade;
 import application.model.Command;
+import application.model.LocalStorage;
 import application.model.Task;
 import application.utils.HelpCommands;
 import application.utils.TasksFormatter;
@@ -27,7 +28,7 @@ public class CommandManager {
 	private static final String TASK_ALREADY_EXISTS = "The exact same task already exists in system.";
 	private static final String EMPTY_FILE_EDIT = "There are no tasks to edit";
 	private static final String WRONG_LINE_NUM	= "Wrong line number entered.";
-	
+	private static final String WRONG_DIRECTORY = "Wrong directory entered.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
 
@@ -75,9 +76,13 @@ public class CommandManager {
 		    	} */
 
 		    case Command.CHANGE_STORAGE_COMMAND_TYPE:
-		    	DataManager.getInstance().changeStorageLocation(cmd);
-		    	return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
-
+		    	int changePathSuccess = ZERO_INT; 
+		    	changePathSuccess = DataManager.getInstance().changeStorageLocation(cmd);
+		    	if (changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS){
+		    		return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
+		    	}else{
+		    		return WRONG_DIRECTORY;
+		    	}
 		    case Command.DELETE_COMMAND_TYPE:
 		    	int deleteSuccess = ZERO_INT;
 		    	if (isInteger(cmd)){
