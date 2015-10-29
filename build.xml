@@ -12,7 +12,13 @@
 	<property name="antlib" location="libs/ant-javafx.jar" />
 	<property name="junit" location="libs/junit.jar" />
 
-
+	<path id="classpath.src">
+			<pathelement location="${antlib}" />
+			<pathelement location="libs/gson lib/gson-2.4.jar" />
+			  <fileset dir="libs/">
+					    <include name="**/*.jar"/>
+				</fileset>
+    </path>
 
 	<path id="classpath.test">
 		<pathelement location="${junit}" />
@@ -35,10 +41,7 @@
 
 	<target name="compile" depends="init" description="compile">
 		<javac srcdir="${src}" destdir="${build}/main">
-			<classpath>
-				<pathelement location="${antlib}" />
-				<pathelement location="libs/gson lib/gson-2.4.jar" />
-			</classpath>
+			<classpath refid="classpath.src" />
 		</javac>
 
 		
@@ -52,6 +55,7 @@
 				<pathelement location="${build}/main" />
 				<pathelement location="${antlib}" />
 				<pathelement location="libs/gson lib/gson-2.4.jar" />
+				<pathelement location="libs/" />
 				<pathelement location="${junit}" />
 			</classpath>
 		</javac>
