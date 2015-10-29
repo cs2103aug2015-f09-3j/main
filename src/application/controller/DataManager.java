@@ -31,12 +31,12 @@ public class DataManager {
 	public static final Integer MAX_HISTORY = 10;
 
 	private static Data data;
-	private ArrayList<Parameter> para;
+	private ArrayList<Parameter> paraList;
 	public static DataManager instance = null;
 
 	private DataManager() {
 		data = new Data();
-		para = null;
+		paraList = null;
 	}
 
 	public static DataManager getInstance() {
@@ -48,6 +48,7 @@ public class DataManager {
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
+		data.clearSearchList();
 		if(data.getTaskList().contains(taskToAdd)){
 			return TASK_ALREADY_EXISTS;
 		}else{
@@ -57,6 +58,7 @@ public class DataManager {
 	}
 
 	public ArrayList<Task> listAll(Command cmd) {
+		data.clearSearchList();
 		ArrayList<Task> filteredList = new ArrayList<Task>();
 		if (cmd.getParameter().size() == 0){
 			for(Task task: data.getTaskList()){
@@ -214,37 +216,37 @@ public class DataManager {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchTasksForMatches(cmd);
 		data.saveToSearchList(searchList);
-		para = cmd.getParameter();
+		paraList = cmd.getParameter();
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
 			case 1:
 				ArrayList<Task> taskList = data.getTaskList();
-				for(int i=0; i<para.size(); i++){
-					switch(para.get(i).getParaType()){
+				for(Parameter para:	paraList){
+					switch(para.getParaType()){
 						case Parameter.PRIORITY_ARGUMENT_TYPE:
-							taskList.get(taskList.indexOf(searchList.get(0))).setPriority_argument(para.get(i).getParaArg());
+							taskList.get(taskList.indexOf(searchList.get(0))).setPriority_argument(para.getParaArg());
 							break;
 						case Parameter.TYPE_ARGUMENT_TYPE:
-							taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.get(i).getParaArg());
+							taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.getParaArg());
 							break;
 						case Parameter.START_DATE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(
-									ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+									ParserFacade.getInstance().parseDate(para.getParaArg()));
 							break;
 						case Parameter.END_DATE_ARGUMENT_TYPE:
 							taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(
-									ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+									ParserFacade.getInstance().parseDate(para.getParaArg()));
 							break;
 						default:
-							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.get(i).getParaArg());
+							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.getParaArg());
 							break;
 					}
 				}
 				data.updateStorage();
 				return TASK_UPDATED;
 			default:
-				//LogicController.getInstance().chooseLine(searchList);
+				CommandManager.setMultipleMatchList(searchList);
 				return MULTIPLE_MATCHES;
 		}
 	}
@@ -252,24 +254,24 @@ public class DataManager {
 	public Integer editTask(int lineNum){
 		ArrayList<Task> taskList = data.getTaskList();
 		ArrayList<Task> searchList = data.getSearchList();
-		for(int i=0; i<para.size(); i++){
-			switch(para.get(i).getParaType()){
+		for(Parameter para:	paraList){
+			switch(para.getParaType()){
 				case Parameter.PRIORITY_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(lineNum))).setPriority_argument(para.get(i).getParaArg());
+					taskList.get(taskList.indexOf(searchList.get(lineNum-1))).setPriority_argument(para.getParaArg());
 					break;
 				case Parameter.TYPE_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(lineNum))).setType_argument(para.get(i).getParaArg());
+					taskList.get(taskList.indexOf(searchList.get(lineNum-1))).setType_argument(para.getParaArg());
 					break;
 				case Parameter.START_DATE_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(lineNum))).setStart_date(
-							ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+					taskList.get(taskList.indexOf(searchList.get(lineNum-1))).setStart_date(
+							ParserFacade.getInstance().parseDate(para.getParaArg()));
 					break;
 				case Parameter.END_DATE_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(lineNum))).setEnd_date(
-							ParserFacade.getInstance().parseDate(para.get(i).getParaArg()));
+					taskList.get(taskList.indexOf(searchList.get(lineNum-1))).setEnd_date(
+							ParserFacade.getInstance().parseDate(para.getParaArg()));
 					break;
 				default:
-					taskList.get(taskList.indexOf(searchList.get(lineNum))).setPlace_argument(para.get(i).getParaArg());
+					taskList.get(taskList.indexOf(searchList.get(lineNum-1))).setPlace_argument(para.getParaArg());
 					break;
 			}
 		}
@@ -291,23 +293,25 @@ public class DataManager {
 				data.updateStorage();
 				return TASK_SET_TO_DONE;
 			default:
-				//LogicController.getInstance().chooseLine(searchList);
+				CommandManager.setMultipleMatchList(searchList);
 				return MULTIPLE_MATCHES;
 		}
 	}
 
 	public Integer setDoneToTask(int lineNum){
-		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum));
+		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum-1));
 		data.getTaskList().get(index).setDone(true);
 		data.updateStorage();
 		return TASK_SET_TO_DONE;
 	}
 
 	public Integer changeStorageLocation(Command cmd) {
+		data.clearSearchList();
 		return data.changeFileLocation(cmd.getTextContent());
 	}
 
 	public static Integer undoPrevCommand(){
+		data.clearSearchList();
 		return data.undo();
 	}
 
