@@ -24,7 +24,7 @@ public class LogicControllerTest {
 		//file = new LocalStorage("LCTest.txt");
 		DataManager.getInstance().changeStorageLocation(new Command(0, "LCTest.txt", null));
 		testList1();
-		testLimit();
+		//testLimit();
 		testAdd1();
 		testAdd2();
 		testDelete1();
