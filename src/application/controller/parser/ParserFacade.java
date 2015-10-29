@@ -12,8 +12,8 @@ public class ParserFacade {
 
 	// From 1 to 99, after and on yyyy are all virtual, user does not type them.
 	// It is used to faciliate parsing.
-	public static final String DATE_FORMAT_TYPE_1 = "dd/MM ha yyyy";
-	public static final String DATE_FORMAT_TYPE_2 = "EEEEE ha yyyy M W";
+	public static final String DATE_FORMAT_TYPE_1 = "dd/MM hha yyyy";
+	public static final String DATE_FORMAT_TYPE_2 = "EEEEE hha yyyy M W";
 	public static final String DATE_FORMAT_TYPE_3 = "dd MMM yyyy";
 	public static final String DATE_FORMAT_TYPE_4 = "EEEEE yyyy M W";
 	public static final String DATE_FORMAT_TYPE_5 = "dd/MM yyyy";
@@ -23,14 +23,14 @@ public class ParserFacade {
 	
 	
 	
-	public static final String DATE_FORMAT_TYPE_9 = "ha dd/MM yyyy";
-	public static final String DATE_FORMAT_TYPE_10 = "ha EEEEE yyyy M W";
+	public static final String DATE_FORMAT_TYPE_9 = "hha dd/MM yyyy";
+	public static final String DATE_FORMAT_TYPE_10 = "hha EEEEE yyyy M W";
 	public static final String DATE_FORMAT_TYPE_11 = "yyyy EEEEE M W";
 	public static final String DATE_FORMAT_TYPE_12 = "hh:mma dd/MM yyyy";
 	public static final String DATE_FORMAT_TYPE_13 = "HH:mm dd/MM yyyy";
 	public static final String DATE_FORMAT_TYPE_14 = "hh:mma EEEEE yyyy M W";
 	
-	public static final String DATE_FORMAT_TYPE_15 = "ha yyyy M dd"; 
+	public static final String DATE_FORMAT_TYPE_15 = "hha yyyy M dd"; 
 	public static final String DATE_FORMAT_TYPE_16 = "HH:mm yyyy M dd";
 	public static final String DATE_FORMAT_TYPE_17 = "hh:mma yyyy M dd";
 
@@ -39,17 +39,17 @@ public class ParserFacade {
 	public static final String DATE_FORMAT_TYPE_101 = "dd/MM/yy hh:mma";
 	public static final String DATE_FORMAT_TYPE_102 = "dd.MM.yy HH:mm";
 	public static final String DATE_FORMAT_TYPE_103 = "dd.MM.yy hh:mma";
-	public static final String DATE_FORMAT_TYPE_104 = "dd/MM/yy ha";
-	public static final String DATE_FORMAT_TYPE_105 = "dd.MM.yy ha";
+	public static final String DATE_FORMAT_TYPE_104 = "dd/MM/yy hha";
+	public static final String DATE_FORMAT_TYPE_105 = "dd.MM.yy hha";
 	
 	public static final String DATE_FORMAT_TYPE_106 = "HH:mm dd/MM/yy";
 	public static final String DATE_FORMAT_TYPE_107 = "hh:mma dd/MM/yy";
 	public static final String DATE_FORMAT_TYPE_108 = "HH:mm dd.MM.yy";
 	public static final String DATE_FORMAT_TYPE_109 = "hh:mma dd.MM.yy";
-	public static final String DATE_FORMAT_TYPE_110 = "ha dd/MM/yy";
-	public static final String DATE_FORMAT_TYPE_111 = "ha dd.MM.yy";
+	public static final String DATE_FORMAT_TYPE_110 = "hha dd/MM/yy";
+	public static final String DATE_FORMAT_TYPE_111 = "hha dd.MM.yy";
 
-	private ParserFacade() {
+	private ParserFacade() { 
 
 	}
 
