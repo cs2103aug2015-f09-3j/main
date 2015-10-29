@@ -20,6 +20,7 @@ public class LogicControllerTest {
 	@Test
 	public void testAll() throws InvalidCommandException{
 		//file = new LocalStorage("LCTest.txt");
+		DataManager.changeStorageLocation(new Command(0, "LCTest.txt", null));
 		testList1();
 		testLimit();
 		testAdd1();
