@@ -45,8 +45,10 @@ public class CommandManager {
 		    	history.clear();
 		    	ArrayList<Task> allTasks = DataManager.getInstance().listAll(cmd);
 		    	if (cmd.getTextContent() != EMPTY_STRING){
-		    		int limit = Integer.parseInt(cmd.getTextContent());
-		    		limitNumberOfTasks(allTasks, limit);
+		    		if (isInteger(cmd)){
+			    		int limit = Integer.parseInt(cmd.getTextContent());
+			    		limitNumberOfTasks(allTasks, limit);
+		    		}
 		    	}
 		    	String msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
 		    	if (cmd.getTextContent() != EMPTY_STRING){
