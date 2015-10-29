@@ -30,6 +30,7 @@ public class CommandManager {
 	private static final String WRONG_LINE_NUM	= "Wrong line number entered.";
 	private static final String WRONG_DIRECTORY = "Wrong directory entered.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
+	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
 
 	public static String executeCommand(Command cmd){
@@ -76,7 +77,7 @@ public class CommandManager {
 		    	} */
 
 		    case Command.CHANGE_STORAGE_COMMAND_TYPE:
-		    	int changePathSuccess = ZERO_INT; 
+		    	int changePathSuccess = ZERO_INT;
 		    	changePathSuccess = DataManager.getInstance().changeStorageLocation(cmd);
 		    	if (changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS){
 		    		return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
@@ -85,7 +86,7 @@ public class CommandManager {
 		    	}
 		    case Command.DELETE_COMMAND_TYPE:
 		    	int deleteSuccess = ZERO_INT;
-		    	if (isInteger(cmd)){
+		    	if (isInteger(cmd) && prevCommandType == Command.DELETE_COMMAND_TYPE){
 		    		deleteSuccess = DataManager.getInstance().removeTask(Integer.parseInt(cmd.getTextContent()));
 		    	} else {
 			    	deleteSuccess= DataManager.getInstance().removeTask(cmd);
@@ -94,6 +95,7 @@ public class CommandManager {
 					return EMPTY_FILE;
 				} else if (deleteSuccess == DataManager.MULTIPLE_MATCHES){
 						String multipleTasks = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
+				    	prevCommandType = Command.DELETE_COMMAND_TYPE;
 				      	return MUL_MATCH_MSG + NEW_LINE + NEW_LINE + multipleTasks;
 			         	} else if(deleteSuccess == DataManager.TASK_REMOVED){
 			        		return DELETE_SUCCESS + cmd.getTextContent();
