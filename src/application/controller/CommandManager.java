@@ -29,6 +29,7 @@ public class CommandManager {
 	private static final String EMPTY_FILE_EDIT = "There are no tasks to edit";
 	private static final String WRONG_LINE_NUM	= "Wrong line number entered.";
 	private static final String WRONG_DIRECTORY = "Wrong directory entered.";
+	private static final String EMPTY_FILE_DONE = "There are no undone tasks that match your keyword.";
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
@@ -108,11 +109,11 @@ public class CommandManager {
 		    	if(DataManager.undoPrevCommand() == DataManager.NO_PREV_COMMAND)
 		    		return "no previous command";
 		    	else
-		    		return "previous command undone";
+		    		return "Previous command undone";
 
 		    case Command.EDIT_COMMAND_TYPE:
 		    	int editSuccess = ZERO_INT;
-		    	if (isInteger(cmd)){
+		    	if (isInteger(cmd) && prevCommandType == Command.EDIT_COMMAND_TYPE){
 		    		editSuccess = DataManager.getInstance().editTask(Integer.parseInt(cmd.getTextContent()));
 		    	} else {
 			    	editSuccess= DataManager.getInstance().editTask(cmd);
@@ -121,6 +122,7 @@ public class CommandManager {
 					return EMPTY_FILE_EDIT;
 				} else if (editSuccess == DataManager.MULTIPLE_MATCHES){
 					String multipleTasksToEdit = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
+					prevCommandType = Command.EDIT_COMMAND_TYPE;
 				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToEdit;
 			    } else if (editSuccess == DataManager.TASK_UPDATED){
 			        return EDIT_SUCCESS + cmd.getTextContent();
@@ -136,7 +138,7 @@ public class CommandManager {
 			    	setDoneSuccess= DataManager.getInstance().setDoneToTask(cmd);
 		    	}
 				if (setDoneSuccess == DataManager.TASK_NOT_FOUND){
-					return EMPTY_FILE_EDIT;
+					return EMPTY_FILE_DONE;
 				} else if (setDoneSuccess == DataManager.MULTIPLE_MATCHES){
 					String multipleTasksToSetDone = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
 				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetDone;
