@@ -34,10 +34,13 @@ public class LogicController {
 
 
 		public static String onCommandProcess(String command) throws InvalidCommandException{
-
-			Command cmd = ParserFacade.getInstance().parseCommand(command);
-
-			return CommandManager.executeCommand(cmd);
+			StringBuilder sb = new StringBuilder();
+			ArrayList<Command> cmds = ParserFacade.getInstance().parseCommand(command);
+			for(Command cmd : cmds){
+				sb.append(CommandManager.executeCommand(cmd) + "\n");
+			}
+			return sb.toString();  
+			
 
 		}
 

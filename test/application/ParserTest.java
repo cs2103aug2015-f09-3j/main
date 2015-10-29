@@ -26,7 +26,7 @@ public class ParserTest {
 	public void testParseCommand1() throws InvalidCommandException {
 
 		Command cmd = ParserFacade.getInstance().parseCommand(
-				"add buy milk for mom \\p high \\t personal \\sdate 15/1/2015 13:00pm \\edate 13/2/2015 12:00pm \\place clementi ntuc");
+				"add buy milk for mom \\p high \\t personal \\sdate 15/1/2015 13:00pm \\edate 13/2/2015 12:00pm \\place clementi ntuc").get(0);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
 		paras.add(new Parameter(Parameter.START_DATE_ARGUMENT_TYPE, "15/1/2015 13:00pm"));
 		paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "13/2/2015 12:00pm"));
@@ -42,7 +42,7 @@ public class ParserTest {
 	@Test
 	public void testParseCommand2() throws InvalidCommandException {
 
-		Command cmd = ParserFacade.getInstance().parseCommand("list");
+		Command cmd = ParserFacade.getInstance().parseCommand("list").get(0);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
 
 		Command cmdCmp = new Command(Command.LIST_COMMAND_TYPE, "", paras);
@@ -54,7 +54,7 @@ public class ParserTest {
 	@Test
 	public void testParseCommand3() throws InvalidCommandException { 
 
-		Command cmd = ParserFacade.getInstance().parseCommand("edit lala world");
+		Command cmd = ParserFacade.getInstance().parseCommand("edit lala world").get(0);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
 
 		Command cmdCmp = new Command(Command.EDIT_COMMAND_TYPE, "lala world", paras);
@@ -67,7 +67,7 @@ public class ParserTest {
 	public void testSmartParseCommand1() throws InvalidCommandException{
 		
 		Command cmd = ParserFacade.getInstance().parseCommand(
-				"add buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm \\p high \\t personal \\sdate 15/1/2015 13:00pm");
+				"add buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm \\p high \\t personal \\sdate 15/1/2015 13:00pm").get(0);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
 		paras.add(new Parameter(Parameter.START_DATE_ARGUMENT_TYPE, "15/1/2015 13:00pm"));
 		paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "13/2/2015 12:00pm"));

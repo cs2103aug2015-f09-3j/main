@@ -29,11 +29,13 @@ public class CommandParser {
 
 	}
 
-	public Command parseCommand(String command) throws InvalidCommandException {
+	public ArrayList<Command> parseCommand(String command) throws InvalidCommandException {
 		// Need to parse add, see all, change, delete, undo, edit, done,
 		// prioritise command
 
-		String cmd, text = "";
+		ArrayList<Command> cmds = new ArrayList<Command>();
+		String cmd;
+		String[] text;
 
 		ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
@@ -64,12 +66,25 @@ public class CommandParser {
 		if (cmdType == -1) {
 			throw new InvalidCommandException(command);
 		}
-
-		performSmartParsing(command, parameters);
-		text = extractTextAndPerformParameterParsing(command, text, parameters, indexOfFirstSpace,
+		
+		
+		
+		if(!command.contains("\\|")){
+			performSmartParsing(command, parameters);
+		}
+		text = extractTextAndPerformParameterParsing(command, parameters, indexOfFirstSpace,
 				indexOfFirstInvertedSlash);
-
-		return new Command(cmdType, text.trim(), parameters);
+		if(text != null){
+		for(String textEntry : text){
+			cmds.add(new Command(cmdType, textEntry.trim(), parameters));
+			
+		}
+		}
+		else{
+			cmds.add(new Command(cmdType, "", parameters));
+		}
+		
+		return cmds;
 	}
 
 	/**
@@ -80,11 +95,14 @@ public class CommandParser {
 	 * @param indexOfFirstInvertedSlash
 	 * @return
 	 */
-	private String extractTextAndPerformParameterParsing(String command, String text, ArrayList<Parameter> parameters,
+	private String[] extractTextAndPerformParameterParsing(String command, ArrayList<Parameter> parameters,
 			int indexOfFirstSpace, int indexOfFirstInvertedSlash) {
+		String splitedText[] = null;
+		String text;
 		if (indexOfFirstSpace < command.length()) {
 			if (isValidCommandWithParameter(indexOfFirstSpace, indexOfFirstInvertedSlash)) {
 				text = command.substring(indexOfFirstSpace + 1, indexOfFirstInvertedSlash);
+
 				String parameterStr = command.substring(indexOfFirstInvertedSlash, command.length());
 				String[] parameterArr = parameterStr.split(" ");
 				extractParameter(parameters, parameterArr);
@@ -92,8 +110,10 @@ public class CommandParser {
 
 				text = command.substring(indexOfFirstSpace + 1, command.length());
 			}
+			//For multiple add and done
+			splitedText = text.split("\\|"); 
 		}
-		return text;
+		return splitedText;
 	}
 
 	/**
@@ -159,7 +179,7 @@ public class CommandParser {
 					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 					
 				} else { 
-					strArr2 = strArr[0].split("(?i)at");
+					strArr2 = strArr[0].split("(?i)at"); 
 				}
 				String[] strArr3; 
 				// task location is at strArr2[0], time is at strArr2[1]

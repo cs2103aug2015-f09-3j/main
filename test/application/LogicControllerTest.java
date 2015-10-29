@@ -33,7 +33,7 @@ public class LogicControllerTest {
 		LogicController.onCommandProcess("add llao llao with tenyee");
 		String cmd = "list";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = TasksFormatter.format(DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd)), TasksFormatter.DETAIL_VIEW_TYPE);
+		String expectedResult = TasksFormatter.format(DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd).get(0)), TasksFormatter.DETAIL_VIEW_TYPE);
 		assertEquals(expectedResult, result);
 	}
 

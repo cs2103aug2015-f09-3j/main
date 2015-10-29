@@ -1,5 +1,6 @@
 package application.controller.parser;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import application.exception.InvalidCommandException;
@@ -64,7 +65,7 @@ public class ParserFacade {
 		return DateParser.getInstance().parseDate(dateStr);
 	}
 	
-	public Command parseCommand(String command) throws InvalidCommandException {
+	public ArrayList<Command> parseCommand(String command) throws InvalidCommandException {
 		return CommandParser.getInstance().parseCommand(command);
 	}
 	
