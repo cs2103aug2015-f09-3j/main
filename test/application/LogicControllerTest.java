@@ -10,13 +10,16 @@ import application.controller.DataManager;
 import application.controller.LogicController;
 import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
+import application.model.LocalStorage;
 import application.model.Task;
 import application.utils.TasksFormatter;
 
 public class LogicControllerTest {
+	LocalStorage file;
 
 	@Test
 	public void testAll() throws InvalidCommandException{
+		//file = new LocalStorage("LCTest.txt");
 		testList1();
 		testLimit();
 		testAdd1();
@@ -33,7 +36,7 @@ public class LogicControllerTest {
 		LogicController.onCommandProcess("add llao llao with tenyee");
 		String cmd = "list";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = TasksFormatter.format(DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd).get(0)), TasksFormatter.DETAIL_VIEW_TYPE);
+		String expectedResult = TasksFormatter.format(DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd).get(0)), TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
 		assertEquals(expectedResult, result);
 	}
 
@@ -44,7 +47,7 @@ public class LogicControllerTest {
 		testLimit.add(new Task("2021 homework i cri"));
 		String command = "list 2";
 		String result = LogicController.onCommandProcess(command);
-		String expectedResult = TasksFormatter.format(testLimit, TasksFormatter.DETAIL_VIEW_TYPE);
+		String expectedResult = TasksFormatter.format(testLimit, TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
 		assertEquals(expectedResult, result);
 	}
 
@@ -52,7 +55,7 @@ public class LogicControllerTest {
 	public void testAdd1() throws InvalidCommandException {
 		String cmd = "add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9am \\place soc";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 9AM 2015";
+		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 09AM 2015" + "\n";
 		assertEquals(expectedResult, result);
 	}
 
@@ -60,7 +63,7 @@ public class LogicControllerTest {
 	public void testAdd2() throws InvalidCommandException {
 		String cmd = "add dinner with porpor \\p high \\t personal \\sdate 24/10/2015 6pm \\place home";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = "Added Description: dinner with porpor Type: personal Priority: high Location: home Start Date: 24/10 6PM 2015";
+		String expectedResult = "Added Description: dinner with porpor Type: personal Priority: high Location: home Start Date: 24/10 06PM 2015" + "\n";
 		assertEquals(expectedResult, result);
 	}
 
@@ -71,7 +74,7 @@ public class LogicControllerTest {
 		String delete = "delete EE2020 homework";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(delete);
-		String expectedResult = "Successfully deleted: EE2020 homework";
+		String expectedResult = "Successfully deleted: EE2020 homework" + "\n";
 		assertEquals(expectedResult, result);
 	}
 
@@ -82,11 +85,8 @@ public class LogicControllerTest {
 		String delete = "delete 2020";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(delete);
-		String expectedResult = "Successfully deleted: 2020";
+		String expectedResult = "Successfully deleted: 2020" + "\n";
 		assertEquals(expectedResult, result);
 	}
-
-
-
 }
 
