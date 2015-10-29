@@ -106,15 +106,31 @@ public class CommandParser {
 			// Find if at or @ appear first
 			int indexAt = command.toUpperCase().indexOf("AT");
 			int indexAnd = command.lastIndexOf("@");
+			boolean atOnly = false, andOnly = false;
+			
+			
+			if(indexAt == -1){
+				indexAt = Integer.MAX_VALUE; 
+				andOnly = true;
+			}
+			if(indexAnd == -1){
+				indexAnd = Integer.MAX_VALUE; 
+				atOnly = true;
+			}
 
-			if (((indexAt != -1) && (indexAnd != -1)) && (indexAt < indexAnd)) {
+			if ((indexAt < indexAnd)) {
 
 				String[] strArr = command.split("(?i)at");
 				// use the first at, which the content is at [1]
 				// try to find @ if there is any
 				String[] strArr2;
 				if (strArr.length > 1) {
-					strArr2 = strArr[1].split(" @ | @|@ ");
+					if(atOnly){
+						strArr2 = strArr[1].split("\\\\");
+					}else{
+						strArr2 = strArr[1].split(" @ | @|@ ");
+					}
+					
 					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr2[0].trim()));
 				} else {
 					strArr2 = strArr[0].split(" @ | @|@ ");
@@ -133,15 +149,22 @@ public class CommandParser {
 				// try to find @ if there is any
 				String[] strArr2;
 				if (strArr.length > 1) {
-					strArr2 = strArr[1].split("(?i)at");
+					if(andOnly){
+						strArr2 = strArr[1].split("\\\\"); 
+						
+					}else{
+						strArr2 = strArr[1].split("(?i)at"); 
+						
+					}
 					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
-				} else {
+					
+				} else { 
 					strArr2 = strArr[0].split("(?i)at");
 				}
 				String[] strArr3; 
 				// task location is at strArr2[0], time is at strArr2[1]
 
-				if (strArr2.length > 1) {
+				if (strArr2.length > 1 && !andOnly) {
 					strArr3 = strArr2[1].split("\\\\");
 					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr3[0].trim()));
 				}
