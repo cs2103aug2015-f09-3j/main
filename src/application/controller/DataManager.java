@@ -1,5 +1,6 @@
 package application.controller;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -67,69 +68,74 @@ public class DataManager {
 				}
 			}
 		}else{
-			ArrayList<Parameter> para = new ArrayList<Parameter>();
-			para = cmd.getParameter();
-			for(int i=0; i<para.size();i++){
-				switch(para.get(i).getParaType()){
-					case Parameter.PRIORITY_ARGUMENT_TYPE:
-						for(Task task: data.getTaskList()){
-							if(task.getPriority_argument().equals(para.get(i).getParaArg())){
-								if(!filteredList.contains(task)){
-									filteredList.add(task);
-								}
-							}
-						}
-						break;
-					case Parameter.TYPE_ARGUMENT_TYPE:
-						for(Task task: data.getTaskList()){
-							if(task.getType_argument().equals(para.get(i).getParaArg())){
-								if(!filteredList.contains(task)){
-									filteredList.add(task);
-								}
-							}
-						}
-						break;
-					case Parameter.START_DATE_ARGUMENT_TYPE:
-						for(Task task: data.getTaskList()){
-							if(task.getStart_date() != null){
-								if(task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
-									if(!filteredList.contains(task)){
-										filteredList.add(task);
-									}
-								}
-							}
-						}
-						break;
-					case Parameter.END_DATE_ARGUMENT_TYPE:
-						for(Task task: data.getTaskList()){
-							if(task.getEnd_date() != null){
-								if(task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.get(i).getParaArg()))){
-									if(!filteredList.contains(task)){
-										filteredList.add(task);
-									}
-								}
-							}
-						}
-						break;
-					default:
-						for(Task task: data.getTaskList()){
-							if(task.getPlace_argument().equals(para.get(i).getParaArg())){
-								if(!filteredList.contains(task)){
-									filteredList.add(task);
-								}
-							}
-						}
-						break;
-				}
-			}
+			ArrayList<Parameter> parameter = new ArrayList<Parameter>();
+			parameter = cmd.getParameter();
+			filterListByParameter(filteredList, parameter);
 		}
 		sort(filteredList);
 		return filteredList;
 	}
 
+	private void filterListByParameter(ArrayList<Task> filteredList, ArrayList<Parameter> parameter) {
+		for(Parameter para:	parameter){
+			switch(para.getParaType()){
+				case Parameter.PRIORITY_ARGUMENT_TYPE:
+					for(Task task: data.getTaskList()){
+						if(task.getPriority_argument().equals(para.getParaArg())){
+							if(!filteredList.contains(task)){
+								filteredList.add(task);
+							}
+						}
+					}
+					break;
+				case Parameter.TYPE_ARGUMENT_TYPE:
+					for(Task task: data.getTaskList()){
+						if(task.getType_argument().equals(para.getParaArg())){
+							if(!filteredList.contains(task)){
+								filteredList.add(task);
+							}
+						}
+					}
+					break;
+				case Parameter.START_DATE_ARGUMENT_TYPE:
+					for(Task task: data.getTaskList()){
+						if(task.getStart_date() != null){
+							if(task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))){
+								if(!filteredList.contains(task)){
+									filteredList.add(task);
+								}
+							}
+						}
+					}
+					break;
+				case Parameter.END_DATE_ARGUMENT_TYPE:
+					for(Task task: data.getTaskList()){
+						if(task.getEnd_date() != null){
+							if(task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))){
+								if(!filteredList.contains(task)){
+									filteredList.add(task);
+								}
+							}
+						}
+					}
+					break;
+				default:
+					for(Task task: data.getTaskList()){
+						if(task.getPlace_argument().equals(para.getParaArg())){
+							if(!filteredList.contains(task)){
+								filteredList.add(task);
+							}
+						}
+					}
+					break;
+			}
+		}
+	}
+
 	public Integer removeTask(Command cmd) {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchTasksForMatches(cmd);
+		data.saveToSearchList(searchList);
 		switch (searchList.size()){
 			case 0:
 				return TASK_NOT_FOUND;
@@ -137,73 +143,8 @@ public class DataManager {
 				data.removeFromData(searchList.get(0));
 				return TASK_REMOVED;
 			default:
-				ArrayList<Parameter> para = cmd.getParameter();
-				ArrayList<Task> taskToRemove = new ArrayList<Task>();
-				for(Parameter p: para){
-					switch(p.getParaType()){
-						case Parameter.PRIORITY_ARGUMENT_TYPE:
-							for(Task task: searchList){
-								if (!task.getPriority_argument().equals(p.getParaArg())){
-									if(!taskToRemove.contains(task)){
-										taskToRemove.add(task);
-									}
-								}
-							}
-							break;
-						case Parameter.TYPE_ARGUMENT_TYPE:
-							for(Task task: searchList){
-								if (!task.getType_argument().equals(p.getParaArg())){
-									if(!taskToRemove.contains(task)){
-										taskToRemove.add(task);
-									}
-								}
-							}
-							break;
-						case Parameter.END_DATE_ARGUMENT_TYPE:
-							for(Task task: searchList){
-								if(task.getEnd_date() != null){
-									if (!task.getEnd_date().equals
-											(ParserFacade.getInstance().parseDate(p.getParaArg()))){
-										if(!taskToRemove.contains(task)){
-											taskToRemove.add(task);
-										}
-									}
-								}
-							}
-							break;
-						case Parameter.START_DATE_ARGUMENT_TYPE:
-							for(Task task: searchList){
-								if(task.getStart_date() != null){
-									if (!task.getStart_date().equals
-											(ParserFacade.getInstance().parseDate(p.getParaArg()))){
-										if(!taskToRemove.contains(task)){
-											taskToRemove.add(task);
-										}
-									}
-								}
-							}
-							break;
-						default:
-							for(Task task: searchList){
-								if (!task.getPlace_argument().equals(p.getParaArg())){
-									if(!taskToRemove.contains(task)){
-										taskToRemove.add(task);
-									}
-								}
-							}
-					}
-				}
-				for(Task task: taskToRemove){
-					searchList.remove(task);
-				}
-				if(searchList.size() == 1){
-					data.removeFromData(searchList.get(0));
-					return TASK_REMOVED;
-				}else{
-					data.saveToSearchList(searchList);
-					CommandManager.setMultipleMatchList(searchList);
-					return MULTIPLE_MATCHES;
-				}
+				CommandManager.setMultipleMatchList(searchList);
+				return MULTIPLE_MATCHES;
 		}
 	}
 
@@ -336,7 +277,6 @@ public class DataManager {
 	private void sort(ArrayList<Task> list){
 		Collections.sort(list);
 	}
-
 
 	@SuppressWarnings("deprecation")
 	public ArrayList<Task> listToday(Command cmd) {
@@ -495,10 +435,17 @@ class Data{
 
 class StorageInterface{
 	private LocalStorage file;
-	private static final String TEST_TXT = "test.txt";
-
+	private File filePath; 
+	public static final String FILE_PATH_TXT = "filePath.txt";
+	public static final String DEFAULT_FILE = "toDoo.txt";
 	public StorageInterface(){
-		file = new LocalStorage(TEST_TXT);
+		filePath = new File(FILE_PATH_TXT);
+		try{
+			filePath.createNewFile();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		file = new LocalStorage(determineFilePath());
 	}
 
 	public ArrayList<String> readFromStorage(){
@@ -511,8 +458,37 @@ class StorageInterface{
 	}
 
 	public Integer changeFilePath(String newPath){
+		BufferedWriter wr = null;
+		try{
+			wr = new BufferedWriter(new FileWriter(filePath,false));
+			wr.close();
+			wr = new BufferedWriter(new FileWriter(filePath,true));
+			wr.append(newPath);
+			wr.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
 		return file.changePath(newPath);
 	}
-
+	
+	private String determineFilePath(){
+		String text = null;
+		BufferedReader br = null;
+		BufferedWriter wr = null;
+		try{
+			br = new BufferedReader(new FileReader(filePath));
+			wr = new BufferedWriter(new FileWriter(filePath,true));
+			text = br.readLine();
+			if(text == null){
+				wr.append(DEFAULT_FILE);
+				text = DEFAULT_FILE;
+			}
+			br.close();
+			wr.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		return text;
+	}
 
 }
