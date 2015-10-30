@@ -49,14 +49,26 @@ public class CommandManager {
 		    case Command.LIST_COMMAND_TYPE:
 		    	history.clear();
 		    	ArrayList<Task> allTasks = DataManager.getInstance().listAll(cmd);
+		    	String msg = EMPTY_STRING;
 		    	if (cmd.getTextContent() != EMPTY_STRING){
 		    		if (isInteger(cmd)){
 			    		int limit = Integer.parseInt(cmd.getTextContent());
 			    		limitNumberOfTasks(allTasks, limit);
+		    		} else {
+		    			int type=determineViewType(cmd);
+		    			switch (type){
+		    				case TasksFormatter.DETAIL_VIEW_TYPE:
+		    					msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    					break;
+		    				case TasksFormatter.TYPE_VIEW_TYPE:
+		    					msg = TasksFormatter.format(allTasks, TasksFormatter.TYPE_VIEW_TYPE);
+		    			}
 		    		}
 		    	}
-		    	String msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
-		    	if (cmd.getTextContent() != EMPTY_STRING){
+		    	if (msg.equals(EMPTY_STRING)){
+		    		msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	}
+		    	if (cmd.getTextContent() != EMPTY_STRING && isInteger(cmd)){
 		    		for (int i=0; i<history.size(); i++){
 		    			allTasks.add(history.get(i));
 		    		}
@@ -168,6 +180,24 @@ public class CommandManager {
 		    default: return "testing-lc";
 		}
 		//return "testing";
+	}
+
+
+	private static int determineViewType(Command cmd) {
+		if (cmd.getTextContent().equals(TasksFormatter.PLAIN_VIEW)){
+			return TasksFormatter.PLAIN_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.DETAIL_VIEW)){
+			return TasksFormatter.DETAIL_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.TYPE_VIEW)){
+			return TasksFormatter.TYPE_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.TIMELINE_VIEW)){
+			return TasksFormatter.TIMELINE_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.PRIORITY_VIEW)){
+			return TasksFormatter.PRIORITY_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.PLACE_VIEW)){
+			return TasksFormatter.PLACE_VIEW_TYPE;
+		}
+		return TasksFormatter.DETAIL_VIEW_TYPE;
 	}
 
 

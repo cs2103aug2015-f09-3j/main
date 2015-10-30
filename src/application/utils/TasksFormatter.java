@@ -15,6 +15,13 @@ public class TasksFormatter {
 	public static final int PRIORITY_VIEW_TYPE = 5;
 	public static final int PLACE_VIEW_TYPE = 6;
 
+	public static final String PLAIN_VIEW = "plain";
+	public static final String DETAIL_VIEW = "detail";
+	public static final String TIMELINE_VIEW = "timeline";
+	public static final String TYPE_VIEW = "type";
+	public static final String PRIORITY_VIEW = "priority";
+	public static final String PLACE_VIEW = "place";
+
 	private static final int DETAIL_DESCRIPTION_COUNT = 35;
 	private static final int DETAIL_LOCATION_COUNT = 25;
 	private static final int DETAIL_TYPE_COUNT = 15;
@@ -83,6 +90,19 @@ public class TasksFormatter {
 			break;
 
 		case TYPE_VIEW_TYPE:
+			ArrayList<String> namesOfTypes = noOfTypes(lists);
+			for (String type:namesOfTypes){
+				sb.append("TYPE: "+type+"\n");
+				int counter = 1;
+				for (Task task:lists){
+					if (type.equals(task.getType_argument())){
+						sb.append(counter+". "+ task.getTextContent() +"\n");
+						counter++;
+					}
+				}
+				counter = 0;
+				sb.append("\n");
+			}
 
 			break;
 
@@ -99,8 +119,23 @@ public class TasksFormatter {
 		return sb.toString(); //stub
 	}
 
-
-
+	private static ArrayList<String> noOfTypes(ArrayList<Task> list){
+		boolean isAdded = false;
+		ArrayList<String> namesOfTypes = new ArrayList<String>();
+		for(Task task: list){
+			String typeOfTask = task.getType_argument();
+			for (String inList:namesOfTypes){
+				if (inList.equals(typeOfTask)){
+					isAdded = true;
+				}
+			}
+			if (isAdded == false){
+				namesOfTypes.add(typeOfTask);
+			}
+			isAdded = false;
+		}
+		return namesOfTypes;
+	}
 
 	private static String replaceWithDotIfTooLong(String string, int limit){
 
