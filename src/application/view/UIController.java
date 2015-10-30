@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 
-public class UIController implements HotkeyListener{
+public class UIController implements HotkeyListener {
 	@FXML
 	private MenuItem minimizeMenuItem;
 	@FXML
@@ -29,49 +29,48 @@ public class UIController implements HotkeyListener{
 
 	Main mainApp;
 
+	private static UIController instance; 
 
-	private static UIController instance;
-
-	public static UIController getInstance(){
-		if(instance == null){
+	public static UIController getInstance() {
+		if (instance == null) {
 			instance = new UIController();
 		}
 		return instance;
 	}
 
-	private UIController(){
-		JIntellitype.getInstance();
-		JIntellitype.getInstance().registerHotKey(1, JIntellitypeConstants.MOD_CONTROL, 'T');
-		JIntellitype.getInstance().addHotKeyListener(this);
+	private UIController() {  
+		try {
+			JIntellitype.getInstance();
+			JIntellitype.getInstance().registerHotKey(1, JIntellitypeConstants.MOD_CONTROL, 'T');
+			JIntellitype.getInstance().addHotKeyListener(this);
+		} catch (Exception e) {
+			System.out.println("Unable to init Jintel"); 
+		}
 	}
 
-	public void setMainApp(Main app){
+	public void setMainApp(Main app) {
 		this.mainApp = app;
 
-
 	}
 
-	public void toggleWindow(){
+	public void toggleWindow() {
 
 		Window window = btSend.getScene().getWindow();
 
-		if(window.isShowing()){
+		if (window.isShowing()) {
 			window.hide();
-		}
-		else{
+		} else {
 			mainApp.stage.show();
 		}
 
 	}
 
-
 	// Event Listener on MenuItem[#minimizeMenuItem].onAction
 	@FXML
 	public void onMinimize(ActionEvent event) {
-		//Minimize the program here.
+		// Minimize the program here.
 		System.out.println("hello");
-		//getWindow().hide();
-
+		// getWindow().hide();
 
 	}
 
@@ -81,6 +80,7 @@ public class UIController implements HotkeyListener{
 		textConsoleOutput.insertText(textConsoleOutput.getLength(), response);
 
 	}
+
 	// Event Listener on Button[#btSend].onMouseClicked
 	@FXML
 	public void onMouseClicked(MouseEvent event) {
@@ -88,11 +88,11 @@ public class UIController implements HotkeyListener{
 		System.out.println("onMouseClicked");
 		processUIRequest();
 
-
 	}
 
-	private String onCommandReceived(String command){
-		//Do whatever you want with the command here. Pass to LogicController to do its stuff.
+	private String onCommandReceived(String command) {
+		// Do whatever you want with the command here. Pass to LogicController
+		// to do its stuff.
 
 		String feedback;
 
@@ -112,29 +112,29 @@ public class UIController implements HotkeyListener{
 		processUIRequest();
 
 	}
+
 	private void processUIRequest() {
-		try{
+		try {
 			String response = onCommandReceived(textCommandInput.getText()) + "\n";
 			showToUser(response);
-		}catch(NullPointerException ex){
+		} catch (NullPointerException ex) {
 			showToUser("Please try again with command details. \n");
-		}finally{
+		} finally {
 			textCommandInput.clear();
 		}
 	}
 
 	@Override
 	public void onHotKey(int arg0) {
-		Platform.runLater(new Runnable(){
+		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				toggleWindow();
-			}});
+			}
+		});
 
 	}
-
-
 
 }
