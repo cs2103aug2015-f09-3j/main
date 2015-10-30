@@ -8,6 +8,7 @@ import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String NOT_APPLICABLE = "NOT APPLICABLE.";
 	public static final int PLAIN_VIEW_TYPE = 1;
 	public static final int DETAIL_VIEW_TYPE = 2;
 	public static final int TIMELINE_VIEW_TYPE = 3;
@@ -37,6 +38,7 @@ public class TasksFormatter {
 
 	private static final String DETAIL_VIEW_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
 	private static final String TIMELINE_VIEW_HEADER = "    " + String.format(TIMELINE_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
+	private static final String EMPTY_STRING = "";
 
 
 	/**
@@ -123,12 +125,48 @@ public class TasksFormatter {
 			break;
 
 		case PLACE_VIEW_TYPE:
-
+			ArrayList<String> locationNames = namesOfLocation(lists);
+			String nameOfLocation = EMPTY_STRING;
+			for (String location:locationNames){
+				if (location.equals(EMPTY_STRING)){
+					nameOfLocation = NOT_APPLICABLE;
+				} else {
+					nameOfLocation = location;
+				}
+				sb.append("LOCATION: "+nameOfLocation+"\n");
+				int counter = 1;
+				for (Task task:lists){
+					if (location.equals(task.getPlace_argument())){
+						sb.append(counter+". "+ task.getTextContent() +"\n");
+						counter++;
+					}
+				}
+				counter = 0;
+				sb.append("\n");
+			}
 			break;
 
 		}
 
 		return sb.toString(); //stub
+	}
+
+	private static ArrayList<String> namesOfLocation(ArrayList<Task> lists) {
+		boolean isAdded = false;
+		ArrayList<String> locationNames = new ArrayList<String>();
+		for(Task task: lists){
+			String locationOfTask = task.getPlace_argument();
+			for (String inList:locationNames){
+				if (inList.equals(locationOfTask)){
+					isAdded = true;
+				}
+			}
+			if (isAdded == false){
+				locationNames.add(locationOfTask);
+			}
+			isAdded = false;
+		}
+		return locationNames;
 	}
 
 	private static ArrayList<String> namesOfPriorityLevels(ArrayList<Task> lists) {

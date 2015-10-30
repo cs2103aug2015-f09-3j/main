@@ -66,6 +66,9 @@ public class CommandManager {
 		    				case TasksFormatter.PRIORITY_VIEW_TYPE:
 		    					msg = TasksFormatter.format(allTasks, TasksFormatter.PRIORITY_VIEW_TYPE);
 		    					break;
+		    				case TasksFormatter.PLACE_VIEW_TYPE:
+		    					msg = TasksFormatter.format(allTasks, TasksFormatter.PLACE_VIEW_TYPE);
+		    					break;
 		    			}
 		    		}
 		    	}
