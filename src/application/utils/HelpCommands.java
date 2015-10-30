@@ -2,7 +2,12 @@ package application.utils;
 
 //@nghuiyirebecca
 public class HelpCommands {
-
+	private static final String TYPE_VIEW_INST = "View the tasks by respective types.";
+	private static final String PLACE_VIEW_INST = "View the tasks sorted into different locations.";
+	private static final String PRIORITY_VIEW_INST = "View the tasks that are sorted by priority.";
+	private static final String TIMELINE_VIEW_INST = "View the tasks by end date.";
+	private static final String DETAIL_VIEW_INST = "To view all the details of a task, incuding sdate, edate, priority, type & place";
+	private static final String LIST_VIEW_INST = "There are a few ways to view the tasks. \n Type list followed by the different keywords: \n";
 	private static final String PRIORITY_DESC = "Add a priority level by typing in /p followed by priority level.";
 	private static final String EDATE_DESC = "Add an end date to a task by typing /edate followed by a date and time.";
 	private static final String SDATE_DESC = "Add a start date to a task by typing /edate followed by a date and time.";
@@ -20,14 +25,16 @@ public class HelpCommands {
 	private static final String ADD_TASK_DESC = "Add a task by typing in keyword followed by a new task with optional parameters.";
 	private static final String EMPTY_STRING = "";
 
-	private static final int DESC_LIMIT = 50;
+	//private static final int DESC_LIMIT = 50;
 	private static final String OUTPUT_FORMAT_HEADER = "%-25s %-20s %-50s";
 	private static final String OUTPUT_FORMAT = "%-3s %-25s %-20s %-50s";
+	private static final String LIST_FORMAT = "%-3s %-15s %-50s";
 
 	private static final String HELP_HEADER = "LIST OF COMMANDS: ";
 	private static final String HELP_TABLE_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Command", "Key", "Description");
 	private static final String PARAMETER_HEADER = "LIST OF PARAMETERS: ";
 	private static final String PARAMETER_TABLE_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Parameter", "Key", "Description");
+
 
 	public static String displayHelp(){
 		StringBuilder sb = new StringBuilder();
@@ -35,7 +42,26 @@ public class HelpCommands {
 		displayCommands(sb);
 		sb.append("\n \n");
 		displayParameters(sb);
+		sb.append("\n \n");
+		displayListView(sb);
 		return sb.toString();
+	}
+
+	private static void displayListView(StringBuilder sb) {
+		int count = 1;
+		sb.append(LIST_VIEW_INST);
+		sb.append(String.format(LIST_FORMAT, "   ", "Key", "Description"));
+		sb.append("\n");
+		sb.append(String.format(LIST_FORMAT, count++, "detail", DETAIL_VIEW_INST));
+		sb.append("\n");
+		sb.append(String.format(LIST_FORMAT, count++, "timeline", TIMELINE_VIEW_INST));
+		sb.append("\n");
+		sb.append(String.format(LIST_FORMAT, count++, "place", PLACE_VIEW_INST));
+		sb.append("\n");
+		sb.append(String.format(LIST_FORMAT, count++, "priority", PRIORITY_VIEW_INST));
+		sb.append("\n");
+		sb.append(String.format(LIST_FORMAT, count++, "type", TYPE_VIEW_INST));
+		sb.append("\n");
 	}
 
 	private static void displayParameters(StringBuilder sb) {
