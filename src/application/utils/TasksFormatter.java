@@ -90,7 +90,7 @@ public class TasksFormatter {
 			break;
 
 		case TYPE_VIEW_TYPE:
-			ArrayList<String> namesOfTypes = noOfTypes(lists);
+			ArrayList<String> namesOfTypes = namesOfTypes(lists);
 			for (String type:namesOfTypes){
 				sb.append("TYPE: "+type+"\n");
 				int counter = 1;
@@ -107,7 +107,19 @@ public class TasksFormatter {
 			break;
 
 		case PRIORITY_VIEW_TYPE:
-
+			ArrayList<String> namesOfPriorityLevel = namesOfPriorityLevels(lists);
+			for (String priority:namesOfPriorityLevel){
+				sb.append("PRIORITY: "+priority+"\n");
+				int counter = 1;
+				for (Task task:lists){
+					if (priority.equals(task.getPriority_argument())){
+						sb.append(counter+". "+ task.getTextContent() +"\n");
+						counter++;
+					}
+				}
+				counter = 0;
+				sb.append("\n");
+			}
 			break;
 
 		case PLACE_VIEW_TYPE:
@@ -119,7 +131,25 @@ public class TasksFormatter {
 		return sb.toString(); //stub
 	}
 
-	private static ArrayList<String> noOfTypes(ArrayList<Task> list){
+	private static ArrayList<String> namesOfPriorityLevels(ArrayList<Task> lists) {
+		boolean isAdded = false;
+		ArrayList<String> namesOfPriorityLevels = new ArrayList<String>();
+		for(Task task: lists){
+			String priorityOfTask = task.getPriority_argument();
+			for (String inList:namesOfPriorityLevels){
+				if (inList.equals(priorityOfTask)){
+					isAdded = true;
+				}
+			}
+			if (isAdded == false){
+				namesOfPriorityLevels.add(priorityOfTask);
+			}
+			isAdded = false;
+		}
+		return namesOfPriorityLevels;
+	}
+
+	private static ArrayList<String> namesOfTypes(ArrayList<Task> list){
 		boolean isAdded = false;
 		ArrayList<String> namesOfTypes = new ArrayList<String>();
 		for(Task task: list){
