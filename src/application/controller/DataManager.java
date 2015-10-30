@@ -39,6 +39,7 @@ public class DataManager {
 		data = new Data();
 		paraList = null;
 	}
+	
 
 	public static DataManager getInstance() {
 		if (instance == null) {
@@ -46,6 +47,13 @@ public class DataManager {
 		}
 		return instance;
 	}
+	
+	public void switchToTestingMode(String filePath){
+		data = new Data(filePath);
+		paraList = null;
+	}
+	
+	
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
@@ -333,6 +341,16 @@ class Data{
 		addToHistory();
 		histCount = 1;
 	}
+	
+	public Data(String testingFilePath){
+		storageIO = new StorageInterface(testingFilePath);
+		gson = new Gson();
+		taskList = initializeTaskList();
+		searchList = new ArrayList<Task>();
+		history = new Stack<ArrayList<Task>>();
+		addToHistory();
+		histCount = 1;
+	}
 
 
 	public ArrayList<Task> getTaskList(){
@@ -446,9 +464,21 @@ class StorageInterface{
 	private LocalStorage file;
 	private File filePath; 
 	public static final String FILE_PATH_TXT = "filePath.txt";
-	public static final String DEFAULT_FILE = "toDoo.txt";
+	public static String DEFAULT_FILE = "toDoo.txt";
 	public StorageInterface(){
 		filePath = new File(FILE_PATH_TXT);
+		try{
+			filePath.createNewFile();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		file = new LocalStorage(determineFilePath());
+	}
+	
+	public StorageInterface(String testFilePath){
+		assert new File(testFilePath).exists() == true;
+		DEFAULT_FILE = "testingTestController.txt";
+		filePath = new File(testFilePath);
 		try{
 			filePath.createNewFile();
 		}catch(IOException ex){

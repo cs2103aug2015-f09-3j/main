@@ -2,6 +2,13 @@ package application;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -15,23 +22,36 @@ import application.model.Task;
 import application.model.Command;
 import application.utils.TasksFormatter;
 
-
 public class LogicControllerTest {
 	LocalStorage file;
+	String curFilePath;
 
 	@Test
-	public void testAll() throws InvalidCommandException{
-		//file = new LocalStorage("LCTest.txt");
-		DataManager.getInstance().changeStorageLocation(new Command(0, "LCTest.txt", null));
+	public void testAll() throws InvalidCommandException {
+		DataManager.getInstance().switchToTestingMode("testingMode.txt");
 		testList1();
-		//testLimit();
+		// testLimit();
 		testAdd1();
 		testAdd2();
 		testDelete1();
 		testDelete2();
+		cleanUp();
+
 	}
 
-	 /* This is a boundary case for the listAll method */
+	public void cleanUp() {
+		try {
+			File file = new File("testingTestController.txt");
+			file.delete();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+	}
+
+	/* This is a boundary case for the listAll method */
 	public void testList1() throws InvalidCommandException {
 		LogicController.onCommandProcess("add meeting with prof");
 		LogicController.onCommandProcess("add 2021 homework i cri");
@@ -39,11 +59,13 @@ public class LogicControllerTest {
 		LogicController.onCommandProcess("add llao llao with tenyee");
 		String cmd = "list";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = TasksFormatter.format(DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd).get(0)), TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
+		String expectedResult = TasksFormatter.format(
+				DataManager.getInstance().listAll(ParserFacade.getInstance().parseCommand(cmd).get(0)),
+				TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
 		assertEquals(expectedResult, result);
 	}
 
-	/* This is a boundary case for the limitNumberOfTasks method*/
+	/* This is a boundary case for the limitNumberOfTasks method */
 	public void testLimit() throws InvalidCommandException {
 		ArrayList<Task> testLimit = new ArrayList<Task>();
 		testLimit.add(new Task("meeting with prof"));
@@ -54,24 +76,26 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-
 	public void testAdd1() throws InvalidCommandException {
 		String cmd = "add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9am \\place soc";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 09AM 2015" + "\n";
+		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 09AM 2015"
+				+ "\n";
 		assertEquals(expectedResult, result);
 	}
-
 
 	public void testAdd2() throws InvalidCommandException {
 		String cmd = "add dinner with porpor \\p high \\t personal \\sdate 24/10/2015 6pm \\place home";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = "Added Description: dinner with porpor Type: personal Priority: high Location: home Start Date: 24/10 06PM 2015" + "\n";
+		String expectedResult = "Added Description: dinner with porpor Type: personal Priority: high Location: home Start Date: 24/10 06PM 2015"
+				+ "\n";
 		assertEquals(expectedResult, result);
 	}
 
-
-	/* This is a boundary case for the delete method as deleting task that is named in full*/
+	/*
+	 * This is a boundary case for the delete method as deleting task that is
+	 * named in full
+	 */
 	public void testDelete1() throws InvalidCommandException {
 		String cmd = "add EE2020 homework \\edate 28/10/2015 \\p high";
 		String delete = "delete EE2020 homework";
@@ -81,8 +105,10 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-
-	/* This is a boundary case for the delete method as deleting task that is partially named*/
+	/*
+	 * This is a boundary case for the delete method as deleting task that is
+	 * partially named
+	 */
 	public void testDelete2() throws InvalidCommandException {
 		String cmd = "add EE2020 homework \\edate 28/10/2015 \\p high";
 		String delete = "delete 2020";
@@ -92,4 +118,3 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 }
-
