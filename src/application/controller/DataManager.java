@@ -339,6 +339,12 @@ public class DataManager {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+
+	public static ArrayList<Task> checkIfDone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 
 class Data{

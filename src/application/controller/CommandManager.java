@@ -47,8 +47,13 @@ public class CommandManager {
 		    	}
 		    case Command.LIST_COMMAND_TYPE:
 		    	history.clear();
-		    	ArrayList<Task> allTasks = DataManager.getInstance().listAll(cmd);
 		    	String msg = EMPTY_STRING;
+		    	ArrayList<Task> allTasks = new ArrayList<Task>();
+		    	if (cmd.getTextContent().equals("done")){
+		    		allTasks = DataManager.checkIfDone();
+		    		msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	}
+		    	allTasks = DataManager.getInstance().listAll(cmd);
 		    	if (cmd.getTextContent() != EMPTY_STRING){
 		    		if (isInteger(cmd)){
 			    		int limit = Integer.parseInt(cmd.getTextContent());
@@ -208,7 +213,6 @@ public class CommandManager {
 		}
 		//return "testing";
 	}
-
 
 	private static int determineViewType(Command cmd) {
 		if (cmd.getTextContent().equals(TasksFormatter.PLAIN_VIEW)){
