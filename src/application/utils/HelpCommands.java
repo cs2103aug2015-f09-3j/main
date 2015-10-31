@@ -1,6 +1,6 @@
 package application.utils;
 
-//@nghuiyirebecca
+//@@nghuiyirebecca A0130876B
 public class HelpCommands {
 	private static final String TYPE_VIEW_INST = "View the tasks by respective types.";
 	private static final String PLACE_VIEW_INST = "View the tasks sorted into different locations.";
@@ -19,7 +19,7 @@ public class HelpCommands {
 	private static final String EDIT_DESC = "Edit a task by typing in keyword, task name and parameter to change";
 	private static final String UNDO_DESC = "Undo the last command entered.";
 	private static final String CHANGE_STORAGE_LOCATION_DESC = "Change the storage location by typing in keyword followed by new location.";
-	private static final String LIST_TO_NOTE = "Note: type \"prev\" to see tasks that are done, \"next\" to see more tasks.";
+	private static final String LIST_TO_NOTE = "Note: type \"done\" to see tasks that are done. By default, list views all undone tasks.";
 	private static final String LIST_DESC = "To see all tasks that are still undone.";
 	private static final String DELETE_TASK_DESC = "Delete a task by typing keyword followed by the task to delete.";
 	private static final String ADD_TASK_DESC = "Add a task by typing in keyword followed by a new task with optional parameters.";
