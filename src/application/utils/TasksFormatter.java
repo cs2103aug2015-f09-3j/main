@@ -93,9 +93,12 @@ public class TasksFormatter {
 		case TIMELINE_VIEW_TYPE:
 			sb.append(TIMELINE_INST);
 			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
+			ArrayList<Task> floating = new ArrayList<Task>();
 			for (Task task:lists){
 				if (task.getEnd_date()!=null){
 					sortedByEDate.add(task);
+				} else {
+					floating.add(task);
 				}
 			}
 			ArrayList<Date> allDates = new ArrayList<Date>();
@@ -130,7 +133,15 @@ public class TasksFormatter {
 				}
 				sb.append("\n");
 			}
-
+			if (floating.size()>0){
+				sb.append("\n");
+				sb.append("Outstanding tasks (no due date): \n");
+				int counter = 1;
+				for (Task task:floating){
+					sb.append(counter + ".   " + task.getTextContent() +"\n");
+					counter++;
+				}
+			}
 
 			break;
 
