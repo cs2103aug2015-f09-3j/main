@@ -28,6 +28,7 @@ public class CommandManager {
 	private static final String WRONG_LINE_NUM	= "Wrong line number entered.";
 	private static final String WRONG_DIRECTORY = "Wrong directory entered.";
 	private static final String EMPTY_FILE_DONE = "There are no undone tasks that match your keyword.";
+	private static final String SET_UNDONE_SUCCESS = "Successfully set undone:";
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
@@ -164,6 +165,24 @@ public class CommandManager {
 				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetDone;
 			    } else if(setDoneSuccess == DataManager.TASK_SET_TO_DONE){
 			        return SET_DONE_SUCCESS + cmd.getTextContent();
+			    }else{
+			    	return WRONG_LINE_NUM;
+			    }
+
+		    case Command.UNDONE_COMMAND_TYPE:
+		    	int setUndoneSuccess = ZERO_INT;
+		    	if (isInteger(cmd)){
+		    		setUndoneSuccess = DataManager.getInstance().setUndoneToTask(Integer.parseInt(cmd.getTextContent()));
+		    	} else {
+			    	setUndoneSuccess= DataManager.getInstance().setUndoneToTask(cmd);
+		    	}
+		    	if (setUndoneSuccess == DataManager.TASK_NOT_FOUND){
+					return EMPTY_FILE_DONE;
+				} else if (setUndoneSuccess == DataManager.MULTIPLE_MATCHES){
+					String multipleTasksToSetUndone = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
+				    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetUndone;
+			    } else if(setUndoneSuccess == DataManager.TASK_SET_TO_DONE){
+			        return SET_UNDONE_SUCCESS + cmd.getTextContent();
 			    }else{
 			    	return WRONG_LINE_NUM;
 			    }

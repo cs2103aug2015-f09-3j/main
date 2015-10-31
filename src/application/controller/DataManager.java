@@ -44,7 +44,7 @@ public class DataManager {
 		data = new Data();
 		paraList = null;
 	}
-	
+
 
 	public static DataManager getInstance() {
 		if (instance == null) {
@@ -52,13 +52,13 @@ public class DataManager {
 		}
 		return instance;
 	}
-	
+
 	public void switchToTestingMode(String filePath){
 		data = new Data(filePath);
 		paraList = null;
 	}
-	
-	
+
+
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
@@ -327,6 +327,18 @@ public class DataManager {
 	public ArrayList<Task> searchTasks(Command cmd) {
 		return searchTasksForMatches(cmd);
 	}
+
+
+	public int setUndoneToTask(int parseInt) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public int setUndoneToTask(Command cmd) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
 
 class Data{
@@ -346,7 +358,7 @@ class Data{
 		addToHistory();
 		histCount = 1;
 	}
-	
+
 	public Data(String testingFilePath){
 		storageIO = new StorageInterface(testingFilePath);
 		gson = new Gson();
@@ -467,7 +479,7 @@ class Data{
 
 class StorageInterface{
 	private LocalStorage file;
-	private File filePath; 
+	private File filePath;
 	public static final String FILE_PATH_TXT = "filePath.txt";
 	public static String DEFAULT_FILE = "toDoo.txt";
 	public StorageInterface(){
@@ -479,7 +491,7 @@ class StorageInterface{
 		}
 		file = new LocalStorage(determineFilePath());
 	}
-	
+
 	public StorageInterface(String testFilePath){
 		assert new File(testFilePath).exists() == true;
 		DEFAULT_FILE = "testingTestController.txt";
@@ -537,7 +549,7 @@ class StorageInterface{
 			return LocalStorage.CHANGE_PATH_SUCCESS;
 		}
 	}
-	
+
 	private String determineFilePath(){
 		String text = null;
 		BufferedReader br = null;
