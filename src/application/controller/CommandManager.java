@@ -15,8 +15,6 @@ public class CommandManager {
 	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = "\n";
-	private static final String INVALID_COMMAND = "Invalid command";
-	private static final int TASK_VIEW_LIMIT = 10;
 	private static final int ZERO_INT = 0;
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
@@ -68,6 +66,9 @@ public class CommandManager {
 		    					break;
 		    				case TasksFormatter.PLACE_VIEW_TYPE:
 		    					msg = TasksFormatter.format(allTasks, TasksFormatter.PLACE_VIEW_TYPE);
+		    					break;
+		    				case TasksFormatter.FLOATING_VIEW_TYPE:
+		    					msg = TasksFormatter.format(allTasks, TasksFormatter.FLOATING_VIEW_TYPE);
 		    					break;
 		    			}
 		    		}
@@ -203,6 +204,8 @@ public class CommandManager {
 			return TasksFormatter.PRIORITY_VIEW_TYPE;
 		} else if (cmd.getTextContent().equals(TasksFormatter.PLACE_VIEW)){
 			return TasksFormatter.PLACE_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.FLOATING_VIEW)){
+			return TasksFormatter.FLOATING_VIEW_TYPE;
 		}
 		return TasksFormatter.DETAIL_VIEW_TYPE;
 	}

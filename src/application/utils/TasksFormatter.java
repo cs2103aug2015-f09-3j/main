@@ -16,6 +16,7 @@ public class TasksFormatter {
 	public static final int TYPE_VIEW_TYPE = 4;
 	public static final int PRIORITY_VIEW_TYPE = 5;
 	public static final int PLACE_VIEW_TYPE = 6;
+	public static final int FLOATING_VIEW_TYPE = 7;
 
 	public static final String PLAIN_VIEW = "plain";
 	public static final String DETAIL_VIEW = "detail";
@@ -23,6 +24,7 @@ public class TasksFormatter {
 	public static final String TYPE_VIEW = "type";
 	public static final String PRIORITY_VIEW = "priority";
 	public static final String PLACE_VIEW = "place";
+	public static final String FLOATING_VIEW = "floating";
 
 	private static final int DETAIL_DESCRIPTION_COUNT = 35;
 	private static final int DETAIL_LOCATION_COUNT = 25;
@@ -147,6 +149,18 @@ public class TasksFormatter {
 			}
 			break;
 
+		case FLOATING_VIEW_TYPE:
+			boolean isFloat = false;
+			int noOfFloatingTasks = 1;
+			for (Task task:lists){
+				if (task.getEnd_date() == null){
+					isFloat = true;
+				}
+				if (isFloat){
+					sb.append(noOfFloatingTasks + ". " + task.getTextContent() + "\n");
+					noOfFloatingTasks++;
+				}
+			}
 		}
 
 		return sb.toString(); //stub
