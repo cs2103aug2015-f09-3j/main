@@ -77,6 +77,9 @@ public class CommandManager {
 		    				case TasksFormatter.FLOATING_VIEW_TYPE:
 		    					msg = TasksFormatter.format(allTasks, TasksFormatter.FLOATING_VIEW_TYPE);
 		    					break;
+		    				case TasksFormatter.TIMELINE_VIEW_TYPE:
+		    					msg = TasksFormatter.format(allTasks, TasksFormatter.TIMELINE_VIEW_TYPE);
+		    					break;
 		    			}
 		    		}
 		    	}
@@ -203,12 +206,18 @@ public class CommandManager {
 		    	}
 
 		    case Command.LIST_TODAY_COMMAND_TYPE:
-		    	String today = TasksFormatter.format(DataManager.getInstance().listToday(cmd), TasksFormatter.DETAIL_VIEW_TYPE);
+		    	ArrayList<Task> listToday = DataManager.getInstance().listToday(cmd);
+		    	String today = TasksFormatter.format(listToday, TasksFormatter.TIMELINE_VIEW_TYPE);
 		    	return today;
 
 		    case Command.HELP_COMMAND_TYPE:
 		    	String help = HelpCommands.displayHelp();
 		    	return help;
+
+		    case Command.SCHEDULE_COMMAND_TYPE:
+		    	ArrayList<Task> schedule = DataManager.getInstance().listAll(cmd);
+		    	String sched = TasksFormatter.format(schedule, TasksFormatter.TIMELINE_VIEW_TYPE);
+		    	return sched;
 
 		    default: return "testing-lc";
 		}
@@ -216,6 +225,7 @@ public class CommandManager {
 	}
 
 	private static int determineViewType(Command cmd) {
+		assert cmd.getType() != null;
 		if (cmd.getTextContent().equals(TasksFormatter.PLAIN_VIEW)){
 			return TasksFormatter.PLAIN_VIEW_TYPE;
 		} else if (cmd.getTextContent().equals(TasksFormatter.DETAIL_VIEW)){
@@ -230,6 +240,8 @@ public class CommandManager {
 			return TasksFormatter.PLACE_VIEW_TYPE;
 		} else if (cmd.getTextContent().equals(TasksFormatter.FLOATING_VIEW)){
 			return TasksFormatter.FLOATING_VIEW_TYPE;
+		} else if (cmd.getTextContent().equals(TasksFormatter.TIMELINE_VIEW)){
+			return TasksFormatter.TIMELINE_VIEW_TYPE;
 		}
 		return TasksFormatter.DETAIL_VIEW_TYPE;
 	}
@@ -237,6 +249,7 @@ public class CommandManager {
 
 	private static boolean isInteger(Command cmd) {
 		boolean isInt = false;
+		assert cmd.getTextContent() != null;
 		try {
 			Integer.parseInt(cmd.getTextContent());
 			isInt = true;
@@ -260,6 +273,7 @@ public class CommandManager {
 
 	private static void limitNumberOfTasks(ArrayList<Task> allTasks, int limit) {
 		boolean flag = false;
+		assert allTasks.size() != 0;
 		if (allTasks.size() > limit){
 			for (int i = allTasks.size()-1; i>=limit; i--){
 				flag = checkDuplicateTask(allTasks.get(i));

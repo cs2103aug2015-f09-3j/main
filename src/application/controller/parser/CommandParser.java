@@ -70,9 +70,9 @@ public class CommandParser {
 		}
 
 		if (!command.contains("\\|")) {
-			performSmartParsing(command, parameters); 
+			performSmartParsing(command, parameters);
 		}
-		
+
 		text = extractTextAndPerformParameterParsing(command, parameters, indexOfFirstSpace, indexOfFirstInvertedSlash);
 		if (text != null) {
 			for (String textEntry : text) {
@@ -85,13 +85,13 @@ public class CommandParser {
 
 		return cmds;
 	}
-	
+
 	private String trimOffDateIfAny(String str){
-		
+
 		String[] strArr = str.split(" @ | @|@ ");
 		return strArr[0].trim();
 
-		
+
 	}
 
 	/**
@@ -135,26 +135,26 @@ public class CommandParser {
 			// try to find @ if there is any
 			String[] strArr2;
 			if (strArr.length > 1) {
-				strArr2 = strArr[1].split("\\\\");		
-			//	parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));				
+				strArr2 = strArr[1].split("\\\\");
+			//	parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 				if(ParserFacade.getInstance().containMultiDate(strArr2[0].trim())){
 					parameters.add(new Parameter(Parameter.START_END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 				}else{
 					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 				}
-			} 
-			
-			
-			
+			}
+
+
+
 			// Find if at or @ appear first
-			
+
 			/*
 			int indexAt = command.toUpperCase().indexOf("AT");
 			int indexAnd = command.lastIndexOf("@");
-			
-			
-			
-			
+
+
+
+
 			boolean atOnly = false, andOnly = false;
 
 			if (indexAt == -1) {
@@ -201,12 +201,12 @@ public class CommandParser {
 				// try to find @ if there is any
 				String[] strArr2;
 				if (strArr.length > 1) {
-					strArr2 = strArr[1].split("\\\\");	
+					strArr2 = strArr[1].split("\\\\");
 					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
-				} 
-				
+				}
+
 			}
-			
+
 			*/
 		}
 	}
@@ -231,6 +231,10 @@ public class CommandParser {
 		}
 
 		if (isCommandType(Command.HELP_COMMAND, command.trim())) {
+			indexOfFirstSpace = command.length();
+		}
+
+		if (isCommandType(Command.SCHEDULE_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
 		}
 
@@ -345,6 +349,8 @@ public class CommandParser {
 			return Command.LIST_NEXT_COMMAND_TYPE;
 		} else if (isCommandType(Command.HELP_COMMAND, cmd)) {
 			return Command.HELP_COMMAND_TYPE;
+		} else if (isCommandType(Command.SCHEDULE_COMMAND, cmd)) {
+			return Command.SCHEDULE_COMMAND_TYPE;
 		} else {
 			return -1;
 		}

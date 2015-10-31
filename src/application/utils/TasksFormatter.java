@@ -3,12 +3,14 @@ package application.utils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import application.controller.parser.ParserFacade;
 import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String TIMELINE_INST = "SCHEDULE \n \n";
 	private static final String NOT_APPLICABLE = "NOT APPLICABLE.";
 	public static final int PLAIN_VIEW_TYPE = 1;
 	public static final int DETAIL_VIEW_TYPE = 2;
@@ -20,7 +22,7 @@ public class TasksFormatter {
 
 	public static final String PLAIN_VIEW = "plain";
 	public static final String DETAIL_VIEW = "detail";
-	public static final String TIMELINE_VIEW = "timeline";
+	public static final String TIMELINE_VIEW = "schedule";
 	public static final String TYPE_VIEW = "type";
 	public static final String PRIORITY_VIEW = "priority";
 	public static final String PLACE_VIEW = "place";
@@ -35,12 +37,7 @@ public class TasksFormatter {
 	private static final String OUTPUT_FORMAT_HEADER = "%-30s %-20s %-20s %-20s %-15s %-15s";
 	private static final String OUTPUT_FORMAT = "%-3d %-30s %-20s %-20s %-20s %-15s %-15s";
 
-	private static final String TIMELINE_FORMAT_HEADER = "%-30s %-20s %-20s %-20s %-15s %-15s";
-	private static final String TIMELINE_FORMAT = "%-3d %-30s %-20s %-20s %-20s %-15s %-15s";
-
-
 	private static final String DETAIL_VIEW_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
-	private static final String TIMELINE_VIEW_HEADER = "    " + String.format(TIMELINE_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
 	private static final String EMPTY_STRING = "";
 
 
@@ -54,6 +51,8 @@ public class TasksFormatter {
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
 		StringBuilder sb = new StringBuilder();
 		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
+		DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
+		DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
 		switch (typeOfFormatting) {
 
 		case PLAIN_VIEW_TYPE:
@@ -92,6 +91,47 @@ public class TasksFormatter {
 			break;
 
 		case TIMELINE_VIEW_TYPE:
+			sb.append(TIMELINE_INST);
+			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
+			for (Task task:lists){
+				if (task.getEnd_date()!=null){
+					sortedByEDate.add(task);
+				}
+			}
+			ArrayList<Date> allDates = new ArrayList<Date>();
+			if (sortedByEDate.size() > 1){
+				allDates.add(sortedByEDate.get(0).getEnd_date());
+				for (int a=1; a<sortedByEDate.size()-1; a++){
+					allDates.add(sortedByEDate.get(a).getEnd_date());
+					for (int b=a+1; b<sortedByEDate.size(); b++){
+						if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
+							allDates.remove(sortedByEDate.get(a).getEnd_date());
+						}
+					}
+				}
+			}
+			for (Date date:allDates){
+				String thisDate = df2.format(date);
+				sb.append(thisDate);
+				sb.append("\n");
+				for (Task task:sortedByEDate){
+					if (thisDate.equals(df2.format(task.getEnd_date()))){
+						if (task.getStart_date()!=null){
+							String start_time = df3.format(task.getStart_date());
+							String end_time = df3.format(task.getEnd_date());
+							sb.append("[" + start_time + " - " + end_time + "]   ");
+							sb.append(task.getTextContent() + "\n");
+						} else {
+							String time = df3.format(task.getEnd_date());
+							sb.append(time+" DUE:   ");
+							sb.append(task.getTextContent() + "\n");
+						}
+					}
+				}
+				sb.append("\n");
+			}
+
+
 			break;
 
 		case TYPE_VIEW_TYPE:
@@ -164,6 +204,16 @@ public class TasksFormatter {
 		}
 
 		return sb.toString(); //stub
+	}
+
+	private static boolean isSameEdate(Date d1, Date d2) {
+		DateFormat df = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
+		String d1Str = df.format(d1);
+		String d2Str = df.format(d2);
+		if (d2Str.equals(d1Str)){
+			return true;
+		}
+		return false;
 	}
 
 	private static ArrayList<String> namesOfLocation(ArrayList<Task> lists) {
