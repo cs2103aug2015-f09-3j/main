@@ -1,18 +1,21 @@
 package application;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.junit.Test;
+
+import com.google.gson.Gson;
 
 import application.controller.DataManager;
 import application.model.Command;
 import application.model.LocalStorage;
 import application.model.Parameter;
 import application.model.Task;
-
-import static org.junit.Assert.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import com.google.gson.*;
 
 public class DataManagerTest {
 	

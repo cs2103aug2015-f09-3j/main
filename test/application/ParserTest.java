@@ -11,9 +11,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import application.controller.parser.DateParser;
-import application.controller.parser.UKDateParser;
 import application.controller.parser.ParserFacade;
+import application.controller.parser.UKDateParser;
 import application.exception.InvalidCommandException;
 import application.model.Command;
 import application.model.Parameter;
@@ -68,14 +67,12 @@ public class ParserTest {
 	public void testSmartParseCommand1() throws InvalidCommandException{
 		
 		Command cmd = ParserFacade.getInstance().parseCommand(
-				"add buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm \\p high \\t personal \\sdate 15/1/2015 13:00pm").get(0);
+				"add buy milk for mom @ 13/2/2015 12:00pm \\p high \\t personal").get(0);
 		ArrayList<Parameter> paras = new ArrayList<Parameter>();
-		paras.add(new Parameter(Parameter.START_DATE_ARGUMENT_TYPE, "15/1/2015 13:00pm"));
 		paras.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, "13/2/2015 12:00pm"));
-		paras.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, "clementi ntuc"));
 		paras.add(new Parameter(Parameter.PRIORITY_ARGUMENT_TYPE, "high"));
 		paras.add(new Parameter(Parameter.TYPE_ARGUMENT_TYPE, "personal"));
-		Command cmdCmp = new Command(Command.ADD_COMMAND_TYPE, "buy milk for mom at clementi ntuc @ 13/2/2015 12:00pm", paras);
+		Command cmdCmp = new Command(Command.ADD_COMMAND_TYPE, "buy milk for mom", paras);
 
 		assertEquals(cmd, cmdCmp);    
 		

@@ -1,6 +1,8 @@
 package application.controller.parser;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import application.exception.InvalidCommandException;
 import application.model.Command;
@@ -66,25 +68,30 @@ public class CommandParser {
 		if (cmdType == -1) {
 			throw new InvalidCommandException(command);
 		}
-		
-		
-		
-		if(!command.contains("\\|")){
-			performSmartParsing(command, parameters);
+
+		if (!command.contains("\\|")) {
+			performSmartParsing(command, parameters); 
 		}
-		text = extractTextAndPerformParameterParsing(command, parameters, indexOfFirstSpace,
-				indexOfFirstInvertedSlash);
-		if(text != null){
-		for(String textEntry : text){
-			cmds.add(new Command(cmdType, textEntry.trim(), parameters));
-			
-		}
-		}
-		else{
+		
+		text = extractTextAndPerformParameterParsing(command, parameters, indexOfFirstSpace, indexOfFirstInvertedSlash);
+		if (text != null) {
+			for (String textEntry : text) {
+				cmds.add(new Command(cmdType, trimOffDateIfAny(textEntry), parameters));
+
+			}
+		} else {
 			cmds.add(new Command(cmdType, "", parameters));
 		}
-		
+
 		return cmds;
+	}
+	
+	private String trimOffDateIfAny(String str){
+		
+		String[] strArr = str.split(" @ | @|@ ");
+		return strArr[0].trim();
+
+		
 	}
 
 	/**
@@ -110,8 +117,8 @@ public class CommandParser {
 
 				text = command.substring(indexOfFirstSpace + 1, command.length());
 			}
-			//For multiple add and done
-			splitedText = text.split("\\|"); 
+			// For multiple add and done
+			splitedText = text.split("\\|");
 		}
 		return splitedText;
 	}
@@ -121,20 +128,41 @@ public class CommandParser {
 	 * @param parameters
 	 */
 	private void performSmartParsing(String command, ArrayList<Parameter> parameters) {
-		if (command.toUpperCase().contains(" AT ") || command.contains("@")) {
+		if (command.contains("@")) {
 
+			String[] strArr = command.split(" @ | @|@ ");
+			// use the first at, which the content is at [1]
+			// try to find @ if there is any
+			String[] strArr2;
+			if (strArr.length > 1) {
+				strArr2 = strArr[1].split("\\\\");		
+			//	parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));				
+				if(ParserFacade.getInstance().containMultiDate(strArr2[0].trim())){
+					parameters.add(new Parameter(Parameter.START_END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
+				}else{
+					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
+				}
+			} 
+			
+			
+			
 			// Find if at or @ appear first
+			
+			/*
 			int indexAt = command.toUpperCase().indexOf("AT");
 			int indexAnd = command.lastIndexOf("@");
+			
+			
+			
+			
 			boolean atOnly = false, andOnly = false;
-			
-			
-			if(indexAt == -1){
-				indexAt = Integer.MAX_VALUE; 
+
+			if (indexAt == -1) {
+				indexAt = Integer.MAX_VALUE;
 				andOnly = true;
 			}
-			if(indexAnd == -1){
-				indexAnd = Integer.MAX_VALUE; 
+			if (indexAnd == -1) {
+				indexAnd = Integer.MAX_VALUE;
 				atOnly = true;
 			}
 
@@ -145,12 +173,12 @@ public class CommandParser {
 				// try to find @ if there is any
 				String[] strArr2;
 				if (strArr.length > 1) {
-					if(atOnly){
+					if (atOnly) {
 						strArr2 = strArr[1].split("\\\\");
-					}else{
+					} else {
 						strArr2 = strArr[1].split(" @ | @|@ ");
 					}
-					
+
 					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr2[0].trim()));
 				} else {
 					strArr2 = strArr[0].split(" @ | @|@ ");
@@ -160,7 +188,11 @@ public class CommandParser {
 
 				if (strArr2.length > 1) {
 					strArr3 = strArr2[1].split("\\\\");
-					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr3[0].trim()));
+					if(ParserFacade.getInstance().containMultiDate(strArr3[0].trim())){
+						parameters.add(new Parameter(Parameter.START_END_DATE_ARGUMENT_TYPE, strArr3[0].trim()));
+					}else{
+						parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr3[0].trim()));
+					}
 				}
 			} else {
 				// @ appear first then at
@@ -169,27 +201,13 @@ public class CommandParser {
 				// try to find @ if there is any
 				String[] strArr2;
 				if (strArr.length > 1) {
-					if(andOnly){
-						strArr2 = strArr[1].split("\\\\"); 
-						
-					}else{
-						strArr2 = strArr[1].split("(?i)at"); 
-						
-					}
+					strArr2 = strArr[1].split("\\\\");	
 					parameters.add(new Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
-					
-				} else { 
-					strArr2 = strArr[0].split("(?i)at"); 
-				}
-				String[] strArr3; 
-				// task location is at strArr2[0], time is at strArr2[1]
-
-				if (strArr2.length > 1 && !andOnly) {
-					strArr3 = strArr2[1].split("\\\\");
-					parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE, strArr3[0].trim()));
-				}
-
+				} 
+				
 			}
+			
+			*/
 		}
 	}
 
@@ -235,7 +253,13 @@ public class CommandParser {
 
 				task.setStart_date(DateParser.getInstance().parseDate(para.getParaArg()));
 
-			} else if (para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE) {
+			} else if (para.getParaType() == Parameter.START_END_DATE_ARGUMENT_TYPE) {
+
+				List<Date> listsOfDate = DateParser.getInstance().parseMultipleDate(para.getParaArg());
+				task.setStart_date(listsOfDate.get(0));
+				task.setEnd_date(listsOfDate.get(1));
+
+			}else if (para.getParaType() == Parameter.END_DATE_ARGUMENT_TYPE) {
 
 				task.setEnd_date(DateParser.getInstance().parseDate(para.getParaArg()));
 

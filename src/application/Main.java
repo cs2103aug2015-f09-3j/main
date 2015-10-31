@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+
 import com.melloware.jintellitype.JIntellitype;
 
 import application.view.UIController;

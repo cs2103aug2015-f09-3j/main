@@ -6,6 +6,8 @@ public class Parameter {
 	public static final String TYPE_ARGUMENT = "t";
 	public static final String START_DATE_ARGUMENT = "sdate";
 	public static final String END_DATE_ARGUMENT = "edate";
+	
+	public static final String START_END_DATE_ARGUMENT = "date";
 
 	public static final String PLACE_ARGUMENT = "place";
 
@@ -14,7 +16,8 @@ public class Parameter {
 	public static final int START_DATE_ARGUMENT_TYPE = 3;
 	public static final int END_DATE_ARGUMENT_TYPE = 4;
 	public static final int PLACE_ARGUMENT_TYPE = 5;
-
+	public static final int START_END_DATE_ARGUMENT_TYPE = 6;
+	
 	private int type;
 	private String argument;
 

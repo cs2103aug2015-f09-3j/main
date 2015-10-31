@@ -1,16 +1,10 @@
 package application.controller.parser;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.joestelmach.natty.DateGroup;
-import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
 
 public class DateParser {
@@ -31,6 +25,9 @@ public class DateParser {
 	public Date parseDate(String dateStr) {
 
 		if (dateStr.contains("/") || dateStr.contains(".")) {
+			List<Date> lists = new ArrayList<Date>();
+			lists.add(UKDateParser.getInstance().parseDate(dateStr));
+			
 			return UKDateParser.getInstance().parseDate(dateStr);
 
 		} else {
@@ -44,6 +41,31 @@ public class DateParser {
 			return lists.get(0);
 
 		}
+
+	}
+	
+	public List<Date> parseMultipleDate(String dateStr){
+		
+		List<Date> lists = null;
+		Parser parser = new Parser();
+		List<DateGroup> groups = parser.parse(dateStr);
+		for (DateGroup group : groups) {
+			lists = group.getDates();
+		}
+		return lists;
+		
+	}
+	
+	public boolean containMultipleDate(String dateStr){
+		
+		List<Date> lists = null;
+		Parser parser = new Parser();
+		List<DateGroup> groups = parser.parse(dateStr);
+		for (DateGroup group : groups) {
+			lists = group.getDates();
+		}
+		return lists.size() > 1;
+		
 	}
 
 }

@@ -1,14 +1,8 @@
 package application;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -19,7 +13,6 @@ import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
 import application.model.LocalStorage;
 import application.model.Task;
-import application.model.Command;
 import application.utils.TasksFormatter;
 
 public class LogicControllerTest {

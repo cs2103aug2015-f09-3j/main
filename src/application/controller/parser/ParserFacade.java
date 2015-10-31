@@ -2,6 +2,7 @@ package application.controller.parser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import application.exception.InvalidCommandException;
 import application.model.Command;
@@ -51,6 +52,14 @@ public class ParserFacade {
 	
 	public Date parseDate(String dateStr) {
 		return DateParser.getInstance().parseDate(dateStr);
+	}
+	
+	public List<Date> parseMultiDate(String dateStr) {
+		return DateParser.getInstance().parseMultipleDate(dateStr);
+	}
+	
+	public boolean containMultiDate(String dateStr){
+		return DateParser.getInstance().containMultipleDate(dateStr);
 	}
 	
 	public ArrayList<Command> parseCommand(String command) throws InvalidCommandException {
