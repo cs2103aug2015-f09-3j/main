@@ -18,6 +18,7 @@ public class DateParser {
 	private static DateParser instance;
 
 	private DateParser() {
+
 	}
 
 	static DateParser getInstance() {
@@ -28,13 +29,21 @@ public class DateParser {
 	}
 
 	public Date parseDate(String dateStr) {
-		List<Date> lists = null;
-		Parser parser = new Parser();
-		List<DateGroup> groups = parser.parse(dateStr);
-		for(DateGroup group:groups) {
-			lists = group.getDates();
-		}	
-		return lists.get(0);
+
+		if (dateStr.contains("/") || dateStr.contains(".")) {
+			return UKDateParser.getInstance().parseDate(dateStr);
+
+		} else {
+
+			List<Date> lists = null;
+			Parser parser = new Parser();
+			List<DateGroup> groups = parser.parse(dateStr);
+			for (DateGroup group : groups) {
+				lists = group.getDates();
+			}
+			return lists.get(0);
+
+		}
 	}
 
 }

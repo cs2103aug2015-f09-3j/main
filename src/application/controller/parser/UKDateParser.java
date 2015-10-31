@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DateParser_OLD {
+public class UKDateParser {
 
 	public static final int ONE_WEEK_IN_MS = 86400 * 7 * 1000;
 	ArrayList<String> listsOfDateFormat;
-	private static DateParser_OLD instance;
+	private static UKDateParser instance;
 
-	private DateParser_OLD() {
+	private UKDateParser() {
 		listsOfDateFormat = new ArrayList<String>();
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_1);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_2);
@@ -22,16 +22,6 @@ public class DateParser_OLD {
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_5);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_6);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_7);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_8);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_9);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_10);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_11);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_12);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_13);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_14);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_15);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_16);
-		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_17);
 
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_100);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_101);
@@ -48,9 +38,9 @@ public class DateParser_OLD {
 
 	}
 
-	static DateParser_OLD getInstance() {
+	static UKDateParser getInstance() {
 		if (instance == null) {
-			instance = new DateParser_OLD();
+			instance = new UKDateParser();
 		}
 		return instance;
 	}
@@ -76,19 +66,10 @@ public class DateParser_OLD {
 			df1.setLenient(false);
 
 			String tmpDate = "";
-			if (count <= 17) {
+			if (count <= 7) {
 				tmpDate = dateStr + " " + Calendar.getInstance().get(Calendar.YEAR);
 			} else {
 				tmpDate = dateStr;
-			}
-
-			if (count == 2 || count == 4 || count == 8 || count == 10 || count == 14) {
-				tmpDate += " " + (Calendar.getInstance().get(Calendar.MONTH) + 1) + " "
-						+ Calendar.getInstance().get(Calendar.WEEK_OF_MONTH);
-
-			} else if (count == 15 || count == 16 || count == 17) {
-				tmpDate += " " + (Calendar.getInstance().get(Calendar.MONTH) + 1) + " "
-						+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 			}
 
 			// 3 is the max char difference allowance.
