@@ -1,5 +1,6 @@
 package application.model;
 
+// @@LimYouLiang A0125975U
 import java.util.ArrayList;
 
 public class Command {
@@ -30,12 +31,11 @@ public class Command {
 	public static final int LIST_TODAY_COMMAND_TYPE = 10;
 	public static final int LIST_NEXT_COMMAND_TYPE = 11;
 	public static final int HELP_COMMAND_TYPE = 12;
-	public static final int SCHEDULE_COMMAND_TYPE= 13;
+	public static final int SCHEDULE_COMMAND_TYPE = 13;
 
 	private Integer type;
 	private String textContent;
 	private ArrayList<Parameter> parameters;
-
 
 	public Command(Integer type, String textContent, ArrayList<Parameter> parameter) {
 		super();
@@ -47,31 +47,39 @@ public class Command {
 	public Integer getType() {
 		return type;
 	}
+
 	public void setType(Integer type) {
 		this.type = type;
 	}
+
 	public String getTextContent() {
 		return textContent;
 	}
+
 	public void setTextContent(String textContent) {
 		this.textContent = textContent;
 	}
+
 	public ArrayList<Parameter> getParameter() {
 		return parameters;
 	}
+
 	public void setParameter(ArrayList<Parameter> parameter) {
 		this.parameters = parameter;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 
-		if(obj instanceof Command){
-			Command cmd = (Command)obj;
-			if(this.parameters.containsAll(cmd.getParameter()) && cmd.getParameter().containsAll(this.parameters) && this.textContent.equals(cmd.getTextContent()) && this.type == cmd.type){
+		if (obj instanceof Command) {
+			Command cmd = (Command) obj;
+			if (this.parameters.containsAll(cmd.getParameter()) && cmd.getParameter().containsAll(this.parameters)
+					&& this.textContent.equals(cmd.getTextContent()) && this.type == cmd.type) {
 				return true;
 			} else {
 				return false;
@@ -80,7 +88,5 @@ public class Command {
 
 		return super.equals(obj);
 	}
-
-
 
 }

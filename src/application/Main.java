@@ -1,5 +1,5 @@
 package application;
-//@@author Lim You Liang
+//@@LimYouLiang A0125975U
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -65,7 +65,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * @@author Java
+	 * @@Java
 	 * DISCLAIMER: this code is adapted from java official code examples.
 	 */
 	 private void createAndShowGUI() {

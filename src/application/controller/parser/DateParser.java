@@ -1,5 +1,6 @@
 package application.controller.parser;
 
+//@@LimYouLiang A0125975U
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ public class DateParser {
 		if (dateStr.contains("/") || dateStr.contains(".")) {
 			List<Date> lists = new ArrayList<Date>();
 			lists.add(UKDateParser.getInstance().parseDate(dateStr));
-			
+
 			return UKDateParser.getInstance().parseDate(dateStr);
 
 		} else {
@@ -43,9 +44,9 @@ public class DateParser {
 		}
 
 	}
-	
-	public List<Date> parseMultipleDate(String dateStr){
-		
+
+	public List<Date> parseMultipleDate(String dateStr) {
+
 		List<Date> lists = null;
 		Parser parser = new Parser();
 		List<DateGroup> groups = parser.parse(dateStr);
@@ -53,11 +54,11 @@ public class DateParser {
 			lists = group.getDates();
 		}
 		return lists;
-		
+
 	}
-	
-	public boolean containMultipleDate(String dateStr){
-		
+
+	public boolean containMultipleDate(String dateStr) {
+
 		List<Date> lists = null;
 		Parser parser = new Parser();
 		List<DateGroup> groups = parser.parse(dateStr);
@@ -65,7 +66,7 @@ public class DateParser {
 			lists = group.getDates();
 		}
 		return lists.size() > 1;
-		
+
 	}
 
 }

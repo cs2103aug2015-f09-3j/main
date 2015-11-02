@@ -1,5 +1,6 @@
 package application.controller.parser;
 
+// @@LimYouLiang A0125975U
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,7 +58,7 @@ public class UKDateParser {
 			isNextWeek = true;
 
 			dateStr = dateStr.replaceAll("(?i)next", "").trim();
-			
+
 		}
 
 		for (String type : this.listsOfDateFormat) {
@@ -88,13 +89,13 @@ public class UKDateParser {
 			count++;
 
 		}
-		
-		//Modified the current set date to next week of that date
-		if(isNextWeek){
+
+		// Modified the current set date to next week of that date
+		if (isNextWeek) {
 			long plusOneWeekTime = date.getTime() + ONE_WEEK_IN_MS;
-			date = new Date(plusOneWeekTime);		
+			date = new Date(plusOneWeekTime);
 		}
-		
+
 		return date;
 	}
 
