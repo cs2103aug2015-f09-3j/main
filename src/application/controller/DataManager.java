@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Stack;
 
 import com.google.gson.Gson;
@@ -57,8 +58,65 @@ public class DataManager {
 		data = new Data(filePath);
 		paraList = null;
 	}
-
-
+	
+	
+	public ArrayList<Task> getListOfTasksToUpload(){
+		
+		
+		
+		data.clearSearchList();
+		ArrayList<Task> filteredList = new ArrayList<Task>();
+		
+		for(Task task: data.getTaskList()){
+			if(task.getgCalId().equals("") && task.getEnd_date() != null){
+				filteredList.add(task);
+			}
+		} 
+		
+		return filteredList;
+		
+		//TODO : update localstorage with gcal id after the call?
+	}
+	
+	public void updateGCalId(HashMap<Task, String> lists){
+		data.clearSearchList();
+		
+		for(Task task : lists.keySet()){
+			int indexToUpdate = data.getTaskList().indexOf(task);
+			data.getTaskList().get(indexToUpdate).setgCalId(lists.get(task));
+			data.getTaskList().get(indexToUpdate).setLastUpdate(System.currentTimeMillis());	
+		}
+		
+		data.updateStorage();
+		
+	}
+	
+	
+	
+	public ArrayList<Task> getAllTasks(){
+		data.clearSearchList();
+		return data.getTaskList();
+	}
+	
+	public void updateTaskByGCalId(String gCalId){
+		
+		
+		
+		int index = 0;
+		
+		for(Task task : data.getTaskList()){
+			
+			if(task.getgCalId().equals(gCalId)){
+				data.getTaskList().get(index).setgCalId(gCalId);
+				break;
+			}
+			index ++;
+		}
+		
+		data.updateStorage();
+		
+		
+	}
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
@@ -79,7 +137,7 @@ public class DataManager {
 				if(!task.isDone()){
 					filteredList.add(task);
 				}
-			}
+			} 
 		}else{
 			ArrayList<Parameter> parameter = new ArrayList<Parameter>();
 			parameter = cmd.getParameter();
@@ -451,6 +509,8 @@ class Data{
 			task.setPlace_argument(new String(temp.getPlace_argument()));
 			task.setStart_date(temp.getStart_date());
 			task.setEnd_date(temp.getEnd_date());
+			task.setgCalId(temp.getgCalId());
+			task.setLastUpdate(temp.getLastUpdate());
 			list.add(task);
 		}
 		history.push(list);

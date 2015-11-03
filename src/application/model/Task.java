@@ -18,6 +18,40 @@ public class Task implements Comparable<Task> {
 	private Date end_date;
 	private String place_argument;
 
+	private String gCalId = "";
+
+	/**
+	 * @return the gCalId
+	 */
+	public String getgCalId() {
+		return gCalId;
+	}
+
+	/**
+	 * @param gCalId
+	 *            the gCalId to set
+	 */
+	public void setgCalId(String gCalId) {
+		this.gCalId = gCalId;
+	}
+
+	/**
+	 * @return the lastUpdate
+	 */
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
+
+	/**
+	 * @param lastUpdate
+	 *            the lastUpdate to set
+	 */
+	public void setLastUpdate(long lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	private long lastUpdate;
+
 	public Task() {
 		isDone = false;
 		textContent = new String("");
@@ -128,7 +162,8 @@ public class Task implements Comparable<Task> {
 			if (this.isDone == taskCmp.isDone && this.place_argument.equals(taskCmp.getPlace_argument())
 					&& this.priority_argument.equals(taskCmp.getPriority_argument())
 					&& this.textContent.equals(taskCmp.getTextContent())
-					&& this.type_argument.equals(taskCmp.getType_argument())) {
+					&& this.type_argument.equals(taskCmp.getType_argument())
+					&& (this.lastUpdate == taskCmp.getLastUpdate()) && this.gCalId.equals(taskCmp.getgCalId())) {
 
 				if (this.start_date != null && taskCmp.getStart_date() != null) {
 					if (this.start_date.equals(taskCmp.getStart_date())) {
@@ -140,6 +175,14 @@ public class Task implements Comparable<Task> {
 
 				if (this.end_date != null && taskCmp.getEnd_date() != null) {
 					if (this.end_date.equals(taskCmp.getEnd_date())) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+				if (this.gCalId != null && taskCmp.getgCalId() != null) {
+					if (this.gCalId.equals(taskCmp.getgCalId())) {
 						return true;
 					} else {
 						return false;
