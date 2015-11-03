@@ -1,5 +1,5 @@
 package application.model;
-
+//@@ZhangLei A0093966L
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,6 +22,16 @@ public class LocalStorage {
 
 	private static File file;
 	private String fileName;
+	
+	public LocalStorage(String path) {
+		fileName = path;
+		file = new File(fileName);
+		try{
+			file.createNewFile();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+	}
 	
 	public String getFileName() {
 		return fileName;
@@ -46,17 +56,6 @@ public class LocalStorage {
 		file = newFile;
 		return CHANGE_PATH_SUCCESS;		
 	}
-	
-	public LocalStorage(String path) {
-		fileName = path;
-		file = new File(fileName);
-		try{
-			file.createNewFile();
-		}catch(IOException ex){
-			ex.printStackTrace();
-		}
-		
-	}
 
 	public ArrayList<String> readFile() {
 		ArrayList<String> textLine = new ArrayList<String>();
@@ -64,7 +63,6 @@ public class LocalStorage {
 		try {
 			fIn = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
