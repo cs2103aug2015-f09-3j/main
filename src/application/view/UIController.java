@@ -6,6 +6,7 @@ import com.melloware.jintellitype.JIntellitype;
 import com.melloware.jintellitype.JIntellitypeConstants;
 
 import application.Main;
+import application.controller.GoogleCalendarManager;
 import application.controller.LogicController;
 import application.exception.InvalidCommandException;
 import javafx.application.Platform;
@@ -103,6 +104,15 @@ public class UIController implements HotkeyListener {
 		} catch (InvalidCommandException e) {
 			feedback = e.getMessage();
 		}
+		
+		try{
+			//lists = GoogleCalendarManager.getInstance().getCalendarEvents();
+			GoogleCalendarManager.getInstance().performSync();
+			
+		}catch(Exception e){
+			e.printStackTrace(); 
+		}
+
 
 		return feedback;
 	}

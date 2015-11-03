@@ -39,18 +39,11 @@ public class CommandManager {
 
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
-		int cmdType = cmd.getType();
+		int cmdType = cmd.getType(); 
 		List<Event> lists = null;
 		
 		
 		
-		try{
-			//lists = GoogleCalendarManager.getInstance().getCalendarEvents();
-			GoogleCalendarManager.getInstance().performSync();
-			
-		}catch(Exception e){
-			e.printStackTrace(); 
-		}
 
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
@@ -235,6 +228,8 @@ public class CommandManager {
 
 		    default: return "testing-lc";
 		}
+		
+		
 		//return "testing";
 	}
 

@@ -78,13 +78,25 @@ public class DataManager {
 		//TODO : update localstorage with gcal id after the call?
 	}
 	
+	public Task findTaskByGCalId(String gCalId){
+		data.clearSearchList();
+		
+		for(Task task : data.getTaskList()){
+			if(task.getgCalId()!= null && task.getgCalId()!= "" && task.getgCalId().equals(gCalId)){
+				return task;
+			}	
+		}
+		
+		return null;
+	}
+	
 	public void updateGCalId(HashMap<Task, String> lists){
 		data.clearSearchList();
 		
 		for(Task task : lists.keySet()){
 			int indexToUpdate = data.getTaskList().indexOf(task);
 			data.getTaskList().get(indexToUpdate).setgCalId(lists.get(task));
-			data.getTaskList().get(indexToUpdate).setLastUpdate(System.currentTimeMillis());	
+			data.getTaskList().get(indexToUpdate).setLastServerUpdate(System.currentTimeMillis());	
 		}
 		
 		data.updateStorage();
@@ -98,21 +110,17 @@ public class DataManager {
 		return data.getTaskList();
 	}
 	
-	public void updateTaskByGCalId(String gCalId){
+	public void updateTask(Task task){
 		
+		data.clearSearchList();
+		Task localTask = this.findTaskByGCalId(task.getgCalId());
 		
+		int indexToUpdate = data.getTaskList().indexOf(localTask);
 		
-		int index = 0;
+		data.getTaskList().remove(indexToUpdate);
+		data.getTaskList().add(task);
 		
-		for(Task task : data.getTaskList()){
-			
-			if(task.getgCalId().equals(gCalId)){
-				data.getTaskList().get(index).setgCalId(gCalId);
-				break;
-			}
-			index ++;
-		}
-		
+
 		data.updateStorage();
 		
 		
@@ -510,7 +518,8 @@ class Data{
 			task.setStart_date(temp.getStart_date());
 			task.setEnd_date(temp.getEnd_date());
 			task.setgCalId(temp.getgCalId());
-			task.setLastUpdate(temp.getLastUpdate());
+			task.setLastServerUpdate(temp.getLastServerUpdate());
+			task.setLastLocalUpdate(temp.getLastLocalUpdate());
 			list.add(task);
 		}
 		history.push(list);

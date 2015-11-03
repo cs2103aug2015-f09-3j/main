@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -15,18 +16,22 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Event.ExtendedProperties;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 
 import application.model.Task;
+import application.utils.TokenManager;
 
 public class GoogleCalendarManager {
 
@@ -49,7 +54,8 @@ public class GoogleCalendarManager {
 	private static HttpTransport HTTP_TRANSPORT;
 
 	/** Global instance of the scopes required by this quickstart. */
-	private static final List<String> SCOPES = Arrays.asList(new String[]{CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR});
+	private static final List<String> SCOPES = Arrays
+			.asList(new String[] { CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR });
 
 	com.google.api.services.calendar.Calendar service;
 
@@ -107,14 +113,45 @@ public class GoogleCalendarManager {
 	/**
 	 * 
 	 */
-	public List<Event> getCalendarEvents() { 
-		try {
+	public List<Event> getCalendarEvents(String syncToken) {
 
-			// List the next 10 events from the primary calendar.
-			DateTime now = new DateTime(System.currentTimeMillis());
-			Events events = service.events().list("primary").setMaxResults(10).setTimeMin(now).setOrderBy("startTime")
-					.setSingleEvents(true).execute();
-			List<Event> items = events.getItems();
+		DateTime now = new DateTime(System.currentTimeMillis());
+
+		Calendar.Events.List request = null;
+		try {
+			request = service.events().list("primary");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if (syncToken != null && !syncToken.equals("")) {
+			request.setSyncToken(syncToken);
+		} else {
+			request.setTimeMin(now);
+		}
+		Events events = null;
+		String pageToken = null;
+		List<Event> items = null;
+		do {
+			request.setPageToken(pageToken);
+			try {
+				events = request.execute();
+			} catch (GoogleJsonResponseException e) {
+				if (e.getStatusCode() == 410) {
+					// A 410 status code, "Gone", indicates that the sync token
+					// is invalid.
+					System.out.println("Invalid sync token, clearing event store and re-syncing.");
+					TokenManager.getInstance().clearToken();
+
+				} else {
+					return null;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			items = events.getItems();
 			if (items.size() == 0) {
 				System.out.println("No upcoming events found.");
 			} else {
@@ -125,31 +162,139 @@ public class GoogleCalendarManager {
 						start = event.getStart().getDate();
 					}
 					System.out.printf("%s (%s)\n", event.getSummary(), start);
+
 				}
 			}
+			pageToken = events.getNextPageToken();
+		} while (pageToken != null);
 
-			return items;
+		TokenManager.getInstance().setToken(events.getNextSyncToken());
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		return items;
+
+	}
+
+	public void performSync() {
+
+		performUpSync();
+		performDownSync();
+	}
+
+	/**
+	 * 
+	 */
+	private void performDownSync() {
+		List<Event> lists = null;
+		ArrayList<Task> taskArr = new ArrayList<Task>();
+		String lastToken = TokenManager.getInstance().getLastToken();
+		lists = getCalendarEvents(lastToken);
+
+		for (Event event : lists) {
+			taskArr.add(convertEventToTask(event));
 		}
 
-		return null;
+		// Compare the downloaded and local lastUpate. depending which one is
+		// latest.
+		// if server lastUpdate > local , update local
+		// if local lastUpdate > server , update server
+
+		for (Task task : taskArr) {
+
+			Task localTask = DataManager.getInstance().findTaskByGCalId(task.getgCalId());
+			if (localTask == null) {
+				// does not exist in local storage. its a new task. update local
+				DataManager.getInstance().addNewTask(task);
+			} else {
+				// compare lastUpdate here
+				if (localTask.getLastServerUpdate() > task.getLastServerUpdate()) {
+					// update server
+					Event event = mapTaskToEvent(localTask);
+					updateServer(event);
+
+				} else {
+					// update local
+					DataManager.getInstance().updateTask(task);
+				}
+
+			}
+
+		}
 	}
-	
-	public void performSync(){
-		
-		performUpSync();
-		//TODO: performDownSync
-		List<Event> lists = getCalendarEvents();
-		
-		
-		
-		
-		
-		
-		
-		
+
+	/**
+	 * @param event
+	 */
+	private void updateServer(Event event) {
+		EventReminder[] reminderOverrides = new EventReminder[] {
+				new EventReminder().setMethod("email").setMinutes(24 * 60),
+				new EventReminder().setMethod("popup").setMinutes(10), };
+		Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
+				.setOverrides(Arrays.asList(reminderOverrides));
+		event.setReminders(reminders);
+
+		try {
+			service.events().update("primary", event.getId(), event).execute();
+			// event = service.events().update("primary", event).execute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	private Task convertEventToTask(Event event) {
+		Task tmpTask = new Task();
+
+		tmpTask.setTextContent(event.getSummary());
+
+		try {
+			tmpTask.setType_argument(event.getExtendedProperties().getShared().get("type"));
+		} catch (NullPointerException e) {
+			// Its normal to have null pointer exception here. google self
+			// created event won't have this instance.
+		}
+
+		tmpTask.setPriority_argument(event.getDescription());
+
+		tmpTask.setPlace_argument(event.getLocation());
+		tmpTask.setLastServerUpdate(event.getUpdated().getValue());
+		tmpTask.setgCalId(event.getId());
+		String has_start_date = null;
+		ExtendedProperties prop = event.getExtendedProperties();
+		Map<String, String> hash = null;
+		if (prop != null) {
+			hash = prop.getShared();
+		}
+
+		if (hash != null) {
+			has_start_date = hash.get("has_start_date");
+		}
+
+		if (has_start_date == null) {
+			has_start_date = "yes";
+		}
+
+		if (event.getStart() != null && has_start_date.equals("yes")) {
+			DateTime dt = event.getStart().getDate();
+			if (dt == null) {
+				dt = event.getStart().getDateTime();
+			}
+			tmpTask.setStart_date(new Date(dt.getValue()));
+		} else {
+			tmpTask.setStart_date(null);
+		}
+
+		if (event.getEnd() != null) {
+			DateTime dt = event.getEnd().getDate();
+			if (dt == null) {
+				dt = event.getEnd().getDateTime();
+			}
+			tmpTask.setEnd_date(new Date(dt.getValue()));
+		}
+
+		return tmpTask;
 	}
 
 	/**
@@ -158,33 +303,29 @@ public class GoogleCalendarManager {
 	private void performUpSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfTasksToUpload();
 		HashMap<Task, String> hashmap = new HashMap<Task, String>();
-		for(Task task : lists){
-			
-			Event event = mapTaskToEvent(task);
-			
-			EventReminder[] reminderOverrides = new EventReminder[] {
-				    new EventReminder().setMethod("email").setMinutes(24 * 60),
-				    new EventReminder().setMethod("popup").setMinutes(10),
-				};
-				Event.Reminders reminders = new Event.Reminders()
-				    .setUseDefault(false)
-				    .setOverrides(Arrays.asList(reminderOverrides));
-				event.setReminders(reminders);
-				
+		for (Task task : lists) {
 
-				try {
-					event = service.events().insert("primary", event).execute();
-					hashmap.put(task, event.getId());
-					//task.setgCalId(event.getId());
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+			Event event = mapTaskToEvent(task);
+
+			EventReminder[] reminderOverrides = new EventReminder[] {
+					new EventReminder().setMethod("email").setMinutes(24 * 60),
+					new EventReminder().setMethod("popup").setMinutes(10), };
+			Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
+					.setOverrides(Arrays.asList(reminderOverrides));
+			event.setReminders(reminders);
+
+			try {
+				event = service.events().insert("primary", event).execute();
+				hashmap.put(task, event.getId());
+				// task.setgCalId(event.getId());
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
-		
+
 		DataManager.getInstance().updateGCalId(hashmap);
 	}
 
@@ -193,45 +334,63 @@ public class GoogleCalendarManager {
 	 * @return
 	 */
 	private Event mapTaskToEvent(Task task) {
-		Event event = new Event()
-				.setSummary(task.getTextContent())
-				.setLocation(task.getPlace_argument())
-				.setDescription(task.getPriority_argument())
-				.setKind(task.getType_argument())
-				;
-				
-				
+		Event event = new Event().setSummary(task.getTextContent()).setLocation(task.getPlace_argument())
+				.setDescription(task.getPriority_argument());
+		Map<String, String> hashMap = new HashMap<String, String>();
+		hashMap.put("type", task.getType_argument());
+
+		if (!task.getgCalId().equals("")) {
+			event.setId(task.getgCalId());
+		}
 
 		EventDateTime start = new EventDateTime();
-		if(task.getStart_date() != null){
-		start.setDateTime(new DateTime(task.getStart_date()));
+		if (task.getStart_date() != null) {
+			start.setDateTime(new DateTime(task.getStart_date()));
 		}
-				
+
 		EventDateTime end = new EventDateTime();
-		if(task.getEnd_date() != null){
+		if (task.getEnd_date() != null) {
 			end.setDateTime(new DateTime(task.getEnd_date()));
-			
+
 		}
 
 		EventDateTime endMinus1Hr = new EventDateTime();
 		endMinus1Hr.setDateTime(new DateTime(new Date(task.getEnd_date().getTime() - 3600000)));
-		
-		//event.setStart(start);
-		//event.setEnd(end);
-		
-		if(task.getStart_date() == null){ 
-			//event.setEndTimeUnspecified(true);
+
+		// event.setStart(start);
+		// event.setEnd(end);
+
+		if (task.getStart_date() == null) {
+			// event.setEndTimeUnspecified(true);
 			event.setStart(endMinus1Hr);
 			event.setEnd(end);
-			event.set("has_start_date", false);
-			
-		}else{
-			
+
+			hashMap.put("has_start_date", "no");
+			// event.setUnknownKeys(map);
+			ExtendedProperties prop = new ExtendedProperties();
+			prop.setShared(hashMap);
+
+			event.setExtendedProperties(prop);
+			// event.set("has_start_date", false);
+
+		} else {
+
 			event.setStart(start);
 			event.setEnd(end);
-			event.set("has_start_date", true);
+			// Map<String, Object> map = new HashMap<String, Object>();
+			// map.put("has_start_date", 1);
+			// event.setUnknownKeys(map);
+
+			hashMap.put("has_start_date", "no");
+			// event.setUnknownKeys(map);
+			ExtendedProperties prop = new ExtendedProperties();
+			prop.setShared(hashMap);
+
+			event.setExtendedProperties(prop);
+
+			// event.set("has_start_date", true);
 		}
-	
+
 		return event;
 	}
 

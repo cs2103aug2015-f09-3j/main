@@ -38,19 +38,35 @@ public class Task implements Comparable<Task> {
 	/**
 	 * @return the lastUpdate
 	 */
-	public long getLastUpdate() {
-		return lastUpdate;
+	public long getLastServerUpdate() {
+		return lastServerUpdate;
 	}
 
 	/**
 	 * @param lastUpdate
 	 *            the lastUpdate to set
 	 */
-	public void setLastUpdate(long lastUpdate) {
-		this.lastUpdate = lastUpdate;
+	public void setLastServerUpdate(long lastUpdate) {
+		this.lastServerUpdate = lastUpdate;
 	}
 
-	private long lastUpdate;
+	private long lastServerUpdate;
+	private long lastLocalUpdate;
+
+	/**
+	 * @return the lastLocalUpdate
+	 */
+	public long getLastLocalUpdate() {
+		return lastLocalUpdate;
+	}
+
+	/**
+	 * @param lastLocalUpdate
+	 *            the lastLocalUpdate to set
+	 */
+	public void setLastLocalUpdate(long lastLocalUpdate) {
+		this.lastLocalUpdate = lastLocalUpdate;
+	}
 
 	public Task() {
 		isDone = false;
@@ -86,7 +102,11 @@ public class Task implements Comparable<Task> {
 	}
 
 	public void setTextContent(String textContent) {
-		this.textContent = textContent;
+		if (textContent != null) {
+			this.textContent = textContent;
+		} else {
+			this.textContent = "";
+		}
 	}
 
 	public String getPriority_argument() {
@@ -94,7 +114,11 @@ public class Task implements Comparable<Task> {
 	}
 
 	public void setPriority_argument(String priority_argument) {
-		this.priority_argument = priority_argument;
+		if (priority_argument != null) {
+			this.priority_argument = priority_argument;
+		} else {
+			this.priority_argument = "normal";
+		}
 	}
 
 	public String getType_argument() {
@@ -102,7 +126,11 @@ public class Task implements Comparable<Task> {
 	}
 
 	public void setType_argument(String type_argument) {
-		this.type_argument = type_argument;
+		if (type_argument != null) {
+			this.type_argument = type_argument;
+		} else {
+			this.type_argument = "normal";
+		}
 	}
 
 	public Date getStart_date() {
@@ -126,7 +154,11 @@ public class Task implements Comparable<Task> {
 	}
 
 	public void setPlace_argument(String place_argument) {
-		this.place_argument = place_argument;
+		if (place_argument != null) {
+			this.place_argument = place_argument;
+		} else {
+			this.place_argument = "";
+		}
 	}
 
 	/*
@@ -163,7 +195,7 @@ public class Task implements Comparable<Task> {
 					&& this.priority_argument.equals(taskCmp.getPriority_argument())
 					&& this.textContent.equals(taskCmp.getTextContent())
 					&& this.type_argument.equals(taskCmp.getType_argument())
-					&& (this.lastUpdate == taskCmp.getLastUpdate()) && this.gCalId.equals(taskCmp.getgCalId())) {
+					&& (this.lastServerUpdate == taskCmp.getLastServerUpdate())) {
 
 				if (this.start_date != null && taskCmp.getStart_date() != null) {
 					if (this.start_date.equals(taskCmp.getStart_date())) {
@@ -175,14 +207,6 @@ public class Task implements Comparable<Task> {
 
 				if (this.end_date != null && taskCmp.getEnd_date() != null) {
 					if (this.end_date.equals(taskCmp.getEnd_date())) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-
-				if (this.gCalId != null && taskCmp.getgCalId() != null) {
-					if (this.gCalId.equals(taskCmp.getgCalId())) {
 						return true;
 					} else {
 						return false;
