@@ -30,6 +30,8 @@ public class CommandManager {
 	private static final String WRONG_DIRECTORY = "Wrong directory entered.";
 	private static final String EMPTY_FILE_DONE = "There are no undone tasks that match your keyword.";
 	private static final String SET_UNDONE_SUCCESS = "Successfully set undone:";
+	private static final String SHOW_DONE_TASKS = "Tasks that are done: \n";
+	
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
@@ -51,35 +53,36 @@ public class CommandManager {
 		    	String msg = EMPTY_STRING;
 		    	ArrayList<Task> allTasks = new ArrayList<Task>();
 		    	if (cmd.getTextContent().equals("done")){
-		    		allTasks = DataManager.checkIfDone();
-		    		msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
-		    	}
-		    	allTasks = DataManager.getInstance().listAll(cmd);
-		    	if (cmd.getTextContent() != EMPTY_STRING){
-		    		if (isInteger(cmd)){
-			    		int limit = Integer.parseInt(cmd.getTextContent());
-			    		limitNumberOfTasks(allTasks, limit);
-		    		} else {
-		    			int type=determineViewType(cmd);
-		    			switch (type){
-		    				case TasksFormatter.DETAIL_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
-		    					break;
-		    				case TasksFormatter.TYPE_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.TYPE_VIEW_TYPE);
-		    					break;
-		    				case TasksFormatter.PRIORITY_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.PRIORITY_VIEW_TYPE);
-		    					break;
-		    				case TasksFormatter.PLACE_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.PLACE_VIEW_TYPE);
-		    					break;
-		    				case TasksFormatter.FLOATING_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.FLOATING_VIEW_TYPE);
-		    					break;
-		    				case TasksFormatter.TIMELINE_VIEW_TYPE:
-		    					msg = TasksFormatter.format(allTasks, TasksFormatter.TIMELINE_VIEW_TYPE);
-		    					break;
+		    		allTasks = DataManager.getInstance().checkIfDone();
+		    		msg = SHOW_DONE_TASKS + TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	}else{
+		    		allTasks = DataManager.getInstance().listAll(cmd);   
+		    		if (cmd.getTextContent() != EMPTY_STRING){
+		    			if (isInteger(cmd)){
+		    				int limit = Integer.parseInt(cmd.getTextContent());
+		    				limitNumberOfTasks(allTasks, limit);
+		    			} else {
+		    				int type=determineViewType(cmd);
+		    				switch (type){
+		    					case TasksFormatter.DETAIL_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
+		    						break;
+		    					case TasksFormatter.TYPE_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.TYPE_VIEW_TYPE);
+		    						break;
+		    					case TasksFormatter.PRIORITY_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.PRIORITY_VIEW_TYPE);
+		    						break;
+		    					case TasksFormatter.PLACE_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.PLACE_VIEW_TYPE);
+		    						break;
+		    					case TasksFormatter.FLOATING_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.FLOATING_VIEW_TYPE);
+		    						break;
+		    					case TasksFormatter.TIMELINE_VIEW_TYPE:
+		    						msg = TasksFormatter.format(allTasks, TasksFormatter.TIMELINE_VIEW_TYPE);
+		    						break;
+		    				}
 		    			}
 		    		}
 		    	}
@@ -207,7 +210,7 @@ public class CommandManager {
 
 		    case Command.LIST_TODAY_COMMAND_TYPE:
 		    	ArrayList<Task> listToday = DataManager.getInstance().listToday(cmd);
-		    	String today = TasksFormatter.format(listToday, TasksFormatter.TIMELINE_VIEW_TYPE);
+		    	String today = TasksFormatter.format(listToday, TasksFormatter.DETAIL_VIEW_TYPE);
 		    	return today;
 
 		    case Command.HELP_COMMAND_TYPE:

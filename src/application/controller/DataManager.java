@@ -1,5 +1,7 @@
 package application.controller;
 
+//@@LimQiWen A0125980B
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,6 +36,7 @@ public class DataManager {
 	public static final Integer TASK_SET_TO_DONE = 3;
 	public static final Integer TASK_UPDATED = 4;
 	public static final Integer PREV_COMMAND_UNDONE = 5;
+	public static final Integer TASK_UNDONE = 6;
 	public static final Integer MAX_HISTORY = 10;
 
 	private static Data data;
@@ -89,6 +92,17 @@ public class DataManager {
 		return filteredList;
 	}
 
+	public ArrayList<Task> checkIfDone() {
+		data.clearSearchList();
+		ArrayList<Task> list = new ArrayList<Task>();
+		for(Task task: data.getTaskList()){
+			if(task.isDone()){
+				list.add(task);
+			}
+		}
+		return list;
+	}
+	
 	private void filterListByParameter(ArrayList<Task> filteredList, ArrayList<Parameter> parameter) {
 		for(Parameter para:	parameter){
 			switch(para.getParaType()){
@@ -278,14 +292,6 @@ public class DataManager {
 		return data.undo();
 	}
 
-	/*private ArrayList<String> tasksToStrings(ArrayList<Task> list){
-		ArrayList<String> taskStrings = new ArrayList<String>();
-		for(int i=0;i<list.size();i++){
-			taskStrings.add(list.get(i).getTextContent());
-		}
-		return taskStrings;
-	}*/
-
 	private ArrayList<Task> searchTasksForMatches(Command cmd) {
 		ArrayList<Task> searchList = new ArrayList<Task>();
 		for(int i=0; i<data.getTaskList().size();i++){
@@ -304,20 +310,20 @@ public class DataManager {
 	public ArrayList<Task> listToday(Command cmd) {
 		Date today = new Date();
 		ArrayList<Task> tasksDueToday = new ArrayList<Task>();
-		Task task;
 
-		for(int i=0; i< data.getTaskList().size(); i++){
-			task = data.getTaskList().get(i);
-			if(task.getEnd_date() != null){
-				if(task.getEnd_date().getYear() == today.getYear()){
-					if(task.getEnd_date().getMonth() == today.getMonth()){
-						if(task.getEnd_date().getDate() == today.getDate()){
-							tasksDueToday.add(task);
+		for(Task task: data.getTaskList()){
+			if(!task.isDone()){
+				if(task.getEnd_date() != null){
+					if(task.getEnd_date().getYear() == today.getYear()){
+						if(task.getEnd_date().getMonth() == today.getMonth()){
+							if(task.getEnd_date().getDate() == today.getDate()){
+								tasksDueToday.add(task);
+							}
 						}
 					}
-				}
-				if(tasksDueToday.size() > 10){
-					break;
+					if(tasksDueToday.size() > 10){
+						break;
+					}
 				}
 			}
 		}
@@ -329,22 +335,38 @@ public class DataManager {
 	}
 
 
-	public int setUndoneToTask(int parseInt) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int setUndoneToTask(int lineNum) {
+		if(lineNum > data.getSearchList().size()){
+			return WRONG_LINE_NUM;
+		}
+		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum-1));
+		data.getTaskList().get(index).setDone(false);
+		data.updateStorage();
+		return TASK_UNDONE;
 	}
 
 
 	public int setUndoneToTask(Command cmd) {
-		// TODO Auto-generated method stub
-		return 0;
+		data.clearSearchList();
+		ArrayList<Task> searchList = searchTasksForMatches(cmd);
+		data.saveToSearchList(searchList);
+		ArrayList<Task> taskList = data.getTaskList();
+		switch (searchList.size()){
+			case 0:
+				return TASK_NOT_FOUND;
+			case 1:
+				int index = taskList.indexOf(searchList.get(0));
+				taskList.get(index).setDone(false);
+				data.updateStorage();
+				return TASK_UNDONE;
+			default:
+				CommandManager.setMultipleMatchList(searchList);
+				return MULTIPLE_MATCHES;
+		}
 	}
 
 
-	public static ArrayList<Task> checkIfDone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 }
 
 class Data{
@@ -396,7 +418,6 @@ class Data{
 		updateStorage();
 	}
 	public void updateStorage(){
-
 		addToHistory();
 		histCount ++;
 		limitHistory();
@@ -429,9 +450,9 @@ class Data{
 	private ArrayList<Task> initializeTaskList(){
 		ArrayList<String> listString = storageIO.readFromStorage();
 		ArrayList<Task> listTask = new ArrayList<Task>();
-
 		for(int i=0; i<listString.size(); i++){
 			listTask.add(gson.fromJson(listString.get(i),Task.class));
+
 		}
 
 		return listTask;
@@ -488,6 +509,7 @@ class StorageInterface{
 	private File filePath;
 	public static final String FILE_PATH_TXT = "filePath.txt";
 	public static String DEFAULT_FILE = "toDoo.txt";
+	
 	public StorageInterface(){
 		filePath = new File(FILE_PATH_TXT);
 		try{
@@ -523,6 +545,7 @@ class StorageInterface{
 		BufferedWriter wr = null;
 		BufferedReader br = null;
 		String oldPath = null;
+		int success = 0;
 		try{
 			br = new BufferedReader(new FileReader(filePath));
 			oldPath = br.readLine();
@@ -534,8 +557,11 @@ class StorageInterface{
 			wr.close();
 		}catch(IOException ex){
 			ex.printStackTrace();
+			success = LocalStorage.WRONG_DIRECTORY;
 		}
-		int success = file.changePath(newPath);
+		if(success == 0){
+			success = file.changePath(newPath);
+		}
 		if(success == LocalStorage.WRONG_DIRECTORY){
 			try{
 				if(oldPath == null){
@@ -560,6 +586,8 @@ class StorageInterface{
 		String text = null;
 		BufferedReader br = null;
 		BufferedWriter wr = null;
+		boolean success = true;
+		File tempfile;
 		try{
 			br = new BufferedReader(new FileReader(filePath));
 			wr = new BufferedWriter(new FileWriter(filePath,true));
@@ -567,11 +595,28 @@ class StorageInterface{
 			if(text == null){
 				wr.append(DEFAULT_FILE);
 				text = DEFAULT_FILE;
+				wr.close();
+				br.close();
 			}
-			br.close();
-			wr.close();
+			else{
+				tempfile = new File(text);
+				tempfile.createNewFile();
+			}
 		}catch(IOException ex){
-			ex.printStackTrace();
+			success = false;
+		}
+		if(success == false){
+			try{
+				wr = new BufferedWriter(new FileWriter(filePath,false));
+				wr.close();
+				wr = new BufferedWriter(new FileWriter(filePath,true)); 
+				wr.append(DEFAULT_FILE);
+				wr.close();
+			}catch(IOException ex){
+				ex.printStackTrace();
+			}finally{
+				text = DEFAULT_FILE;
+			}
 		}
 		return text;
 	}
