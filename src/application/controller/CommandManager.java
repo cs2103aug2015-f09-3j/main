@@ -3,9 +3,6 @@ package application.controller;
 //@@nghuiyirebecca A0130876B
 
 import java.util.ArrayList;
-import java.util.List;
-
-import com.google.api.services.calendar.model.Event;
 
 import application.controller.parser.ParserFacade;
 import application.model.Command;
@@ -34,18 +31,18 @@ public class CommandManager {
 	private static final String EMPTY_FILE_DONE = "There are no undone tasks that match your keyword.";
 	private static final String SET_UNDONE_SUCCESS = "Successfully set undone:";
 	private static final String SHOW_DONE_TASKS = "Tasks that are done: \n";
-	
+
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
 
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
-		int cmdType = cmd.getType(); 
-		
-		
-		
-		
+		int cmdType = cmd.getType();
+
+
+
+
 
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
@@ -63,7 +60,7 @@ public class CommandManager {
 		    		allTasks = DataManager.getInstance().checkIfDone();
 		    		msg = SHOW_DONE_TASKS + TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
 		    	}else{
-		    		allTasks = DataManager.getInstance().listAll(cmd);   
+		    		allTasks = DataManager.getInstance().listAll(cmd);
 		    		if (cmd.getTextContent() != EMPTY_STRING){
 		    			if (isInteger(cmd)){
 		    				int limit = Integer.parseInt(cmd.getTextContent());
@@ -229,10 +226,14 @@ public class CommandManager {
 		    	String sched = TasksFormatter.format(schedule, TasksFormatter.TIMELINE_VIEW_TYPE);
 		    	return sched;
 
+		    case Command.GOOGLE_ADD_COMMAND_TYPE:
+		    	String googleAdd = "testgoogleadd \n";
+		    	return googleAdd;
+
 		    default: return "testing-lc";
 		}
-		
-		
+
+
 		//return "testing";
 	}
 

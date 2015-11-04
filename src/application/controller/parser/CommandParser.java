@@ -150,29 +150,29 @@ public class CommandParser {
 			/*
 			 * int indexAt = command.toUpperCase().indexOf("AT"); int indexAnd =
 			 * command.lastIndexOf("@");
-			 * 
-			 * 
-			 * 
-			 * 
+			 *
+			 *
+			 *
+			 *
 			 * boolean atOnly = false, andOnly = false;
-			 * 
+			 *
 			 * if (indexAt == -1) { indexAt = Integer.MAX_VALUE; andOnly = true;
 			 * } if (indexAnd == -1) { indexAnd = Integer.MAX_VALUE; atOnly =
 			 * true; }
-			 * 
+			 *
 			 * if ((indexAt < indexAnd)) {
-			 * 
+			 *
 			 * String[] strArr = command.split("(?i)at"); // use the first at,
 			 * which the content is at [1] // try to find @ if there is any
 			 * String[] strArr2; if (strArr.length > 1) { if (atOnly) { strArr2
 			 * = strArr[1].split("\\\\"); } else { strArr2 = strArr[1].split(
 			 * " @ | @|@ "); }
-			 * 
+			 *
 			 * parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE,
 			 * strArr2[0].trim())); } else { strArr2 = strArr[0].split(
 			 * " @ | @|@ "); } String[] strArr3; // task location is at
 			 * strArr2[0], time is at strArr2[1]
-			 * 
+			 *
 			 * if (strArr2.length > 1) { strArr3 = strArr2[1].split("\\\\");
 			 * if(ParserFacade.getInstance().containMultiDate(strArr3[0].trim())
 			 * ){ parameters.add(new
@@ -186,9 +186,9 @@ public class CommandParser {
 			 * strArr[1].split("\\\\"); parameters.add(new
 			 * Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 			 * }
-			 * 
+			 *
 			 * }
-			 * 
+			 *
 			 */
 		}
 	}
@@ -333,6 +333,8 @@ public class CommandParser {
 			return Command.HELP_COMMAND_TYPE;
 		} else if (isCommandType(Command.SCHEDULE_COMMAND, cmd)) {
 			return Command.SCHEDULE_COMMAND_TYPE;
+		} else if (isCommandType(Command.GOOGLE_ADD_COMMAND, cmd)) {
+				return Command.GOOGLE_ADD_COMMAND_TYPE;
 		} else {
 			return -1;
 		}

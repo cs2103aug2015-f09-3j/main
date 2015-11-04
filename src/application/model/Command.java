@@ -18,6 +18,7 @@ public class Command {
 	public static final String LIST_NEXT_COMMAND = "next:nxt";
 	public static final String HELP_COMMAND = "help:?";
 	public static final String SCHEDULE_COMMAND = "schedule:sd";
+	public static final String GOOGLE_ADD_COMMAND = "googleAdd:ga";
 
 	public static final int ADD_COMMAND_TYPE = 1;
 	public static final int LIST_COMMAND_TYPE = 2;
@@ -32,6 +33,7 @@ public class Command {
 	public static final int LIST_NEXT_COMMAND_TYPE = 11;
 	public static final int HELP_COMMAND_TYPE = 12;
 	public static final int SCHEDULE_COMMAND_TYPE = 13;
+	public static final int GOOGLE_ADD_COMMAND_TYPE = 14;
 
 	private Integer type;
 	private String textContent;
@@ -70,7 +72,7 @@ public class Command {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
