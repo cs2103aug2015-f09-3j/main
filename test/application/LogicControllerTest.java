@@ -2,7 +2,6 @@ package application;
 //@@nghuiyirebecca A0130876B
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import org.junit.Test;
 
 import application.controller.DataManager;
@@ -15,52 +14,6 @@ import application.utils.TasksFormatter;
 public class LogicControllerTest {
 	LocalStorage file;
 	String curFilePath;
-
-	@Test
-	public void testAll() throws InvalidCommandException {
-		DataManager.getInstance().switchToTestingMode("testingMode.txt");
-		testDeleteOneFromMultipleOccurance();
-		testListAll();
-		testListDone();
-		testListPlace();
-		testAdd();
-		testAddRepeat();
-		testDeleteFullName();
-		testDeletePartialName();
-		cleanUp();
-
-	}
-
-	public void cleanUp() {
-		try {
-			File file = new File("testingTestController.txt");
-			file.delete();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-
-	}
-
-	/*
-	 * This is a boundary case for the delete method as deleting one of the tasks having
-	 * the same names
-	 */
-	@Test
-	public void testDeleteOneFromMultipleOccurance() throws InvalidCommandException {
-		String cmd1 = "add EE2021 homework \\p high";
-		String cmd2 = "add EE2021 homework \\p normal";
-		String delete = "delete EE2021 homework";
-		LogicController.onCommandProcess(cmd1);
-		LogicController.onCommandProcess(cmd2);
-		String result = LogicController.onCommandProcess(delete);
-		String expectedResult = "There is more than one match, please choose from the following tasks.\n" + "\n" +
-				"    Description                    Start Date           End Date             Location             Type            Priority       \n"+
-				"1   EE2021 homework                                                                               normal          high           \n"+
-				"2   EE2021 homework                                                                               normal          normal         \n"+"\n";
-		assertEquals(expectedResult, result);
-	}
 	
 	/* This is a boundary case for the listAll method */
 	@Test
@@ -109,8 +62,6 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-
-	@Test
 	public void testAdd() throws InvalidCommandException {
 		String cmd = "add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc";
 		String result = LogicController.onCommandProcess(cmd);
@@ -151,14 +102,31 @@ public class LogicControllerTest {
 	 */
 	@Test
 	public void testDeletePartialName() throws InvalidCommandException {
-		String cmd = "add EE2020 homework \\edate 28/10/2015 \\p high";
-		String delete = "delete 2020";
+		String cmd = "add EE4240 homework \\edate 28/10/2015 \\p high";
+		String delete = "delete 4240";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(delete);
-		String expectedResult = "Successfully deleted: 2020" + "\n";
+		String expectedResult = "Successfully deleted: 4240" + "\n";
 		assertEquals(expectedResult, result);
 	}
 	
-
+	/*
+	 * This is a boundary case for the delete method as deleting one of the tasks having
+	 * the same names
+	 */
+	@Test
+	public void testDeleteOneFromMultipleOccurance() throws InvalidCommandException {
+		String cmd1 = "add EE2021 homework \\p high";
+		String cmd2 = "add EE2021 homework \\p normal";
+		String delete = "delete EE2021 homework";
+		LogicController.onCommandProcess(cmd1);
+		LogicController.onCommandProcess(cmd2);
+		String result = LogicController.onCommandProcess(delete);
+		String expectedResult = "There is more than one match, please choose from the following tasks.\n" + "\n" +
+				"    Description                    Start Date           End Date             Location             Type            Priority       \n"+
+				"1   EE2021 homework                                                                               normal          high           \n"+
+				"2   EE2021 homework                                                                               normal          normal         \n"+"\n";
+		assertEquals(expectedResult, result);
+	}
 	
 }
