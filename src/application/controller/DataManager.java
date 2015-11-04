@@ -202,12 +202,20 @@ public class DataManager {
 							taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.getParaArg());
 							break;
 						case Parameter.START_DATE_ARGUMENT_TYPE:
-							taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(
+							if(para.getParaArg().equals("")){
+								taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(null);
+							}else{
+								taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(
 									ParserFacade.getInstance().parseDate(para.getParaArg()));
+							}
 							break;
 						case Parameter.END_DATE_ARGUMENT_TYPE:
-							taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(
+							if(para.getParaArg().equals("")){
+								taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(null);
+							}else{
+								taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(
 									ParserFacade.getInstance().parseDate(para.getParaArg()));
+							}
 							break;
 						default:
 							taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.getParaArg());
