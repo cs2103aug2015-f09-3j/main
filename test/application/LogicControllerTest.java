@@ -3,8 +3,6 @@ package application;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 import application.controller.DataManager;
@@ -12,19 +10,19 @@ import application.controller.LogicController;
 import application.controller.parser.ParserFacade;
 import application.exception.InvalidCommandException;
 import application.model.LocalStorage;
-import application.model.Task;
 import application.utils.TasksFormatter;
 
 public class LogicControllerTest {
 	LocalStorage file;
 	String curFilePath;
 
-	
+	@Test
 	public void testAll() throws InvalidCommandException {
 		DataManager.getInstance().switchToTestingMode("testingMode.txt");
+		testDeleteOneFromMultipleOccurance();
 		testListAll();
 		testListDone();
-		testLimit();
+		testListPlace();
 		testAdd();
 		testAddRepeat();
 		testDeleteFullName();
@@ -45,7 +43,27 @@ public class LogicControllerTest {
 
 	}
 
+	/*
+	 * This is a boundary case for the delete method as deleting one of the tasks having
+	 * the same names
+	 */
+	@Test
+	public void testDeleteOneFromMultipleOccurance() throws InvalidCommandException {
+		String cmd1 = "add EE2021 homework \\p high";
+		String cmd2 = "add EE2021 homework \\p normal";
+		String delete = "delete EE2021 homework";
+		LogicController.onCommandProcess(cmd1);
+		LogicController.onCommandProcess(cmd2);
+		String result = LogicController.onCommandProcess(delete);
+		String expectedResult = "There is more than one match, please choose from the following tasks.\n" + "\n" +
+				"    Description                    Start Date           End Date             Location             Type            Priority       \n"+
+				"1   EE2021 homework                                                                               normal          high           \n"+
+				"2   EE2021 homework                                                                               normal          normal         \n"+"\n";
+		assertEquals(expectedResult, result);
+	}
+	
 	/* This is a boundary case for the listAll method */
+	@Test
 	public void testListAll() throws InvalidCommandException {
 		LogicController.onCommandProcess("add meeting with prof");
 		LogicController.onCommandProcess("add 2021 homework i cri");
@@ -61,6 +79,7 @@ public class LogicControllerTest {
 	
 	//@@ZhangLei A0093966L
 	/* This is a boundary case for the list done tasks */
+	@Test
 	public void testListDone() throws InvalidCommandException {
 		LogicController.onCommandProcess("add meeting with prof");
 		LogicController.onCommandProcess("add 2021 homework i cri");
@@ -90,17 +109,8 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	/* This is a boundary case for the limitNumberOfTasks method */
-	public void testLimit() throws InvalidCommandException {
-		ArrayList<Task> testLimit = new ArrayList<Task>();
-		testLimit.add(new Task("meeting with prof"));
-		testLimit.add(new Task("2021 homework i cri"));
-		String command = "list 2";
-		String result = LogicController.onCommandProcess(command);
-		String expectedResult = TasksFormatter.format(testLimit, TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
-		assertEquals(expectedResult, result);
-	}
 
+	@Test
 	public void testAdd() throws InvalidCommandException {
 		String cmd = "add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc";
 		String result = LogicController.onCommandProcess(cmd);
@@ -111,6 +121,7 @@ public class LogicControllerTest {
 	
 	//@@ZhangLei A0093966L
 	/* This is a boundary case for adding the same task */
+	@Test
 	public void testAddRepeat() throws InvalidCommandException {
 		String cmd1 = "add dinner with porpor \\p high \\t personal \\sdate 24/10/2015 6:00pm \\place home";
 		String cmd2 = "add dinner with porpor \\t personal \\p high \\sdate 24/10/2015 6:00pm \\place home";
@@ -124,6 +135,7 @@ public class LogicControllerTest {
 	 * This is a boundary case for the delete method as deleting task that is
 	 * named in full
 	 */
+	@Test
 	public void testDeleteFullName() throws InvalidCommandException {
 		String cmd = "add EE2020 homework \\edate 28/10/2015 \\p high";
 		String delete = "delete EE2020 homework";
@@ -137,6 +149,7 @@ public class LogicControllerTest {
 	 * This is a boundary case for the delete method as deleting task that is
 	 * partially named
 	 */
+	@Test
 	public void testDeletePartialName() throws InvalidCommandException {
 		String cmd = "add EE2020 homework \\edate 28/10/2015 \\p high";
 		String delete = "delete 2020";
@@ -146,5 +159,6 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 	
+
 	
 }
