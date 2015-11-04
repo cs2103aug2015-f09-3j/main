@@ -42,7 +42,7 @@ public class CommandManager {
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
 		int cmdType = cmd.getType(); 
-		List<Event> lists = null;
+		
 		
 		
 		
