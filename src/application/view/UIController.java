@@ -9,7 +9,7 @@ import application.Main;
 import application.controller.GoogleCalendarManager;
 import application.controller.LogicController;
 import application.exception.InvalidCommandException;
-import application.utils.Utility;
+import application.utils.GoogleCalendarUtility;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -105,7 +105,7 @@ public class UIController implements HotkeyListener {
 		} catch (InvalidCommandException e) {
 			feedback = e.getMessage();
 		}
-		if (Utility.hasInternetConnection()) {
+		if (GoogleCalendarUtility.hasInternetConnection()) {
 			GoogleCalendarManager.getInstance().performSync();
 		}
 

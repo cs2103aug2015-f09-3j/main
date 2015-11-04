@@ -1,12 +1,16 @@
 package application.controller;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 //@@LimYouLiang A0125975U
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,6 +44,9 @@ import application.utils.TokenManager;
 public class GoogleCalendarManager {
 
 	private static GoogleCalendarManager instance;
+
+	/** Default File name for deletion offline record **/
+	public static final String DELETION_FILE_NAME = "deletionCache.txt";
 
 	/** Application name. */
 	private static final String APPLICATION_NAME = "toDoo";
@@ -116,6 +123,65 @@ public class GoogleCalendarManager {
 
 	
 
+	private void syncOfflineDeletionRecords() {
+		ArrayList<String> records = getListOfRecordsFromFile();
+		
+		if(records.size() == 0){
+			return;
+		}
+		
+		try {
+			for (String eventId : records) {
+				service.events().delete("primary", eventId).execute();
+			}
+		} catch (IOException e) {
+			return;
+		}
+
+		// If success, clear the deletion file.
+		File file = new File(DELETION_FILE_NAME);
+		assert file.exists() == true;
+		file.delete();
+
+	}
+
+	/**
+	 * 
+	 */
+	private ArrayList<String> getListOfRecordsFromFile() {
+		ArrayList<String> records = new ArrayList<String>();
+
+		File file = new File(DELETION_FILE_NAME);
+		
+		if(!file.exists()){
+			return records; 
+		}
+		
+		FileInputStream fIn = null;
+		try {
+			fIn = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+		String aDataRow = "";
+
+		try {
+			while ((aDataRow = myReader.readLine()) != null) {
+				records.add(aDataRow);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			myReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return records;
+	}
+
 	/**
 	 * 
 	 */
@@ -190,6 +256,7 @@ public class GoogleCalendarManager {
 				// TODO Auto-generated method stub
 				performUpSync();
 				performDownSync();
+				syncOfflineDeletionRecords();
 			}
 		}).run();
 	}

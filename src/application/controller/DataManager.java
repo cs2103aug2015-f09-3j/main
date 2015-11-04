@@ -21,7 +21,8 @@ import application.model.Command;
 import application.model.LocalStorage;
 import application.model.Parameter;
 import application.model.Task;
-import application.utils.Utility;
+
+import application.utils.GoogleCalendarUtility;
 
 /*
  * @author: Lim Qi Wen
@@ -269,8 +270,10 @@ public class DataManager {
 		case 1:
 			data.removeFromData(searchList.get(0));
 			if (searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")) {
-				if (Utility.hasInternetConnection()) {
+				if (GoogleCalendarUtility.hasInternetConnection()) {
 					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
+				} else {
+					GoogleCalendarUtility.addToOfflineDeletionRecords(searchList.get(0).getgCalId());
 				}
 			}
 			return TASK_REMOVED;
@@ -288,9 +291,11 @@ public class DataManager {
 		data.removeFromData(data.getSearchList().get(lineNum - 1));
 		if (data.getSearchList().get(lineNum - 1).getgCalId() != null
 				&& !data.getSearchList().get(lineNum - 1).getgCalId().equals("")) {
-			if (Utility.hasInternetConnection()) {
+			if (GoogleCalendarUtility.hasInternetConnection()) {
 				GoogleCalendarManager.getInstance()
 						.removeTaskFromServer(data.getSearchList().get(lineNum - 1).getgCalId());
+			} else {
+				GoogleCalendarUtility.addToOfflineDeletionRecords(data.getSearchList().get(lineNum - 1).getgCalId());
 			}
 		}
 		return TASK_REMOVED;
