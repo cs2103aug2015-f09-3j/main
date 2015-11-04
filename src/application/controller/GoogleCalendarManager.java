@@ -1,8 +1,12 @@
 package application.controller;
 
+//@@LimYouLiang A0125975U
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -110,6 +114,8 @@ public class GoogleCalendarManager {
 
 	}
 
+	
+
 	/**
 	 * 
 	 */
@@ -198,11 +204,11 @@ public class GoogleCalendarManager {
 		lists = getCalendarEvents(lastToken);
 
 		for (Event event : lists) {
-			if(!event.getStatus().equals("cancelled")){ 
+			if (!event.getStatus().equals("cancelled")) {
 				taskArr.add(convertEventToTask(event));
-			}else{
+			} else {
 				DataManager.getInstance().deleteTaskByGCalId(event.getId());
-			} 
+			}
 		}
 
 		// Compare the downloaded and local lastUpate. depending which one is
@@ -275,9 +281,7 @@ public class GoogleCalendarManager {
 	 * @param event
 	 */
 	private Task convertEventToTask(Event event) {
-		
-		
-		
+
 		Task tmpTask = new Task();
 
 		tmpTask.setTextContent(event.getSummary());

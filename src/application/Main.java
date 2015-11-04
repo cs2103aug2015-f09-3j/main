@@ -23,6 +23,7 @@ import javax.swing.ImageIcon;
 import com.melloware.jintellitype.JIntellitype;
 
 import application.controller.GoogleCalendarManager;
+import application.utils.Utility;
 import application.view.UIController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -60,9 +61,9 @@ public class Main extends Application {
 			createAndShowGUI();
 			this.stage = primaryStage;
 
-
-			GoogleCalendarManager.getInstance().performSync();
-
+			if (Utility.hasInternetConnection()) {
+				GoogleCalendarManager.getInstance().performSync();
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
