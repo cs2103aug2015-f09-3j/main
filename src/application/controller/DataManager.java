@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Stack;
 
 import com.google.gson.Gson;
@@ -60,8 +61,111 @@ public class DataManager {
 		data = new Data(filePath);
 		paraList = null;
 	}
-
-
+	
+	
+	public ArrayList<Task> getListOfTasksToUploadGCal(){
+		
+		
+		
+		data.clearSearchList();
+		ArrayList<Task> filteredList = new ArrayList<Task>();
+		
+		for(Task task: data.getTaskList()){
+			if(task.getgCalId().equals("") && task.getEnd_date() != null){
+				filteredList.add(task);
+			}
+		} 
+		
+		return filteredList;
+		
+	
+	}
+	
+	public ArrayList<Task> getListOfTaskToUpdateGCal(){
+		
+		data.clearSearchList();
+		ArrayList<Task> filteredList = new ArrayList<Task>();
+		
+		for(Task task: data.getTaskList()){
+			if(task.getgCalId()!= null && !task.getgCalId().equals("") && task.getLastServerUpdate() != 0 && task.getLastLocalUpdate()!= 0 && (task.getLastLocalUpdate() > task.getLastServerUpdate())){
+				filteredList.add(task);
+			}
+		} 
+		
+		
+		
+		return filteredList;
+	}
+	
+	public Task findTaskByGCalId(String gCalId){
+		data.clearSearchList();
+		
+		for(Task task : data.getTaskList()){
+			if(task.getgCalId()!= null && task.getgCalId()!= "" && task.getgCalId().equals(gCalId)){
+				return task;
+			}	
+		}
+		
+		return null;
+	}
+	
+	
+	public void deleteTaskByGCalId(String gCalId){
+		Task task = findTaskByGCalId(gCalId);
+		if(task == null){
+			return;
+		}
+		data.clearSearchList();
+		int indexToDelete = data.getTaskList().indexOf(task);
+		data.getTaskList().remove(indexToDelete);
+		
+		data.updateStorage();
+	
+	}
+	
+	public void updateGCalId(HashMap<Task, String> lists){
+		data.clearSearchList();
+		
+		for(Task task : lists.keySet()){
+			int indexToUpdate = data.getTaskList().indexOf(task);
+			data.getTaskList().get(indexToUpdate).setgCalId(lists.get(task));
+			data.getTaskList().get(indexToUpdate).setLastServerUpdate(System.currentTimeMillis());	
+		}
+		
+		data.updateStorage();
+		
+	}
+	
+	public void updateServerUpdateTime(HashMap<Task, Long> lists){
+		data.clearSearchList();
+		
+		for(Task task : lists.keySet()){
+			int indexToUpdate = data.getTaskList().indexOf(task);
+			data.getTaskList().get(indexToUpdate).setLastServerUpdate(lists.get(task));
+		}
+		
+		data.updateStorage();
+		
+	}
+	
+	public ArrayList<Task> getAllTasks(){
+		data.clearSearchList();
+		return data.getTaskList();
+	}
+	
+	public void updateTask(Task task){
+		
+		data.clearSearchList();
+		Task localTask = this.findTaskByGCalId(task.getgCalId());
+		
+		int indexToUpdate = data.getTaskList().indexOf(localTask);
+		
+		data.getTaskList().remove(indexToUpdate);
+		data.getTaskList().add(task);
+		data.updateStorage();
+		
+		
+	}
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
@@ -82,7 +186,7 @@ public class DataManager {
 				if(!task.isDone()){
 					filteredList.add(task);
 				}
-			}
+			} 
 		}else{
 			ArrayList<Parameter> parameter = new ArrayList<Parameter>();
 			parameter = cmd.getParameter();
@@ -168,11 +272,16 @@ public class DataManager {
 				return TASK_NOT_FOUND;
 			case 1:
 				data.removeFromData(searchList.get(0));
+				if(searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")){
+					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
+				}
 				return TASK_REMOVED;
 			default:
 				CommandManager.setMultipleMatchList(searchList);
 				return MULTIPLE_MATCHES;
 		}
+		
+		
 	}
 
 	public Integer removeTask(int lineNum){
@@ -222,6 +331,7 @@ public class DataManager {
 							break;
 					}
 				}
+				taskList.get(taskList.indexOf(searchList.get(0))).setLastLocalUpdate(System.currentTimeMillis());
 				data.updateStorage();
 				return TASK_UPDATED;
 			default:
@@ -480,6 +590,9 @@ class Data{
 			task.setPlace_argument(new String(temp.getPlace_argument()));
 			task.setStart_date(temp.getStart_date());
 			task.setEnd_date(temp.getEnd_date());
+			task.setgCalId(temp.getgCalId());
+			task.setLastServerUpdate(temp.getLastServerUpdate());
+			task.setLastLocalUpdate(temp.getLastLocalUpdate());
 			list.add(task);
 		}
 		history.push(list);
