@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-
 import com.melloware.jintellitype.JIntellitype;
 
+import application.controller.GoogleCalendarManager;
 import application.view.UIController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,11 +37,9 @@ public class Main extends Application {
 	private TrayIcon trayIcon;
 	public Stage stage;
 
-	
-
 	@Override
 	public void start(Stage primaryStage) {
-		
+
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI.fxml"));
 			UIController uiControl = UIController.getInstance();
@@ -62,11 +60,13 @@ public class Main extends Application {
 			createAndShowGUI();
 			this.stage = primaryStage;
 
+
+			GoogleCalendarManager.getInstance().performSync();
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-	
 
 	}
 

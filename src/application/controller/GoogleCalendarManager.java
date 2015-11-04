@@ -75,7 +75,7 @@ public class GoogleCalendarManager {
 	 * @return an authorized Credential object.
 	 * @throws IOException
 	 */
-	public Credential authorize() throws IOException {
+	private Credential authorize() throws IOException {
 		// Load client secrets.
 		InputStream in = this.getClass().getResourceAsStream("client_secret.json");
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
@@ -94,7 +94,7 @@ public class GoogleCalendarManager {
 	 * @return an authorized Calendar client service
 	 * @throws IOException
 	 */
-	public com.google.api.services.calendar.Calendar getCalendarService() throws IOException {
+	private com.google.api.services.calendar.Calendar getCalendarService() throws IOException {
 		Credential credential = authorize();
 		return new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
@@ -113,7 +113,7 @@ public class GoogleCalendarManager {
 	/**
 	 * 
 	 */
-	public List<Event> getCalendarEvents(String syncToken) {
+	private List<Event> getCalendarEvents(String syncToken) {
 
 		DateTime now = new DateTime(System.currentTimeMillis());
 
@@ -157,12 +157,15 @@ public class GoogleCalendarManager {
 			} else {
 				System.out.println("Upcoming events");
 				for (Event event : items) {
-					DateTime start = event.getStart().getDateTime();
-					if (start == null) {
-						start = event.getStart().getDate();
+					try {
+						DateTime start = event.getStart().getDateTime();
+						if (start == null) {
+							start = event.getStart().getDate();
+						}
+						System.out.printf("%s (%s)\n", event.getSummary(), start);
+					} catch (Exception e) {
+						LogManager.getInstance().log(e.toString());
 					}
-					System.out.printf("%s (%s)\n", event.getSummary(), start);
-
 				}
 			}
 			pageToken = events.getNextPageToken();
@@ -175,9 +178,14 @@ public class GoogleCalendarManager {
 	}
 
 	public void performSync() {
-
-		performUpSync();
-		performDownSync();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				performUpSync();
+				performDownSync();
+			}
+		}).run();
 	}
 
 	/**
@@ -190,7 +198,11 @@ public class GoogleCalendarManager {
 		lists = getCalendarEvents(lastToken);
 
 		for (Event event : lists) {
-			taskArr.add(convertEventToTask(event));
+			if(!event.getStatus().equals("cancelled")){ 
+				taskArr.add(convertEventToTask(event));
+			}else{
+				DataManager.getInstance().deleteTaskByGCalId(event.getId());
+			} 
 		}
 
 		// Compare the downloaded and local lastUpate. depending which one is
@@ -221,6 +233,24 @@ public class GoogleCalendarManager {
 		}
 	}
 
+	public void removeTaskFromServer(String eventId) {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					service.events().delete("primary", eventId).execute();
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}).run();
+
+	}
+
 	/**
 	 * @param event
 	 */
@@ -245,6 +275,9 @@ public class GoogleCalendarManager {
 	 * @param event
 	 */
 	private Task convertEventToTask(Event event) {
+		
+		
+		
 		Task tmpTask = new Task();
 
 		tmpTask.setTextContent(event.getSummary());
@@ -301,7 +334,41 @@ public class GoogleCalendarManager {
 	 * 
 	 */
 	private void performUpSync() {
-		ArrayList<Task> lists = DataManager.getInstance().getListOfTasksToUpload();
+
+		performNewTaskSync();
+		performUpdatedTaskSync();
+	}
+
+	/**
+	 * 
+	 */
+	private void performUpdatedTaskSync() {
+		ArrayList<Task> lists = DataManager.getInstance().getListOfTaskToUpdateGCal();
+		HashMap<Task, Long> lastServerUpdateMap = new HashMap<Task, Long>();
+
+		for (Task task : lists) {
+
+			Event event = mapTaskToEvent(task);
+
+			try {
+				event = service.events().update("primary", task.getgCalId(), event).execute();
+				lastServerUpdateMap.put(task, event.getUpdated().getValue());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		DataManager.getInstance().updateServerUpdateTime(lastServerUpdateMap);
+
+	}
+
+	/**
+	 * 
+	 */
+	private void performNewTaskSync() {
+		ArrayList<Task> lists = DataManager.getInstance().getListOfTasksToUploadGCal();
 		HashMap<Task, String> hashmap = new HashMap<Task, String>();
 		for (Task task : lists) {
 
@@ -381,7 +448,7 @@ public class GoogleCalendarManager {
 			// map.put("has_start_date", 1);
 			// event.setUnknownKeys(map);
 
-			hashMap.put("has_start_date", "no");
+			hashMap.put("has_start_date", "yes");
 			// event.setUnknownKeys(map);
 			ExtendedProperties prop = new ExtendedProperties();
 			prop.setShared(hashMap);

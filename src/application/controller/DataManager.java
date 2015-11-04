@@ -60,7 +60,7 @@ public class DataManager {
 	}
 	
 	
-	public ArrayList<Task> getListOfTasksToUpload(){
+	public ArrayList<Task> getListOfTasksToUploadGCal(){
 		
 		
 		
@@ -75,7 +75,23 @@ public class DataManager {
 		
 		return filteredList;
 		
-		//TODO : update localstorage with gcal id after the call?
+	
+	}
+	
+	public ArrayList<Task> getListOfTaskToUpdateGCal(){
+		
+		data.clearSearchList();
+		ArrayList<Task> filteredList = new ArrayList<Task>();
+		
+		for(Task task: data.getTaskList()){
+			if(task.getgCalId()!= null && !task.getgCalId().equals("") && task.getLastServerUpdate() != 0 && task.getLastLocalUpdate()!= 0 && (task.getLastLocalUpdate() > task.getLastServerUpdate())){
+				filteredList.add(task);
+			}
+		} 
+		
+		
+		
+		return filteredList;
 	}
 	
 	public Task findTaskByGCalId(String gCalId){
@@ -88,6 +104,20 @@ public class DataManager {
 		}
 		
 		return null;
+	}
+	
+	
+	public void deleteTaskByGCalId(String gCalId){
+		Task task = findTaskByGCalId(gCalId);
+		if(task == null){
+			return;
+		}
+		data.clearSearchList();
+		int indexToDelete = data.getTaskList().indexOf(task);
+		data.getTaskList().remove(indexToDelete);
+		
+		data.updateStorage();
+	
 	}
 	
 	public void updateGCalId(HashMap<Task, String> lists){
@@ -103,7 +133,17 @@ public class DataManager {
 		
 	}
 	
-	
+	public void updateServerUpdateTime(HashMap<Task, Long> lists){
+		data.clearSearchList();
+		
+		for(Task task : lists.keySet()){
+			int indexToUpdate = data.getTaskList().indexOf(task);
+			data.getTaskList().get(indexToUpdate).setLastServerUpdate(lists.get(task));
+		}
+		
+		data.updateStorage();
+		
+	}
 	
 	public ArrayList<Task> getAllTasks(){
 		data.clearSearchList();
@@ -119,8 +159,6 @@ public class DataManager {
 		
 		data.getTaskList().remove(indexToUpdate);
 		data.getTaskList().add(task);
-		
-
 		data.updateStorage();
 		
 		
@@ -220,11 +258,16 @@ public class DataManager {
 				return TASK_NOT_FOUND;
 			case 1:
 				data.removeFromData(searchList.get(0));
+				if(searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")){
+					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
+				}
 				return TASK_REMOVED;
 			default:
 				CommandManager.setMultipleMatchList(searchList);
 				return MULTIPLE_MATCHES;
 		}
+		
+		
 	}
 
 	public Integer removeTask(int lineNum){
@@ -266,6 +309,7 @@ public class DataManager {
 							break;
 					}
 				}
+				taskList.get(taskList.indexOf(searchList.get(0))).setLastLocalUpdate(System.currentTimeMillis());
 				data.updateStorage();
 				return TASK_UPDATED;
 			default:

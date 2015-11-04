@@ -105,14 +105,8 @@ public class UIController implements HotkeyListener {
 			feedback = e.getMessage();
 		}
 		
-		try{
-			//lists = GoogleCalendarManager.getInstance().getCalendarEvents();
-			GoogleCalendarManager.getInstance().performSync();
-			
-		}catch(Exception e){
-			e.printStackTrace(); 
-		}
-
+		GoogleCalendarManager.getInstance().performSync();
+		
 
 		return feedback;
 	}
