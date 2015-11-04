@@ -6,8 +6,10 @@ import com.melloware.jintellitype.JIntellitype;
 import com.melloware.jintellitype.JIntellitypeConstants;
 
 import application.Main;
+import application.controller.GoogleCalendarManager;
 import application.controller.LogicController;
 import application.exception.InvalidCommandException;
+import application.utils.GoogleCalendarUtility;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -85,7 +87,7 @@ public class UIController implements HotkeyListener {
 	// Event Listener on Button[#btSend].onMouseClicked
 	@FXML
 	public void onMouseClicked(MouseEvent event) {
-		
+
 		System.out.println("onMouseClicked");
 		processUIRequest();
 
@@ -102,6 +104,9 @@ public class UIController implements HotkeyListener {
 			feedback = LogicController.onCommandProcess(command);
 		} catch (InvalidCommandException e) {
 			feedback = e.getMessage();
+		}
+		if (GoogleCalendarUtility.hasInternetConnection()) {
+			GoogleCalendarManager.getInstance().performSync();
 		}
 
 		return feedback;

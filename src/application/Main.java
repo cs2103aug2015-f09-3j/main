@@ -1,4 +1,5 @@
 package application;
+
 //@@LimYouLiang A0125975U
 import java.awt.AWTException;
 import java.awt.Image;
@@ -8,12 +9,21 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
 import com.melloware.jintellitype.JIntellitype;
 
+import application.controller.GoogleCalendarManager;
+import application.utils.GoogleCalendarUtility;
 import application.view.UIController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,115 +32,111 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application { 
-	
+public class Main extends Application {
+
 	boolean firstTime;
-	 private TrayIcon trayIcon;
-	 public Stage stage;
-	
+	private TrayIcon trayIcon;
+	public Stage stage;
+
 	@Override
 	public void start(Stage primaryStage) {
+
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI.fxml"));
 			UIController uiControl = UIController.getInstance();
-			
+
 			fxmlLoader.setController(uiControl);
-			
+
 			Parent root = fxmlLoader.load();
 			Scene scene = new Scene(root, 1007, 400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("toDoo");
-			primaryStage.getIcons().add( new javafx.scene.image.Image(
-					getClass().getResourceAsStream( "toDoo.png" )));  
+			primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("toDoo.png")));
 			uiControl.setMainApp(this);
 			firstTime = true;
-		    Platform.setImplicitExit(false);  
+			Platform.setImplicitExit(false);
 			primaryStage.show();
-			
+
 			createAndShowGUI();
 			this.stage = primaryStage;
-			
-		
-			
-			
-		} catch (Exception e) { 
+
+			if (GoogleCalendarUtility.hasInternetConnection()) {
+				GoogleCalendarManager.getInstance().performSync();
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public static void main(String[] args) {
-		
+
 		launch(args);
+
 	}
-	
+
 	/**
-	 * @@Java
-	 * DISCLAIMER: this code is adapted from java official code examples.
+	 * @@Java DISCLAIMER: this code is adapted from java official code examples.
 	 */
-	 private void createAndShowGUI() {
-	        //Check the SystemTray support
-	        if (!SystemTray.isSupported()) { 
-	            System.out.println("SystemTray is not supported");
-	            return;
-	        } 
-	        final PopupMenu popup = new PopupMenu();    
-	        trayIcon =
-	                new TrayIcon(createImage("toDoo.png", "tray icon"));
-	        final SystemTray tray = SystemTray.getSystemTray();  
-	         
+	private void createAndShowGUI() {
+		// Check the SystemTray support
+		if (!SystemTray.isSupported()) {
+			System.out.println("SystemTray is not supported");
+			return;
+		}
+		final PopupMenu popup = new PopupMenu();
+		trayIcon = new TrayIcon(createImage("toDoo.png", "tray icon"));
+		final SystemTray tray = SystemTray.getSystemTray();
 
-	        MenuItem exitItem = new MenuItem("Exit");
+		MenuItem exitItem = new MenuItem("Exit");
 
-	        popup.add(exitItem);
-	        
-	        trayIcon.setPopupMenu(popup);
-	        
-	        try {
-	            tray.add(trayIcon);
-	        } catch (AWTException e) {
-	            System.out.println("TrayIcon could not be added.");
-	            return;
-	        }
-	      
-	        
-	        trayIcon.addActionListener(new ActionListener() { 
-	            @Override
-				public void actionPerformed(ActionEvent e) {
-	            	 Platform.runLater(new Runnable() {   
-	                        @Override
-	                        public void run() { 
-	                            stage.show();
-	                        }
-	                    });
-	            	
-	            }
-	        });
-	        
-	        exitItem.addActionListener(new ActionListener() {
-	            @Override
-				public void actionPerformed(ActionEvent e) {
-	                tray.remove(trayIcon);
-	                JIntellitype.getInstance().cleanUp();
-	                System.exit(0);
-	            }
-	        });
-	    } 
-	    
-	    //Obtain the image URL
-	    protected static Image createImage(String path, String description) {  
-	    	
-	        URL imageURL = Main.class.getResource(path); 
-	        
-	        if (imageURL == null) {  
-	            System.err.println("Resource not found: " + path);
-	            return null;  
-	        } else {
-	            return (new ImageIcon(imageURL, description)).getImage();
-	        }
-	    }
+		popup.add(exitItem);
 
+		trayIcon.setPopupMenu(popup);
 
-	   
-	
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e) {
+			System.out.println("TrayIcon could not be added.");
+			return;
+		}
+
+		trayIcon.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						stage.show();
+					}
+				});
+
+			}
+		});
+
+		exitItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tray.remove(trayIcon);
+				JIntellitype.getInstance().cleanUp();
+				System.exit(0);
+			}
+		});
+	}
+
+	// Obtain the image URL
+	protected static Image createImage(String path, String description) {
+
+		URL imageURL = Main.class.getResource(path);
+
+		if (imageURL == null) {
+			System.err.println("Resource not found: " + path);
+			return null;
+		} else {
+			return (new ImageIcon(imageURL, description)).getImage();
+		}
+	}
+
 }

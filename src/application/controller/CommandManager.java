@@ -3,6 +3,9 @@ package application.controller;
 //@@nghuiyirebecca A0130876B
 
 import java.util.ArrayList;
+import java.util.List;
+
+import com.google.api.services.calendar.model.Event;
 
 import application.controller.parser.ParserFacade;
 import application.model.Command;
@@ -38,7 +41,11 @@ public class CommandManager {
 
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
-		int cmdType = cmd.getType();
+		int cmdType = cmd.getType(); 
+		
+		
+		
+		
 
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
@@ -224,6 +231,8 @@ public class CommandManager {
 
 		    default: return "testing-lc";
 		}
+		
+		
 		//return "testing";
 	}
 
