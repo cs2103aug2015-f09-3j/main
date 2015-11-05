@@ -71,8 +71,7 @@ public class LogicControllerTest {
 	}
 
 	public void testAdd() throws InvalidCommandException {
-		String cmd = "add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc";
-		String result = LogicController.onCommandProcess(cmd);
+		String result = LogicController.onCommandProcess("add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc");
 		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 09AM 2015"
 				+ "\n";
 		assertEquals(expectedResult, result);
@@ -82,10 +81,8 @@ public class LogicControllerTest {
 	/* This is a boundary case for adding the same task */
 	@Test
 	public void testAddRepeat() throws InvalidCommandException {
-		String cmd1 = "add dinner with porpor \\p high \\t personal \\sdate 24/10/2015 6:00pm \\place home";
-		String cmd2 = "add dinner with porpor \\t personal \\p high \\sdate 24/10/2015 6:00pm \\place home";
-		LogicController.onCommandProcess(cmd1);
-		String result = LogicController.onCommandProcess(cmd2);
+		LogicController.onCommandProcess("add dinner with porpor \\p high \\t personal \\sdate 24/10/2015 6:00pm \\place home");
+		String result = LogicController.onCommandProcess("add dinner with porpor \\t personal \\p high \\sdate 24/10/2015 6:00pm \\place home");
 		String expectedResult = "The exact same task already exists in system.\n";
 		assertEquals(expectedResult, result);
 	}
@@ -137,4 +134,28 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 	
+	@Test
+	public void testEditTask() throws InvalidCommandException {
+		String cmd = "add EE2022 homework \\p high";
+		String edit = "edit EE2022 homework \\p low \\place home";
+		LogicController.onCommandProcess(cmd);
+		String result = LogicController.onCommandProcess(edit);
+		String expectedResult = "Successfully edited: EE2022 homework\n";
+		assertEquals(expectedResult, result);
+	}
+	
+	@Test
+	public void testDoneTask() throws InvalidCommandException {
+		LogicController.onCommandProcess("add CS2103 quiz 12");
+		LogicController.onCommandProcess("add CS1010 homework");
+		LogicController.onCommandProcess("add watch movie at engin");
+		String done2 = "ok CS1010 homework";
+		String result = LogicController.onCommandProcess(done2);
+		String expectedResult = "Done task: CS1010 homework\n";
+		assertEquals(expectedResult, result);
+	}
+	
+	@Test
+	public void testUndoneTask() throws InvalidCommandException {
+	}
 }
