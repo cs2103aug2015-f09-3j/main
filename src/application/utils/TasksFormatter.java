@@ -102,7 +102,7 @@ public class TasksFormatter {
 				}
 			}
 			ArrayList<Date> allDates = new ArrayList<Date>();
-			if (sortedByEDate.size() > 1){
+			if (sortedByEDate.size() >= 1){
 				allDates.add(sortedByEDate.get(0).getEnd_date());
 				for (int a=1; a<sortedByEDate.size()-1; a++){
 					allDates.add(sortedByEDate.get(a).getEnd_date());

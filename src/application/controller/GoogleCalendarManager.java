@@ -1,16 +1,13 @@
 package application.controller;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 //@@LimYouLiang A0125975U
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -39,6 +37,7 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 
 import application.model.Task;
+import application.utils.GoogleCalendarUtility;
 import application.utils.TokenManager;
 
 /**
@@ -78,6 +77,7 @@ public class GoogleCalendarManager {
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 			DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 			System.exit(1);
@@ -86,7 +86,7 @@ public class GoogleCalendarManager {
 
 	/**
 	 * Creates an authorized Credential object.
-	 * 
+	 *
 	 * @return an authorized Credential object.
 	 * @throws IOException
 	 */
@@ -105,7 +105,7 @@ public class GoogleCalendarManager {
 
 	/**
 	 * Build and return an authorized Calendar client service.
-	 * 
+	 *
 	 * @return an authorized Calendar client service
 	 * @throws IOException
 	 */
@@ -125,22 +125,24 @@ public class GoogleCalendarManager {
 
 	}
 
-	
 	/**
-	 * Pre-Condition: Internet is up and quickAddMsg is not null. 
-	 * This function will call the google quickadd api and return the event created. If
-	 * Successful, it will return the Task, otherwise it will return null. 
-	 * @param quickAddMsg : quickAdd message
+	 * Pre-Condition: Internet is up and quickAddMsg is not null. This function
+	 * will call the google quickadd api and return the event created. If
+	 * Successful, it will return the Task, otherwise it will return null.
+	 * 
+	 * @param quickAddMsg
+	 *            : quickAdd message
 	 * @return Task if successful in creation, or null if fail to create task.
 	 */
-	public Task quickAddToGCal(String quickAddMsg){  
-		
+
+	public Integer quickAddToGCal(String quickAddMsg) {
+
 		Event createdEvent;
 		try {
 			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
 			Task task = this.convertEventToTask(createdEvent);
-			DataManager.getInstance().addNewTask(task);
-			return task;
+			int googleAddSuccess = DataManager.getInstance().addNewTask(task);
+			return googleAddSuccess;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,7 +173,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private ArrayList<String> getListOfRecordsFromFile() {
 		ArrayList<String> records = new ArrayList<String>();
@@ -208,7 +210,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private List<Event> getCalendarEvents(String syncToken) {
 
@@ -244,8 +246,21 @@ public class GoogleCalendarManager {
 					return null;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
+
+				if (e instanceof TokenResponseException) {
+					System.out.println("Renewing");
+					TokenManager.getInstance().clearToken();
+					GoogleCalendarUtility.recursiveDelete(DATA_STORE_DIR);
+					try {
+						service = getCalendarService();
+					} catch (IOException e1) {
+						
+						e1.printStackTrace();
+					}
+				}
+
 			}
 
 			items = events.getItems();
@@ -287,7 +302,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void performDownSync() {
 		List<Event> lists = null;
@@ -427,7 +442,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void performUpSync() {
 
@@ -436,7 +451,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void performUpdatedTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfModifiedTask();
@@ -461,7 +476,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void performNewTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfUnSyncNonFloatingTasks();
