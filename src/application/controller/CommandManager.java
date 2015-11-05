@@ -13,6 +13,7 @@ import application.utils.TasksFormatter;
 
 public class CommandManager {
 
+	private static final String PLEASE_ENTER_TEXT = "Please enter text";
 	private static final String NUMBER_FORMAT_EXCEPTION = "Number format exception in CommandManager";
 	private static final String PREVIOUS_COMMAND_UNDONE = "Previous command undone";
 	private static final String NO_PREVIOUS_COMMAND = "no previous command";
@@ -93,7 +94,7 @@ public class CommandManager {
 		} catch (NullPointerException e) {
 			LogManager.getInstance().log(cmd.getTextContent(), e.toString());
 		}
-		return "Please enter text";
+		return PLEASE_ENTER_TEXT;
 	}
 
 
@@ -374,6 +375,7 @@ public class CommandManager {
 	 * This function checks if the content of the command is an integer
 	 * @param cmd : command with text content
 	 * @return : true if content of command is an integer, false otherwise
+	 * @exception : NumberFormatExeception if text content is not an integer.
 	 */
 	private static boolean isInteger(Command cmd) {
 		boolean isInt = false;
@@ -381,8 +383,7 @@ public class CommandManager {
 		try {
 			Integer.parseInt(cmd.getTextContent());
 			isInt = true;
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			LogManager.getInstance().log(NUMBER_FORMAT_EXCEPTION, e.getMessage());
 		}
 		return isInt;
