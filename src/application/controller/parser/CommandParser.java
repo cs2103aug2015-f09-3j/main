@@ -17,6 +17,10 @@ import application.model.Task;
  */
 public class CommandParser {
 
+	private static final int ERROR_COMMAND_TYPE = -1;
+	private static final String REGEX_ATSIGN = " @ | @|@ ";
+	private static final String VERTICAL_DASH = "\\|";
+	private static final char INVERTED_SLASH = '\\';
 	private static CommandParser instance;
 
 	static CommandParser getInstance() {
@@ -31,9 +35,14 @@ public class CommandParser {
 
 	}
 
+	/**
+	 * This function parse the input command string from the input console.
+	 * @param command : string to be parsed.
+	 * @return : obj of ArrayList<Command>
+	 * @throws InvalidCommandException : when command is invalid.
+	 */
 	public ArrayList<Command> parseCommand(String command) throws InvalidCommandException {
-		// Need to parse add, see all, change, delete, undo, edit, done,
-		// prioritise command
+
 
 		ArrayList<Command> cmds = new ArrayList<Command>();
 		String cmd;
@@ -50,13 +59,13 @@ public class CommandParser {
 			if (command.charAt(i) == ' ' && !passFirstSpace) {
 				indexOfFirstSpace = i;
 				passFirstSpace = true;
-			} else if (command.charAt(i) == '\\') {
+			} else if (command.charAt(i) == INVERTED_SLASH) {
 				indexOfFirstInvertedSlash = i;
 				break;
 			}
 		}
 
-		indexOfFirstSpace = setIndexOfFirstSpaceForCommandWithoutParameter(command, indexOfFirstSpace);
+		indexOfFirstSpace = getEquivalentIndexForCommandWithoutParameter(command);
 
 		if (indexOfFirstSpace == 0) {
 			return null;
@@ -65,11 +74,11 @@ public class CommandParser {
 		cmd = command.substring(0, indexOfFirstSpace);
 		int cmdType = mapCommandType(cmd);
 
-		if (cmdType == -1) {
+		if (cmdType == ERROR_COMMAND_TYPE) {
 			throw new InvalidCommandException(command);
 		}
 
-		if (!command.contains("\\|")) {
+		if (!command.contains(VERTICAL_DASH)) {
 			performSmartParsing(command, parameters);
 		}
 
@@ -88,17 +97,18 @@ public class CommandParser {
 
 	private String trimOffDateIfAny(String str) {
 
-		String[] strArr = str.split(" @ | @|@ ");
+		String[] strArr = str.split(REGEX_ATSIGN);
 		return strArr[0].trim();
 
 	}
 
 	/**
-	 * @param command
-	 * @param text
-	 * @param parameters
-	 * @param indexOfFirstSpace
-	 * @param indexOfFirstInvertedSlash
+	 * 
+	 * This function extracts the command main text and extract its paramter.
+	 * @param command : the raw command string.
+	 * @param parameters : the lists to store the parsed results
+	 * @param indexOfFirstSpace : index of the first space of the command.
+	 * @param indexOfFirstInvertedSlash : index of the first inverted slash of the command.
 	 * @return
 	 */
 	private String[] extractTextAndPerformParameterParsing(String command, ArrayList<Parameter> parameters,
@@ -117,19 +127,20 @@ public class CommandParser {
 				text = command.substring(indexOfFirstSpace + 1, command.length());
 			}
 			// For multiple add and done
-			splitedText = text.split("\\|");
+			splitedText = text.split(VERTICAL_DASH);
 		}
 		return splitedText;
 	}
 
 	/**
-	 * @param command
-	 * @param parameters
+	 * This function performs smart parsing syntax. 
+	 * @param command : the raw command string.
+	 * @param parameters : the list to store the parsed results.
 	 */
 	private void performSmartParsing(String command, ArrayList<Parameter> parameters) {
 		if (command.contains("@")) {
 
-			String[] strArr = command.split(" @ | @|@ ");
+			String[] strArr = command.split(REGEX_ATSIGN);
 			// use the first at, which the content is at [1]
 			// try to find @ if there is any
 			String[] strArr2;
@@ -145,60 +156,16 @@ public class CommandParser {
 				}
 			}
 
-			// Find if at or @ appear first
-
-			/*
-			 * int indexAt = command.toUpperCase().indexOf("AT"); int indexAnd =
-			 * command.lastIndexOf("@");
-			 *
-			 *
-			 *
-			 *
-			 * boolean atOnly = false, andOnly = false;
-			 *
-			 * if (indexAt == -1) { indexAt = Integer.MAX_VALUE; andOnly = true;
-			 * } if (indexAnd == -1) { indexAnd = Integer.MAX_VALUE; atOnly =
-			 * true; }
-			 *
-			 * if ((indexAt < indexAnd)) {
-			 *
-			 * String[] strArr = command.split("(?i)at"); // use the first at,
-			 * which the content is at [1] // try to find @ if there is any
-			 * String[] strArr2; if (strArr.length > 1) { if (atOnly) { strArr2
-			 * = strArr[1].split("\\\\"); } else { strArr2 = strArr[1].split(
-			 * " @ | @|@ "); }
-			 *
-			 * parameters.add(new Parameter(Parameter.PLACE_ARGUMENT_TYPE,
-			 * strArr2[0].trim())); } else { strArr2 = strArr[0].split(
-			 * " @ | @|@ "); } String[] strArr3; // task location is at
-			 * strArr2[0], time is at strArr2[1]
-			 *
-			 * if (strArr2.length > 1) { strArr3 = strArr2[1].split("\\\\");
-			 * if(ParserFacade.getInstance().containMultiDate(strArr3[0].trim())
-			 * ){ parameters.add(new
-			 * Parameter(Parameter.START_END_DATE_ARGUMENT_TYPE,
-			 * strArr3[0].trim())); }else{ parameters.add(new
-			 * Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr3[0].trim()));
-			 * } } } else { // @ appear first then at String[] strArr =
-			 * command.split(" @ | @|@ "); // use the first at, which the
-			 * content is at [1] // try to find @ if there is any String[]
-			 * strArr2; if (strArr.length > 1) { strArr2 =
-			 * strArr[1].split("\\\\"); parameters.add(new
-			 * Parameter(Parameter.END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
-			 * }
-			 *
-			 * }
-			 *
-			 */
 		}
 	}
 
 	/**
-	 * @param command
-	 * @param indexOfFirstSpace
-	 * @return
+	 * This function finds the equivalent index of the first space for command without paramters(which is the space after the command).
+	 * @param command : Raw command string.
+	 * @return the equivalent index of the first space.
 	 */
-	private int setIndexOfFirstSpaceForCommandWithoutParameter(String command, int indexOfFirstSpace) {
+	private int getEquivalentIndexForCommandWithoutParameter(String command) {
+		int indexOfFirstSpace = 0;;
 		// check if is a list command with no parameter. e.g list
 		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
@@ -226,12 +193,16 @@ public class CommandParser {
 		return indexOfFirstSpace;
 	}
 
+	
+	/**
+	 * This function convert the an add command into Task.
+	 * @param cmd
+	 * @return
+	 */
 	public Task convertAddCommandtoTask(Command cmd) {
 
 		assert cmd != null;
-
 		Task task = new Task(cmd.getTextContent());
-
 		ArrayList<Parameter> lists = cmd.getParameter();
 
 		for (Parameter para : lists) {
@@ -263,9 +234,10 @@ public class CommandParser {
 	}
 
 	/**
+	 * 
 	 * @param indexOfFirstSpace
 	 * @param indexOfFirstInvertedSlash
-	 * @return
+	 * @return True if the command is with parameter, else false.
 	 */
 	private boolean isValidCommandWithParameter(int indexOfFirstSpace, int indexOfFirstInvertedSlash) {
 		return indexOfFirstInvertedSlash > 0 && indexOfFirstInvertedSlash > indexOfFirstSpace;
@@ -282,7 +254,7 @@ public class CommandParser {
 	 */
 	private void extractParameter(ArrayList<Parameter> parameters, String[] parameterArr) {
 		for (int i = 0; i < parameterArr.length; i++) {
-			if (parameterArr[i].charAt(0) == '\\') {
+			if (parameterArr[i].charAt(0) == INVERTED_SLASH) {
 
 				// format.
 				String para = parameterArr[i].substring(1, parameterArr[i].length());
@@ -293,20 +265,25 @@ public class CommandParser {
 				String paraContent = "";
 
 				for (int c = i + 1; c < parameterArr.length; c++) {
-					if (parameterArr[c].charAt(0) != '\\') {
+					if (parameterArr[c].charAt(0) != INVERTED_SLASH) {
 						paraContent += parameterArr[c].substring(0, parameterArr[c].length()) + " ";
 					} else {
 						break;
 					}
 				}
 				int paraType = mapParameterType(para);
-				if (paraType != -1) {
+				if (paraType != ERROR_COMMAND_TYPE) {
 					parameters.add(new Parameter(paraType, paraContent.trim()));
 				}
 			}
 		}
 	}
 
+	/**
+	 * Map the command and finds its form.
+	 * @param cmd
+	 * @return the type of command in integer form.
+	 */
 	private Integer mapCommandType(String cmd) {
 
 		if (isCommandType(Command.ADD_COMMAND, cmd)) {
@@ -336,11 +313,17 @@ public class CommandParser {
 		} else if (isCommandType(Command.GOOGLE_ADD_COMMAND, cmd)) {
 				return Command.GOOGLE_ADD_COMMAND_TYPE;
 		} else {
-			return -1;
+			return ERROR_COMMAND_TYPE;
 		}
 
 	}
 
+	/**
+	 * 
+	 * @param cmdDefinition : The definition of the command. For e.g "add:+" 
+	 * @param cmd : the command to check. For E.g. add
+	 * @return true if matched, otherwise false.
+	 */
 	private boolean isCommandType(String cmdDefinition, String cmd) {
 
 		String[] cmdDef = cmdDefinition.split(":");
@@ -353,6 +336,11 @@ public class CommandParser {
 
 	}
 
+	/**
+	 * This functions maps the parameters with its type.
+	 * @param parameterStr
+	 * @return its type in integer form.
+	 */
 	private Integer mapParameterType(String parameterStr) {
 
 		switch (parameterStr) {
@@ -371,7 +359,7 @@ public class CommandParser {
 			return Parameter.TYPE_ARGUMENT_TYPE;
 
 		default:
-			return -1;
+			return ERROR_COMMAND_TYPE;
 
 		}
 

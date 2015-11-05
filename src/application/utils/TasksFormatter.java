@@ -90,8 +90,8 @@ public class TasksFormatter {
 
 			break;
 			
-		case TIMELINE_VIEW_TYPE:
-			sb.append(TIMELINE_INST);
+		case TIMELINE_VIEW_TYPE: 
+			sb.append(TIMELINE_INST);  
 			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
 			ArrayList<Task> floating = new ArrayList<Task>();
 			for (Task task:lists){
