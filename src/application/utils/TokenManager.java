@@ -17,7 +17,7 @@ public class TokenManager {
 	File file;
 
 	private TokenManager() {
-		file = new File(DEFAULT_TOKEN_PATH);
+		file = new File(DEFAULT_TOKEN_PATH); 
 	}
 
 	public static TokenManager getInstance() {

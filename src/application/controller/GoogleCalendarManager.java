@@ -53,7 +53,7 @@ public class GoogleCalendarManager {
 	public static final String DELETION_FILE_NAME = "deletionCache.txt";
 
 	/** Application name. */
-	private static final String APPLICATION_NAME = "toDoo";
+	private static final String APPLICATION_NAME = "toDoo"; 
 
 	/** Directory to store user credentials for this application. */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"),
@@ -86,6 +86,72 @@ public class GoogleCalendarManager {
 		}
 	}
 
+
+	public static GoogleCalendarManager getInstance() {
+		if (instance == null) {
+			instance = new GoogleCalendarManager();
+		}
+
+		return instance;
+	}
+	
+	public void performSync() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				performUpSync();
+				performDownSync();
+				syncOfflineDeletionRecords();
+			}
+		}).start();
+	}
+
+	
+	/**
+	 * Pre-Condition: Internet is up and quickAddMsg is not null. This function
+	 * will call the google quickadd api and return the event created. If
+	 * Successful, it will return the Task, otherwise it will return null.
+	 * 
+	 * @param quickAddMsg
+	 *            : quickAdd message
+	 * @return Task if successful in creation, or null if fail to create task.
+	 */
+
+	public Integer quickAddToGCal(String quickAddMsg) {
+
+		Event createdEvent;
+		try {
+			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
+			Task task = this.mapEventToTask(createdEvent);
+			int googleAddSuccess = DataManager.getInstance().addNewTask(task);
+			return googleAddSuccess;
+		} catch (IOException e) {
+			LogManager.getInstance().log(this.getClass().getName(), e.toString());
+		}
+		return null;
+	}
+	
+	/**
+	 * remove events from Gooogle Calendar by eventId
+	 * 
+	 * @param eventId
+	 *            : Google Calendar Event Id
+	 */
+	public void removeTaskFromServer(String eventId) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					service.events().delete("primary", eventId).execute();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	} 
+
+	
 	/**
 	 * Creates an authorized Credential object.
 	 *
@@ -128,30 +194,7 @@ public class GoogleCalendarManager {
 
 	}
 
-	/**
-	 * Pre-Condition: Internet is up and quickAddMsg is not null. This function
-	 * will call the google quickadd api and return the event created. If
-	 * Successful, it will return the Task, otherwise it will return null.
-	 * 
-	 * @param quickAddMsg
-	 *            : quickAdd message
-	 * @return Task if successful in creation, or null if fail to create task.
-	 */
-
-	public Integer quickAddToGCal(String quickAddMsg) {
-
-		Event createdEvent;
-		try {
-			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
-			Task task = this.mapEventToTask(createdEvent);
-			int googleAddSuccess = DataManager.getInstance().addNewTask(task);
-			return googleAddSuccess;
-		} catch (IOException e) {
-			LogManager.getInstance().log(this.getClass().getName(), e.toString());
-		}
-		return null;
-	}
-
+	
 	/**
 	 * This function syncs records of deletion that happen during offline mode.
 	 * It clears its cache if successful.
@@ -352,17 +395,7 @@ public class GoogleCalendarManager {
 		return items;
 	}
 
-	public void performSync() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				performUpSync();
-				performDownSync();
-				syncOfflineDeletionRecords();
-			}
-		}).run();
-	}
-
+	
 	/**
 	 * 
 	 */
@@ -407,25 +440,7 @@ public class GoogleCalendarManager {
 		}
 	}
 
-	/**
-	 * remove events from Gooogle Calendar by eventId
-	 * 
-	 * @param eventId
-	 *            : Google Calendar Event Id
-	 */
-	public void removeTaskFromServer(String eventId) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					service.events().delete("primary", eventId).execute();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}).run();
-	}
+	
 
 	/**
 	 * This function updates the Google Calendar Event.
@@ -464,7 +479,7 @@ public class GoogleCalendarManager {
 			tmpTask.setType_argument(event.getExtendedProperties().getShared().get("type"));
 		}
 
-		tmpTask.setPriority_argument(event.getDescription());
+		tmpTask.setPriority_argument(event.getDescription()); 
 
 		tmpTask.setPlace_argument(event.getLocation());
 		tmpTask.setLastServerUpdate(event.getUpdated().getValue());
@@ -615,12 +630,5 @@ public class GoogleCalendarManager {
 		return event;
 	}
 
-	public static GoogleCalendarManager getInstance() {
-		if (instance == null) {
-			instance = new GoogleCalendarManager();
-		}
-
-		return instance;
-	}
 
 }

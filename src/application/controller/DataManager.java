@@ -40,11 +40,14 @@ public class DataManager {
 
 	private static Data data;
 	private ArrayList<Parameter> paraList;
+	private Stack<Operation> history;
 	public static DataManager instance = null;
+	
 
 	private DataManager() {
 		data = new Data();
 		paraList = null;
+		history = new Stack<Operation>();
 	}
 
 	public static DataManager getInstance() {
@@ -194,6 +197,7 @@ public class DataManager {
 			return TASK_ALREADY_EXISTS;
 		} else {
 			data.addToData(taskToAdd);
+			history.push(new Operation((taskToAdd),null,Op.ADD));
 			return TASK_ADDED;
 		}
 	}
@@ -310,6 +314,7 @@ public class DataManager {
 			return TASK_NOT_FOUND;
 		case 1:
 			data.removeFromData(searchList.get(0));
+			history.push(new Operation(searchList.get(0),null,Op.DELETE));
 			if (searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")) {
 				if (GoogleCalendarUtility.hasInternetConnection()) {
 					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
@@ -330,6 +335,7 @@ public class DataManager {
 			return WRONG_LINE_NUM;
 		}
 		data.removeFromData(data.getSearchList().get(lineNum - 1));
+		history.push(new Operation(data.getSearchList().get(lineNum - 1),null,Op.DELETE));
 		if (data.getSearchList().get(lineNum - 1).getgCalId() != null
 				&& !data.getSearchList().get(lineNum - 1).getgCalId().equals("")) {
 			if (GoogleCalendarUtility.hasInternetConnection()) {
@@ -352,6 +358,8 @@ public class DataManager {
 			return TASK_NOT_FOUND;
 		case 1:
 			ArrayList<Task> taskList = data.getTaskList();
+			Task newTask, prevTask;
+			prevTask = copyTask(searchList.get(0));
 			for (Parameter para : paraList) {
 				switch (para.getParaType()) {
 				case Parameter.PRIORITY_ARGUMENT_TYPE:
@@ -381,6 +389,8 @@ public class DataManager {
 					break;
 				}
 			}
+			newTask = searchList.get(0);
+			history.push(new Operation(newTask, prevTask, Op.EDIT));
 			taskList.get(taskList.indexOf(searchList.get(0))).setLastLocalUpdate(System.currentTimeMillis());
 			data.updateStorage();
 			return TASK_UPDATED;
@@ -396,6 +406,8 @@ public class DataManager {
 		}
 		ArrayList<Task> taskList = data.getTaskList();
 		ArrayList<Task> searchList = data.getSearchList();
+		Task newTask, prevTask;
+		prevTask = copyTask(searchList.get(lineNum-1));
 		for (Parameter para : paraList) {
 			switch (para.getParaType()) {
 			case Parameter.PRIORITY_ARGUMENT_TYPE:
@@ -417,6 +429,8 @@ public class DataManager {
 				break;
 			}
 		}
+		newTask = searchList.get(lineNum - 1);
+		history.push(new Operation(newTask, prevTask, Op.EDIT));
 		data.updateStorage();
 		return TASK_UPDATED;
 	}
@@ -432,6 +446,7 @@ public class DataManager {
 		case 1:
 			int index = taskList.indexOf(searchList.get(0));
 			taskList.get(index).setDone(true);
+			history.push(new Operation(searchList.get(0),null, Op.SETDONE));//TODO
 			data.updateStorage();
 			return TASK_SET_TO_DONE;
 		default:
@@ -444,8 +459,8 @@ public class DataManager {
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
 		}
-		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum - 1));
-		data.getTaskList().get(index).setDone(true);
+		data.getSearchList().get(lineNum - 1).setDone(true);
+		history.push(new Operation(data.getSearchList().get(lineNum - 1),null, Op.SETDONE)); //TODO
 		data.updateStorage();
 		return TASK_SET_TO_DONE;
 	}
@@ -455,9 +470,15 @@ public class DataManager {
 		return data.changeFileLocation(cmd.getTextContent());
 	}
 
-	public static Integer undoPrevCommand() {
+	public Integer undoPrevCommand() {
 		data.clearSearchList();
-		return data.undo();
+		if(history.empty()){
+			return NO_PREV_COMMAND;
+		}else{
+			Operation oper = history.pop();
+			oper.undo(data);
+			return PREV_COMMAND_UNDONE;
+		}
 	}
 
 	private ArrayList<Task> searchTasksForMatches(Command cmd) {
@@ -506,8 +527,8 @@ public class DataManager {
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
 		}
-		int index = data.getTaskList().indexOf(data.getSearchList().get(lineNum - 1));
-		data.getTaskList().get(index).setDone(false);
+		data.getSearchList().get(lineNum - 1).setDone(false);
+		history.push(new Operation(data.getSearchList().get(lineNum - 1), null, Op.UNDONE)); //TODO
 		data.updateStorage();
 		return TASK_UNDONE;
 	}
@@ -523,6 +544,7 @@ public class DataManager {
 		case 1:
 			int index = taskList.indexOf(searchList.get(0));
 			taskList.get(index).setDone(false);
+			history.push(new Operation(searchList.get(0), null, Op.UNDONE)); //TODO
 			data.updateStorage();
 			return TASK_UNDONE;
 		default:
@@ -530,25 +552,36 @@ public class DataManager {
 			return MULTIPLE_MATCHES;
 		}
 	}
+	
+	
+	private Task copyTask(Task task1) {
+		Task task2 = new Task();
+		task2 = new Task(task1.getTextContent());
+		task2.setDone(task1.isDone());
+		task2.setPriority_argument(new String(task1.getPriority_argument()));
+		task2.setType_argument(new String(task1.getType_argument()));
+		task2.setPlace_argument(new String(task1.getPlace_argument()));
+		task2.setStart_date(task1.getStart_date());
+		task2.setEnd_date(task1.getEnd_date());
+		task2.setgCalId(task1.getgCalId());
+		task2.setLastServerUpdate(task1.getLastServerUpdate());
+		task2.setLastLocalUpdate(task1.getLastLocalUpdate());
+		return task2;
+	}
 
 }
 
 class Data {
 	private ArrayList<Task> taskList;
 	private ArrayList<Task> searchList;
-	private Stack<ArrayList<Task>> history;
 	private StorageInterface storageIO;
 	private Gson gson;
-	private int histCount;
 
 	public Data() {
 		storageIO = new StorageInterface();
 		gson = new Gson();
 		taskList = initializeTaskList();
 		searchList = new ArrayList<Task>();
-		history = new Stack<ArrayList<Task>>();
-		addToHistory();
-		histCount = 1;
 	}
 
 	public Data(String testingFilePath) {
@@ -556,9 +589,6 @@ class Data {
 		gson = new Gson();
 		taskList = initializeTaskList();
 		searchList = new ArrayList<Task>();
-		history = new Stack<ArrayList<Task>>();
-		addToHistory();
-		histCount = 1;
 	}
 
 	public ArrayList<Task> getTaskList() {
@@ -584,9 +614,6 @@ class Data {
 	}
 
 	public void updateStorage() {
-		addToHistory();
-		histCount++;
-		limitHistory();
 		storageIO.saveToStorage(tasksToStrings());
 	}
 
@@ -598,18 +625,6 @@ class Data {
 	public void removeFromData(int lineNum) {
 		taskList.remove(lineNum);
 		updateStorage();
-	}
-
-	public Integer undo() {
-		if (histCount == 1) {
-			return DataManager.NO_PREV_COMMAND;
-		} else {
-			history.pop();
-			taskList = history.pop();
-			histCount -= 2;
-			updateStorage();
-			return DataManager.PREV_COMMAND_UNDONE;
-		}
 	}
 
 	public Integer changeFileLocation(String location) {
@@ -627,27 +642,6 @@ class Data {
 		return listTask;
 	}
 
-	private void addToHistory() {
-		ArrayList<Task> list = new ArrayList<Task>();
-		Task task = new Task();
-		Task temp;
-		for (int i = 0; i < taskList.size(); i++) {
-			temp = taskList.get(i);
-			task = new Task(temp.getTextContent());
-			task.setDone(temp.isDone());
-			task.setPriority_argument(new String(temp.getPriority_argument()));
-			task.setType_argument(new String(temp.getType_argument()));
-			task.setPlace_argument(new String(temp.getPlace_argument()));
-			task.setStart_date(temp.getStart_date());
-			task.setEnd_date(temp.getEnd_date());
-			task.setgCalId(temp.getgCalId());
-			task.setLastServerUpdate(temp.getLastServerUpdate());
-			task.setLastLocalUpdate(temp.getLastLocalUpdate());
-			list.add(task);
-		}
-		history.push(list);
-	}
-
 	private void sort() {
 		Collections.sort(taskList);
 	}
@@ -659,20 +653,7 @@ class Data {
 		}
 		return taskStrings;
 	}
-
-	private void limitHistory() {
-		Stack<ArrayList<Task>> tempStack = new Stack<ArrayList<Task>>();
-		if (histCount > DataManager.MAX_HISTORY) {
-			while (!history.empty()) {
-				tempStack.push(history.pop());
-			}
-			tempStack.pop();
-			while (!tempStack.empty()) {
-				history.push(tempStack.pop());
-			}
-			histCount--;
-		}
-	}
+	
 }
 
 class StorageInterface {
@@ -791,4 +772,45 @@ class StorageInterface {
 		return text;
 	}
 
+}
+
+class Operation {
+	private Task task;
+	private Task prevTask;
+	private Op op;
+	
+
+	public Operation(Task task, Task prevTask, Op op){
+		this.task = task;
+		this.prevTask = prevTask;
+		this.op = op;
+	}
+	
+
+	public void undo(Data data){
+		int index;
+		switch(op){
+		case ADD:
+			data.removeFromData(task);
+			break;
+		case DELETE:
+			data.addToData(task);
+			break;
+		case EDIT:
+			data.removeFromData(task);
+			data.addToData(prevTask);
+			break;
+		case SETDONE:
+			index = data.getTaskList().indexOf(task);
+			data.getTaskList().get(index).setDone(false);
+			break;
+		default:
+			index = data.getTaskList().indexOf(task);
+			data.getTaskList().get(index).setDone(true);
+		}
+	}	
+}
+
+enum Op {
+    ADD, DELETE, EDIT, SETDONE, UNDONE
 }

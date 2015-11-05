@@ -143,7 +143,7 @@ public class CommandManager {
 
 
 		    case Command.UNDO_COMMAND_TYPE:
-		    	if(DataManager.undoPrevCommand() == DataManager.NO_PREV_COMMAND)
+		    	if(DataManager.getInstance().undoPrevCommand() == DataManager.NO_PREV_COMMAND)
 		    		return "no previous command";
 		    	else
 		    		return "Previous command undone";

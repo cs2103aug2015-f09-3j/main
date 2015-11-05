@@ -53,7 +53,7 @@ public class DateParser {
 	 * @return true if the date is in uk format, else false.
 	 */
 	private boolean isUKFormat(String dateStr) {
-		return dateStr.contains("/") || dateStr.contains(".");
+		return dateStr.contains("/");
 	}
 
 	
