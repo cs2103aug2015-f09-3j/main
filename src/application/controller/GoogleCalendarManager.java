@@ -1,10 +1,10 @@
 package application.controller;
-
+//@@LimYouLiang A0125975U
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-//@@LimYouLiang A0125975U
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,8 +71,9 @@ public class GoogleCalendarManager {
 	private static final List<String> SCOPES = Arrays
 			.asList(new String[] { CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR });
 
+	//@@Google
 	com.google.api.services.calendar.Calendar service;
-
+	
 	static {
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -115,6 +116,10 @@ public class GoogleCalendarManager {
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
+	
+	//@@LimYouLiang A0125975U
+	
+	
 	private GoogleCalendarManager() {
 		try {
 			service = getCalendarService();
@@ -276,7 +281,7 @@ public class GoogleCalendarManager {
 						}
 						System.out.printf("%s (%s)\n", event.getSummary(), start);
 					} catch (Exception e) {
-						LogManager.getInstance().log(e.toString());
+						LogManager.getInstance().log(this.getClass().getName(), e.toString());
 					}
 				}
 			}
