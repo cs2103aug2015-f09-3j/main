@@ -173,6 +173,8 @@ public class CommandManager {
 		    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetUndone;
 		} else if(setUndoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    return SET_UNDONE_SUCCESS + cmd.getTextContent();
+		} else if(setUndoneSuccess == DataManager.TASK_UNDONE){ 
+			return SET_UNDONE_SUCCESS + cmd.getTextContent();
 		}else{
 			return WRONG_LINE_NUM;
 		}
