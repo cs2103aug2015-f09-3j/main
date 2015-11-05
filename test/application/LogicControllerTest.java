@@ -108,16 +108,17 @@ public class LogicControllerTest {
 	@Test
 	public void testDeletePartialName() throws InvalidCommandException {
 		String cmd = "add EE4240 homework \\edate 28/10/2015 \\p high";
-		String delete = "delete 4240";
+		String delete = "delete EE4240";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(delete);
-		String expectedResult = "Successfully deleted: 4240" + "\n";
+		String expectedResult = "Successfully deleted: EE4240" + "\n";
 		assertEquals(expectedResult, result);
 	}
 	
+	//@@ZhangLei A0093966L
 	/*
 	 * This is a boundary case for the delete method as deleting one of the tasks having
-	 * the same names
+	 * the same names i.e. multiple occurrence
 	 */
 	@Test
 	public void testDeleteOneFromMultipleOccurance() throws InvalidCommandException {
@@ -134,28 +135,35 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 	
+	//@@ZhangLei A0093966L
 	@Test
 	public void testEditTask() throws InvalidCommandException {
-		String cmd = "add EE2022 homework \\p high";
-		String edit = "edit EE2022 homework \\p low \\place home";
+		String cmd = "add EE2023 homework \\p high";
+		String edit = "edit EE2023 homework \\p low \\place home";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(edit);
-		String expectedResult = "Successfully edited: EE2022 homework\n";
+		String expectedResult = "Successfully edited: EE2023 homework\n";
 		assertEquals(expectedResult, result);
 	}
 	
+	//@@ZhangLei A0093966L
 	@Test
 	public void testDoneTask() throws InvalidCommandException {
-		LogicController.onCommandProcess("add CS2103 quiz 12");
 		LogicController.onCommandProcess("add CS1010 homework");
-		LogicController.onCommandProcess("add watch movie at engin");
-		String done2 = "ok CS1010 homework";
-		String result = LogicController.onCommandProcess(done2);
+		String done = "ok CS1010 homework";
+		String result = LogicController.onCommandProcess(done);
 		String expectedResult = "Done task: CS1010 homework\n";
 		assertEquals(expectedResult, result);
 	}
 	
+	//@@ZhangLei A0093966L
 	@Test
-	public void testUndoneTask() throws InvalidCommandException {
+	public void testUndoTask() throws InvalidCommandException {
+		LogicController.onCommandProcess("add CS1010 homework");
+		LogicController.onCommandProcess("delete CS1010 homework");
+		String undo = "undo";
+		String result = LogicController.onCommandProcess(undo);
+		String expectedResult = "Previous command undone\n";
+		assertEquals(expectedResult, result);
 	}
 }
