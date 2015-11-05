@@ -41,7 +41,7 @@ public class Main extends Application {
 			fxmlLoader.setController(uiControl);
 
 			Parent root = fxmlLoader.load();
-			Scene scene = new Scene(root, 1007, 400);
+			Scene scene = new Scene(root, 1000, 600); 
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("toDoo");
