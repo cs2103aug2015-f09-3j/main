@@ -28,6 +28,10 @@ public class TokenManager {
 		return instance;
 	}
 
+	/**
+	 * This function gets the last saved token.
+	 * @return return the last saved token.
+	 */
 	public String getLastToken() {
 
 		try {
@@ -54,6 +58,11 @@ public class TokenManager {
 		setToken("");
 	}
 
+	/**
+	 * This function sets token into local cache.
+	 * @param token : token in string format.
+	 * @return true if token is set, else false
+	 */
 	public boolean setToken(String token) {
 
 		try {
@@ -63,10 +72,8 @@ public class TokenManager {
 			return true;
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

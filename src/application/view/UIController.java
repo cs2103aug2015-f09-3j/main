@@ -7,6 +7,7 @@ import com.melloware.jintellitype.JIntellitypeConstants;
 
 import application.Main;
 import application.controller.GoogleCalendarManager;
+import application.controller.LogManager;
 import application.controller.LogicController;
 import application.exception.InvalidCommandException;
 import application.utils.GoogleCalendarUtility;
@@ -47,7 +48,7 @@ public class UIController implements HotkeyListener {
 			JIntellitype.getInstance().registerHotKey(1, JIntellitypeConstants.MOD_CONTROL, 'T');
 			JIntellitype.getInstance().addHotKeyListener(this);
 		} catch (Exception e) {
-			System.out.println("Unable to init Jintel");
+			LogManager.getInstance().log(this.getClass().getName(), "Unable to init Jintel");
 		}
 	}
 
@@ -71,15 +72,11 @@ public class UIController implements HotkeyListener {
 	// Event Listener on MenuItem[#minimizeMenuItem].onAction
 	@FXML
 	public void onMinimize(ActionEvent event) {
-		// Minimize the program here.
-		System.out.println("hello");
-		// getWindow().hide();
 
 	}
 
 	public void showToUser(String response) {
 		textConsoleOutput.setStyle("-fx-font-family: monospace");
-		System.out.println(response);
 		textConsoleOutput.insertText(textConsoleOutput.getLength(), response);
 
 	}
@@ -88,14 +85,11 @@ public class UIController implements HotkeyListener {
 	@FXML
 	public void onMouseClicked(MouseEvent event) {
 
-		System.out.println("onMouseClicked");
 		processUIRequest();
 
 	}
 
 	private String onCommandReceived(String command) {
-		// Do whatever you want with the command here. Pass to LogicController
-		// to do its stuff.
 
 		String feedback;
 
@@ -114,7 +108,6 @@ public class UIController implements HotkeyListener {
 
 	@FXML
 	public void onEnter(ActionEvent event) {
-		System.out.println("onEnter");
 		processUIRequest();
 
 	}
