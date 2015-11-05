@@ -10,6 +10,7 @@ import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String DUE = " DUE:   ";
 	private static final String TIMELINE_INST = "SCHEDULE \n \n";
 	private static final String NOT_APPLICABLE = "NOT APPLICABLE.";
 	public static final int PLAIN_VIEW_TYPE = 1;
@@ -126,7 +127,7 @@ public class TasksFormatter {
 							sb.append(task.getTextContent() + "\n");
 						} else {
 							String time = df3.format(task.getEnd_date());
-							sb.append(time+" DUE:   ");
+							sb.append(time+DUE);
 							sb.append(task.getTextContent() + "\n");
 						}
 					}
