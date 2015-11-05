@@ -65,7 +65,7 @@ public class CommandParser {
 			}
 		}
 
-		indexOfFirstSpace = getEquivalentIndexForCommandWithoutParameter(command);
+		indexOfFirstSpace = getEquivalentIndexForCommandWithoutParameter(command, indexOfFirstSpace);
 
 		if (indexOfFirstSpace == 0) {
 			return null;
@@ -164,8 +164,8 @@ public class CommandParser {
 	 * @param command : Raw command string.
 	 * @return the equivalent index of the first space.
 	 */
-	private int getEquivalentIndexForCommandWithoutParameter(String command) {
-		int indexOfFirstSpace = 0;;
+	private int getEquivalentIndexForCommandWithoutParameter(String command, int indexOfFirstSpace) {
+		
 		// check if is a list command with no parameter. e.g list
 		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
