@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@author A0130876B
+//@@author nghuiyirebecca A0130876B
 
 import java.util.ArrayList;
 
@@ -89,11 +89,11 @@ public class CommandManager {
 
 			    default: return "testing-lc";
 			}
-			} catch (NullPointerException e) {
-				LogManager.getInstance().log(cmd.getTextContent(), e.toString());
-			}
-			return "Please enter text";
+		} catch (NullPointerException e) {
+			LogManager.getInstance().log(cmd.getTextContent(), e.toString());
 		}
+		return "Please enter text";
+	}
 
 
 	/**
