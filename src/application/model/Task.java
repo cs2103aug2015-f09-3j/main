@@ -237,7 +237,50 @@ public class Task implements Comparable<Task> {
 		String dateStr = df1.format(this.getStart_date());
 		return dateStr;
 	}
+	
+	/**
+	 * @param task
+	 * @return
+	 */
+	public boolean isModified() {
+		return this.getgCalId() != null && !this.getgCalId().equals("") && this.getLastServerUpdate() != 0
+				&& this.getLastLocalUpdate() != 0 && (this.getLastLocalUpdate() > this.getLastServerUpdate());
+	}
+	
+	/**
+	 * This function will determine if task is non-floating.
+	 * @param task
+	 * @return return true if task is non-floating else false.
+	 */
+	public boolean isNonFloatingTask() {
+		return this.getEnd_date() != null;
+	}
 
+	/**This function will determine if task is yet to be synced.
+	 * Pre-condition: task is not null.
+	 * @param task
+	 * @return return true if task is not yet synced, else false.
+	 */
+	public boolean isUnSyncedTask() {
+		return this.getgCalId() != null && this.getgCalId().equals("");
+	}
+	
+	/**
+	 * This function will check if this task 
+	 * @return
+	 */
+	private boolean isSyncedBefore() {
+		return this.getgCalId() != null && !this.getgCalId().equals("");
+	}
+
+	/**
+	 * This function compares if this task gCalId is the same.
+	 * @param gCalId
+	 * @return if gCalId is the same.
+	 */
+	public boolean compareGCalId(String gCalId) {
+		return this.isSyncedBefore() && this.getgCalId().equals(gCalId);
+	}
 	@Override
 	public String toString() {
 

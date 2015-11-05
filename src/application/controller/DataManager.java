@@ -64,52 +64,71 @@ public class DataManager {
 		paraList = null;
 	}
 
-	public ArrayList<Task> getListOfTasksToUploadGCal() {
+	/**
+	 * This function return a list of suitable task for its first sync.
+	 * 
+	 * @return
+	 */
+	public ArrayList<Task> getListOfUnSyncNonFloatingTasks() {
+		
+
+		ArrayList<Task> unSyncTasks = new ArrayList<Task>();
+
+		for (Task task : data.getTaskList()) {
+			if (task.isUnSyncedTask() && task.isNonFloatingTask()) {
+				unSyncTasks.add(task);
+			}
+		}
+
+		return unSyncTasks;
+
+	}
+
+	/**
+	 * This function will return a list of modified gCal Sync-ed task.
+	 * 
+	 * @return a list of Tasks that have been modified locally since last server
+	 *         update.
+	 */
+	public ArrayList<Task> getListOfModifiedTask() {
 
 		ArrayList<Task> filteredList = new ArrayList<Task>();
 
 		for (Task task : data.getTaskList()) {
-			if (task.getgCalId().equals("") && task.getEnd_date() != null) {
+			if (task.isModified()) {
 				filteredList.add(task);
 			}
 		}
 
 		return filteredList;
-
 	}
 
-	public ArrayList<Task> getListOfTaskToUpdateGCal() {
-
-		ArrayList<Task> filteredList = new ArrayList<Task>();
-
-		for (Task task : data.getTaskList()) {
-			if (task.getgCalId() != null && !task.getgCalId().equals("") && task.getLastServerUpdate() != 0
-					&& task.getLastLocalUpdate() != 0 && (task.getLastLocalUpdate() > task.getLastServerUpdate())) {
-				filteredList.add(task);
-			}
-		}
-
-		return filteredList;
-	}
-
+	/**
+	 * This function finds local task by its GCalId.
+	 * 
+	 * @param gCalId
+	 * @return return tasks with that GCalId, If Any. Otherwise, return null.
+	 */
 	public Task findTaskByGCalId(String gCalId) {
-		// data.clearSearchList();
 
 		for (Task task : data.getTaskList()) {
-			if (task.getgCalId() != null && task.getgCalId() != "" && task.getgCalId().equals(gCalId)) {
+			if (task.compareGCalId(gCalId)) {
 				return task;
 			}
 		}
-
 		return null;
 	}
 
+	/**
+	 * This function deletes task by its GCalId, If Any.
+	 * 
+	 * @param gCalId
+	 */
 	public void deleteTaskByGCalId(String gCalId) {
 		Task task = findTaskByGCalId(gCalId);
 		if (task == null) {
 			return;
 		}
-		// data.clearSearchList();
 		int indexToDelete = data.getTaskList().indexOf(task);
 		data.getTaskList().remove(indexToDelete);
 
@@ -117,21 +136,33 @@ public class DataManager {
 
 	}
 
+	/**
+	 * This function takes in HashMap of Task and String, It takes the
+	 * value(GCalId) and update its key(Task).
+	 * 
+	 * @param lists
+	 *            : HashMap of key(Task) and value(String)(GCalId) pair.
+	 * 
+	 */
 	public void updateGCalId(HashMap<Task, String> lists) {
-		// data.clearSearchList();
 
 		for (Task task : lists.keySet()) {
 			int indexToUpdate = data.getTaskList().indexOf(task);
 			data.getTaskList().get(indexToUpdate).setgCalId(lists.get(task));
 			data.getTaskList().get(indexToUpdate).setLastServerUpdate(System.currentTimeMillis());
 		}
-
 		data.updateStorage();
 
 	}
 
+	/**
+	 * This function takes in HashMap of Task and Long, It takes the
+	 * value(LastServerUpdateTime) and update its key(Task).
+	 * 
+	 * @param :
+	 *            HashMap of key(Task) and value(Long)(lastServerUpdate) pair.
+	 */
 	public void updateServerUpdateTime(HashMap<Task, Long> lists) {
-		// data.clearSearchList();
 
 		for (Task task : lists.keySet()) {
 			int indexToUpdate = data.getTaskList().indexOf(task);
@@ -142,20 +173,19 @@ public class DataManager {
 
 	}
 
-	public ArrayList<Task> getAllTasks() {
-		// data.clearSearchList();
-		return data.getTaskList();
-	}
+	/**
+	 * This function updates the local storage with the updated remote task.
+	 * 
+	 * @param remoteTask
+	 *            : latest remote task from google calendar api.
+	 */
+	public void updateTask(Task remoteTask) {
 
-	public void updateTask(Task task) {
-
-		// data.clearSearchList();
-		Task localTask = this.findTaskByGCalId(task.getgCalId());
-
+		Task localTask = this.findTaskByGCalId(remoteTask.getgCalId());
+		assert localTask != null; // localTask will be found.
 		int indexToUpdate = data.getTaskList().indexOf(localTask);
-
 		data.getTaskList().remove(indexToUpdate);
-		data.getTaskList().add(task);
+		data.getTaskList().add(remoteTask);
 		data.updateStorage();
 
 	}
@@ -236,7 +266,7 @@ public class DataManager {
 				break;
 			case Parameter.END_DATE_ARGUMENT_TYPE:
 				for (Task task : data.getTaskList()) {
-					if (task.getEnd_date() != null) {
+					if (task.isNonFloatingTask()) {
 						if (task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
 							if (!filteredList.contains(task)) {
 								filteredList.add(task);
@@ -438,7 +468,7 @@ public class DataManager {
 
 		for (Task task : data.getTaskList()) {
 			if (!task.isDone()) {
-				if (task.getEnd_date() != null) {
+				if (task.isNonFloatingTask()) {
 					if (task.getEnd_date().getYear() == today.getYear()) {
 						if (task.getEnd_date().getMonth() == today.getMonth()) {
 							if (task.getEnd_date().getDate() == today.getDate()) {

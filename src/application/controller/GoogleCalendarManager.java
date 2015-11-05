@@ -133,7 +133,7 @@ public class GoogleCalendarManager {
 	 * @param quickAddMsg : quickAdd message
 	 * @return Task if successful in creation, or null if fail to create task.
 	 */
-	public Task quickAddToGCal(String quickAddMsg){
+	public Task quickAddToGCal(String quickAddMsg){  
 		
 		Event createdEvent;
 		try {
@@ -439,7 +439,7 @@ public class GoogleCalendarManager {
 	 * 
 	 */
 	private void performUpdatedTaskSync() {
-		ArrayList<Task> lists = DataManager.getInstance().getListOfTaskToUpdateGCal();
+		ArrayList<Task> lists = DataManager.getInstance().getListOfModifiedTask();
 		HashMap<Task, Long> lastServerUpdateMap = new HashMap<Task, Long>();
 
 		for (Task task : lists) {
@@ -464,7 +464,7 @@ public class GoogleCalendarManager {
 	 * 
 	 */
 	private void performNewTaskSync() {
-		ArrayList<Task> lists = DataManager.getInstance().getListOfTasksToUploadGCal();
+		ArrayList<Task> lists = DataManager.getInstance().getListOfUnSyncNonFloatingTasks();
 		HashMap<Task, String> hashmap = new HashMap<Task, String>();
 		for (Task task : lists) {
 
