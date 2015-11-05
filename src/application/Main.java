@@ -9,20 +9,13 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.swing.ImageIcon;
 
 import com.melloware.jintellitype.JIntellitype;
 
 import application.controller.GoogleCalendarManager;
+import application.controller.LogManager;
 import application.utils.GoogleCalendarUtility;
 import application.view.UIController;
 import javafx.application.Application;
@@ -59,11 +52,12 @@ public class Main extends Application {
 			primaryStage.show();
 
 			createAndShowGUI();
-			this.stage = primaryStage;
+			this.stage = primaryStage; 
 
 			if (GoogleCalendarUtility.hasInternetConnection()) {
 				GoogleCalendarManager.getInstance().performSync();
 			}
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,10 +112,15 @@ public class Main extends Application {
 
 		exitItem.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				tray.remove(trayIcon);
-				JIntellitype.getInstance().cleanUp();
+			public void actionPerformed(ActionEvent e) { 
+				try {
+					tray.remove(trayIcon);
+					JIntellitype.getInstance().cleanUp();
+				} catch (Exception err) {
+					LogManager.getInstance().log(this.getClass().getName(), err.toString());
+				}
 				System.exit(0);
+
 			}
 		});
 	}
