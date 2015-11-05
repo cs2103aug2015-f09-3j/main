@@ -214,7 +214,7 @@ public class CommandManager {
 
 		    case Command.LIST_TODAY_COMMAND_TYPE:
 		    	ArrayList<Task> listToday = DataManager.getInstance().listToday(cmd);
-		    	String today = TasksFormatter.format(listToday, TasksFormatter.DETAIL_VIEW_TYPE);
+		    	String today = TasksFormatter.format(listToday, TasksFormatter.TIMELINE_VIEW_TYPE);
 		    	return today;
 
 		    case Command.HELP_COMMAND_TYPE:
@@ -227,8 +227,12 @@ public class CommandManager {
 		    	return sched;
 
 		    case Command.GOOGLE_ADD_COMMAND_TYPE:
-		    	String googleAdd = "testgoogleadd \n";
-		    	return googleAdd;
+		    	Integer googleAddSuccess= GoogleCalendarManager.getInstance().quickAddToGCal(cmd.getTextContent());
+		    	if(googleAddSuccess == DataManager.TASK_ADDED){
+		    		return ADDED_SUCCESS + cmd.getTextContent();
+		    	}else{
+		    		return TASK_ALREADY_EXISTS;
+		    	}
 
 		    default: return "testing-lc";
 		}
