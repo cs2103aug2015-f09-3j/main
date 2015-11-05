@@ -10,7 +10,13 @@ import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String LOCATION_HEADER = "LOCATION: ";
+	private static final String PRIORITY_HEADER = "PRIORITY: ";
+	private static final String FULLSTOP = ". ";
+	private static final String TYPE_HEADER = "TYPE: ";
+	private static final String OUTSTANDING_TASKS_INFO = "Outstanding tasks (no due date): \n";
 	private static final String DUE = " DUE:   ";
+	private static final String NEW_LINE = "\n";
 	private static final String TIMELINE_INST = "SCHEDULE \n \n";
 	private static final String NOT_APPLICABLE = "NOT APPLICABLE.";
 	public static final int PLAIN_VIEW_TYPE = 1;
@@ -55,11 +61,11 @@ public class TasksFormatter {
 		DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 		DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
 		switch (typeOfFormatting) {
-		
+
 		case PLAIN_VIEW_TYPE:
 			int i = 1;
 			for(Task task: lists){
-				sb.append(String.format("%d. %s\n", i++, task.getTextContent()));
+				sb.append(String.format("%d. %s" + NEW_LINE, i++, task.getTextContent()));
 			}
 			break;
 
@@ -90,9 +96,9 @@ public class TasksFormatter {
 			}
 
 			break;
-			
-		case TIMELINE_VIEW_TYPE: 
-			sb.append(TIMELINE_INST);  
+
+		case TIMELINE_VIEW_TYPE:
+			sb.append(TIMELINE_INST);
 			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
 			ArrayList<Task> floating = new ArrayList<Task>();
 			for (Task task:lists){
@@ -124,22 +130,21 @@ public class TasksFormatter {
 							String start_time = df3.format(task.getStart_date());
 							String end_time = df3.format(task.getEnd_date());
 							sb.append("[" + start_time + " - " + end_time + "]   ");
-							sb.append(task.getTextContent() + "\n");
+							sb.append(task.getTextContent() + NEW_LINE);
 						} else {
 							String time = df3.format(task.getEnd_date());
 							sb.append(time+DUE);
-							sb.append(task.getTextContent() + "\n");
+							sb.append(task.getTextContent() + NEW_LINE);
 						}
 					}
 				}
 				sb.append("\n");
 			}
 			if (floating.size()>0){
-				sb.append("\n");
-				sb.append("Outstanding tasks (no due date): \n");
+				sb.append(NEW_LINE + OUTSTANDING_TASKS_INFO);
 				int counter = 1;
 				for (Task task:floating){
-					sb.append(counter + ".   " + task.getTextContent() +"\n");
+					sb.append(counter + FULLSTOP + task.getTextContent() + NEW_LINE);
 					counter++;
 				}
 			}
@@ -149,16 +154,16 @@ public class TasksFormatter {
 		case TYPE_VIEW_TYPE:
 			ArrayList<String> namesOfTypes = namesOfTypes(lists);
 			for (String type:namesOfTypes){
-				sb.append("TYPE: "+type+"\n");
+				sb.append(TYPE_HEADER+type+NEW_LINE);
 				int counter = 1;
 				for (Task task:lists){
 					if (type.equals(task.getType_argument())){
-						sb.append(counter+". "+ task.getTextContent() +"\n");
+						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
 						counter++;
 					}
 				}
 				counter = 0;
-				sb.append("\n");
+				sb.append(NEW_LINE);
 			}
 
 			break;
@@ -166,16 +171,16 @@ public class TasksFormatter {
 		case PRIORITY_VIEW_TYPE:
 			ArrayList<String> namesOfPriorityLevel = namesOfPriorityLevels(lists);
 			for (String priority:namesOfPriorityLevel){
-				sb.append("PRIORITY: "+priority+"\n");
+				sb.append(PRIORITY_HEADER+priority+NEW_LINE);
 				int counter = 1;
 				for (Task task:lists){
 					if (priority.equals(task.getPriority_argument())){
-						sb.append(counter+". "+ task.getTextContent() +"\n");
+						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
 						counter++;
 					}
 				}
 				counter = 0;
-				sb.append("\n");
+				sb.append(NEW_LINE);
 			}
 			break;
 
@@ -188,16 +193,16 @@ public class TasksFormatter {
 				} else {
 					nameOfLocation = location;
 				}
-				sb.append("LOCATION: "+nameOfLocation+"\n");
+				sb.append(LOCATION_HEADER+nameOfLocation+NEW_LINE);
 				int counter = 1;
 				for (Task task:lists){
 					if (location.equals(task.getPlace_argument())){
-						sb.append(counter+". "+ task.getTextContent() +"\n");
+						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
 						counter++;
 					}
 				}
 				counter = 0;
-				sb.append("\n");
+				sb.append(NEW_LINE);
 			}
 			break;
 
@@ -209,15 +214,15 @@ public class TasksFormatter {
 					isFloat = true;
 				}
 				if (isFloat){
-					sb.append(noOfFloatingTasks + ". " + task.getTextContent() + "\n");
+					sb.append(noOfFloatingTasks + FULLSTOP + task.getTextContent() + NEW_LINE);
 					noOfFloatingTasks++;
 				}
 			}
 		}
 
-		return sb.toString(); 
+		return sb.toString();
 	}
-	
+
 	private static boolean isSameEdate(Date d1, Date d2) {
 		DateFormat df = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 		String d1Str = df.format(d1);
