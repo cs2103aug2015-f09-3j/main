@@ -1,4 +1,5 @@
 package application.controller;
+
 //@@LimYouLiang A0125975U
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,9 +72,9 @@ public class GoogleCalendarManager {
 	private static final List<String> SCOPES = Arrays
 			.asList(new String[] { CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR });
 
-	//@@Google
+	// @@Google
 	com.google.api.services.calendar.Calendar service;
-	
+
 	static {
 		try {
 			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -116,16 +117,13 @@ public class GoogleCalendarManager {
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
-	
-	//@@LimYouLiang A0125975U
-	
-	
+	// @@LimYouLiang A0125975U
+
 	private GoogleCalendarManager() {
 		try {
 			service = getCalendarService();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LogManager.getInstance().log(this.getClass().getName(), e1.toString());
 		}
 
 	}
@@ -145,12 +143,11 @@ public class GoogleCalendarManager {
 		Event createdEvent;
 		try {
 			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
-			Task task = this.convertEventToTask(createdEvent);
+			Task task = this.mapEventToTask(createdEvent);
 			int googleAddSuccess = DataManager.getInstance().addNewTask(task);
 			return googleAddSuccess;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogManager.getInstance().log(this.getClass().getName(), e.toString());
 		}
 		return null;
 	}
@@ -198,10 +195,13 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * This function take in a arraylist of records, and store the data into the file
-	 * to the records.
-	 * @param records : the place to be store in.
-	 * @param file : the file to be read from.
+	 * This function take in a arraylist of records, and store the data into the
+	 * file to the records.
+	 * 
+	 * @param records
+	 *            : the place to be store in.
+	 * @param file
+	 *            : the file to be read from.
 	 */
 	private void getRecordsFromFile(ArrayList<String> records, File file) {
 		FileInputStream fIn = null;
@@ -228,31 +228,39 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * This function retrieves Event from Google Calendar API based on a syncToken, if syncToken is null
-	 * , It is the initial full sync.
-	 * @param syncToken : Can be null or the syncToken for the next sync.
-	 * @return : a list of events to be updated to local storage.
+	 * This function retrieves Event from Google Calendar API based on a
+	 * syncToken, if syncToken is null , It is the initial full sync.
+	 * 
+	 * @return : a list of events to be updated to local storage or null if it
+	 *         fail.
 	 */
-	private List<Event> getCalendarEvents(String syncToken) {
-
-		DateTime now = new DateTime(System.currentTimeMillis());
-
+	private List<Event> getCalendarEvents() {
+		String syncToken = TokenManager.getInstance().getLastToken();
 		Calendar.Events.List request = null;
 		try {
 			request = service.events().list("primary");
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LogManager.getInstance().log(this.getClass().getName(), e1.toString());
+			return null;
 		}
-		if (syncToken != null && !syncToken.equals("")) {
-			request.setSyncToken(syncToken);
-		} else {
-			request.setTimeMin(now);
-		}
-		Events events = null;
+		setInitialSyncOrContinuingSync(syncToken, request);
+		return getEventsByIterateRequestUsingPageToken(request);
+	}
+
+	/**
+	 * This function takes in a valid request object, and start retrieving the
+	 * events from the google api.
+	 * 
+	 * @param request
+	 *            : valid Calendar.Events.List instance
+	 * @return list of events
+	 */
+	private List<Event> getEventsByIterateRequestUsingPageToken(Calendar.Events.List request) {
+		List<Event> items = new ArrayList<Event>();
 		String pageToken = null;
-		List<Event> items = null;
+		Events events = null;
 		do {
+
 			request.setPageToken(pageToken);
 			try {
 				events = request.execute();
@@ -260,61 +268,94 @@ public class GoogleCalendarManager {
 				if (e.getStatusCode() == 410) {
 					// A 410 status code, "Gone", indicates that the sync token
 					// is invalid.
-					System.out.println("Invalid sync token, clearing event store and re-syncing.");
+					LogManager.getInstance().log(this.getClass().getName(),
+							"Invalid sync token, clearing event store and re-syncing.");
 					TokenManager.getInstance().clearToken();
 
-				} else {
-					return null;
 				}
 			} catch (IOException e) {
-
-				e.printStackTrace();
-
+				LogManager.getInstance().log(this.getClass().getName(), e.toString());
 				if (e instanceof TokenResponseException) {
-					System.out.println("Renewing");
-					TokenManager.getInstance().clearToken();
-					GoogleCalendarUtility.recursiveDelete(DATA_STORE_DIR);
-					try {
-						service = getCalendarService();
-					} catch (IOException e1) {
-						
-						e1.printStackTrace();
-					}
+					renewAccountCredential();
 				}
 
 			}
-
-			items = events.getItems(); 
-			if (items.size() == 0) {
-				System.out.println("No upcoming events found.");
-			} else {
-				System.out.println("Upcoming events");
-				for (Event event : items) {
-					try {
-						DateTime start = event.getStart().getDateTime();
-						if (start == null) {
-							start = event.getStart().getDate();
-						}
-						System.out.printf("%s (%s)\n", event.getSummary(), start);
-					} catch (Exception e) {
-						LogManager.getInstance().log(this.getClass().getName(), e.toString());
-					}
-				}
+			if (events != null) {
+				items.addAll(retrieveEvents(events));
+				pageToken = events.getNextPageToken();
 			}
-			pageToken = events.getNextPageToken();
 		} while (pageToken != null);
 
 		TokenManager.getInstance().setToken(events.getNextSyncToken());
+		return items;
+	}
+
+	/**
+	 * This function sets the request obj for either initial sync or
+	 * continuation sync.
+	 * 
+	 * @param syncToken
+	 *            : null if for intial sync, otherwise the sync token from
+	 *            previous sync.
+	 * @param request
+	 *            : valid Calendar.Events.List instance
+	 */
+	private void setInitialSyncOrContinuingSync(String syncToken, Calendar.Events.List request) {
+		DateTime now = new DateTime(System.currentTimeMillis());
+		if (syncToken != null && !syncToken.equals("")) {
+			request.setSyncToken(syncToken);
+		} else {
+			request.setTimeMin(now);
+		}
+	}
+
+	/**
+	 * This function renews the account credential.
+	 */
+	private void renewAccountCredential() {
+		System.out.println("Renewing");
+		TokenManager.getInstance().clearToken();
+		GoogleCalendarUtility.recursiveDelete(DATA_STORE_DIR);
+		try {
+			service = getCalendarService();
+		} catch (IOException e1) {
+
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * This function retrieve Event from the Events instance.
+	 * 
+	 * @param events
+	 */
+	private List<Event> retrieveEvents(Events events) {
+		List<Event> items;
+		items = events.getItems();
+		if (items.size() == 0) {
+			System.out.println("No new event, Local is already the latest.");
+		} else {
+			System.out.println("New/Update events found.");
+			for (Event event : items) {
+				try {
+					DateTime start = event.getStart().getDateTime();
+					if (start == null) {
+						start = event.getStart().getDate();
+					}
+					System.out.printf("%s (%s)\n", event.getSummary(), start);
+				} catch (Exception e) {
+					LogManager.getInstance().log(this.getClass().getName(), e.toString());
+				}
+			}
+		}
 
 		return items;
-
 	}
 
 	public void performSync() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				performUpSync();
 				performDownSync();
 				syncOfflineDeletionRecords();
@@ -323,17 +364,16 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 *
+	 * 
 	 */
 	private void performDownSync() {
 		List<Event> lists = null;
 		ArrayList<Task> taskArr = new ArrayList<Task>();
-		String lastToken = TokenManager.getInstance().getLastToken();
-		lists = getCalendarEvents(lastToken);
+		lists = getCalendarEvents();
 
 		for (Event event : lists) {
 			if (!event.getStatus().equals("cancelled")) {
-				taskArr.add(convertEventToTask(event));
+				taskArr.add(mapEventToTask(event));
 			} else {
 				DataManager.getInstance().deleteTaskByGCalId(event.getId());
 			}
@@ -355,7 +395,7 @@ public class GoogleCalendarManager {
 				if (localTask.getLastServerUpdate() > task.getLastServerUpdate()) {
 					// update server
 					Event event = mapTaskToEvent(localTask);
-					updateServer(event);
+					updateGCalEvent(event);
 
 				} else {
 					// update local
@@ -367,58 +407,61 @@ public class GoogleCalendarManager {
 		}
 	}
 
+	/**
+	 * remove events from Gooogle Calendar by eventId
+	 * 
+	 * @param eventId
+	 *            : Google Calendar Event Id
+	 */
 	public void removeTaskFromServer(String eventId) {
-
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					service.events().delete("primary", eventId).execute();
-
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}).run();
-
 	}
 
 	/**
+	 * This function updates the Google Calendar Event.
+	 * 
 	 * @param event
+	 *            : Google Calendar Event
 	 */
-	private void updateServer(Event event) {
+	private void updateGCalEvent(Event event) {
 		EventReminder[] reminderOverrides = new EventReminder[] {
 				new EventReminder().setMethod("email").setMinutes(24 * 60),
-				new EventReminder().setMethod("popup").setMinutes(10), };
+				new EventReminder().setMethod("popup").setMinutes(10) };
 		Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
 				.setOverrides(Arrays.asList(reminderOverrides));
 		event.setReminders(reminders);
 
 		try {
 			service.events().update("primary", event.getId(), event).execute();
-			// event = service.events().update("primary", event).execute();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogManager.getInstance().log(this.getClass().getName(), e.toString());
 		}
 	}
 
 	/**
+	 * This function maps Event Object to Task Object
+	 * 
 	 * @param event
+	 *            : Google Calendar Event Object
 	 */
-	private Task convertEventToTask(Event event) {
+	private Task mapEventToTask(Event event) {
 
 		Task tmpTask = new Task();
 
 		tmpTask.setTextContent(event.getSummary());
 
-		try {
+		if (event.getExtendedProperties() != null && event.getExtendedProperties().getShared() != null) {
 			tmpTask.setType_argument(event.getExtendedProperties().getShared().get("type"));
-		} catch (NullPointerException e) {
-			// Its normal to have null pointer exception here. google self
-			// created event won't have this instance.
 		}
 
 		tmpTask.setPriority_argument(event.getDescription());
@@ -463,7 +506,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 *
+	 * This function perform sync from local to server.
 	 */
 	private void performUpSync() {
 
@@ -472,7 +515,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 *
+	 * This function perform syncing to server for locally modified task.
 	 */
 	private void performUpdatedTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfModifiedTask();
@@ -486,10 +529,8 @@ public class GoogleCalendarManager {
 				event = service.events().update("primary", task.getgCalId(), event).execute();
 				lastServerUpdateMap.put(task, event.getUpdated().getValue());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogManager.getInstance().log(this.getClass().getName(), e.toString());
 			}
-
 		}
 
 		DataManager.getInstance().updateServerUpdateTime(lastServerUpdateMap);
@@ -497,7 +538,7 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 *
+	 * This function syncs all new task that are yet to be sync for the first time.
 	 */
 	private void performNewTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfUnSyncNonFloatingTasks();
@@ -516,11 +557,8 @@ public class GoogleCalendarManager {
 			try {
 				event = service.events().insert("primary", event).execute();
 				hashmap.put(task, event.getId());
-				// task.setgCalId(event.getId());
-
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogManager.getInstance().log(this.getClass().getName(), e.toString());
 			}
 
 		}
@@ -529,8 +567,9 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * @param task
-	 * @return
+	 * This function maps Task to Event Object.
+	 * @param task : toDoo task model.
+	 * @return Google Calendar Event object.
 	 */
 	private Event mapTaskToEvent(Task task) {
 		Event event = new Event().setSummary(task.getTextContent()).setLocation(task.getPlace_argument())
@@ -556,38 +595,21 @@ public class GoogleCalendarManager {
 		EventDateTime endMinus1Hr = new EventDateTime();
 		endMinus1Hr.setDateTime(new DateTime(new Date(task.getEnd_date().getTime() - 3600000)));
 
-		// event.setStart(start);
-		// event.setEnd(end);
-
 		if (task.getStart_date() == null) {
-			// event.setEndTimeUnspecified(true);
 			event.setStart(endMinus1Hr);
 			event.setEnd(end);
-
 			hashMap.put("has_start_date", "no");
-			// event.setUnknownKeys(map);
 			ExtendedProperties prop = new ExtendedProperties();
 			prop.setShared(hashMap);
-
 			event.setExtendedProperties(prop);
-			// event.set("has_start_date", false);
 
 		} else {
-
 			event.setStart(start);
 			event.setEnd(end);
-			// Map<String, Object> map = new HashMap<String, Object>();
-			// map.put("has_start_date", 1);
-			// event.setUnknownKeys(map);
-
 			hashMap.put("has_start_date", "yes");
-			// event.setUnknownKeys(map);
 			ExtendedProperties prop = new ExtendedProperties();
 			prop.setShared(hashMap);
-
 			event.setExtendedProperties(prop);
-
-			// event.set("has_start_date", true);
 		}
 
 		return event;
@@ -596,7 +618,6 @@ public class GoogleCalendarManager {
 	public static GoogleCalendarManager getInstance() {
 		if (instance == null) {
 			instance = new GoogleCalendarManager();
-
 		}
 
 		return instance;
