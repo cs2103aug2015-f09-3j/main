@@ -253,37 +253,8 @@ public class ParserTest {
 
 	}
 
-	@Test
-	public void testParseDate102() throws ParseException {
-		Date date = ParserFacade.getInstance().parseDate("11.11.16 3:30");
+	
 
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DATE, 11);
-		cal.set(Calendar.MONTH, 10);
-		cal.set(Calendar.YEAR, 2016);
-		cal.set(Calendar.HOUR_OF_DAY, 3);
-		cal.set(Calendar.MINUTE, 30);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		assertEquals(cal.getTime(), date);
-
-	}
-
-	@Test
-	public void testParseDate103() throws ParseException {
-		Date date = ParserFacade.getInstance().parseDate("11.11.16 3:30am");
-
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DATE, 11);
-		cal.set(Calendar.MONTH, 10);
-		cal.set(Calendar.YEAR, 2016);
-		cal.set(Calendar.HOUR_OF_DAY, 3);
-		cal.set(Calendar.MINUTE, 30);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		assertEquals(cal.getTime(), date);
-
-	}
 
 	@Test
 	public void testParseDate104() throws ParseException {
@@ -301,20 +272,5 @@ public class ParserTest {
 
 	}
 
-	@Test
-	public void testParseDate105() throws ParseException {
-		Date date = ParserFacade.getInstance().parseDate("11.11.16 3am");
-
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DATE, 11);
-		cal.set(Calendar.MONTH, 10);
-		cal.set(Calendar.YEAR, 2016);
-		cal.set(Calendar.HOUR_OF_DAY, 3);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		assertEquals(cal.getTime(), date);
-
-	}
 
 }
