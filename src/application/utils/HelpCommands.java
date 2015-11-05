@@ -2,6 +2,9 @@ package application.utils;
 
 //@@nghuiyirebecca A0130876B
 public class HelpCommands {
+	private static final String GEN_INFO3 = "When connected to the internet, it will automatically sync with your Google Calendar.";
+	private static final String GEN_INFO_2 = "Below are commands essential to the use of toDoo. \n";
+	private static final String GEN_INFO_1 = "Welcome to the help page of toDoo! \n";
 	private static final String TYPE_VIEW_INST = "View the tasks by respective types.";
 	private static final String PLACE_VIEW_INST = "View the tasks sorted into different locations.";
 	private static final String PRIORITY_VIEW_INST = "View the tasks that are sorted by priority.";
@@ -19,10 +22,11 @@ public class HelpCommands {
 	private static final String EDIT_DESC = "Edit a task by typing in keyword, task name and parameter to change";
 	private static final String UNDO_DESC = "Undo the last command entered.";
 	private static final String CHANGE_STORAGE_LOCATION_DESC = "Change the storage location by typing in keyword followed by new location.";
-	private static final String LIST_TO_NOTE = "Note: type \"done\" to see tasks that are done. By default, list views all undone tasks.";
+	private static final String LIST_TO_NOTE = "Type \"done\" to see tasks that are done. By default, list views all undone tasks.";
 	private static final String LIST_DESC = "To see all tasks that are still undone.";
 	private static final String DELETE_TASK_DESC = "Delete a task by typing keyword followed by the task to delete.";
 	private static final String ADD_TASK_DESC = "Add a task by typing in keyword followed by a new task with optional parameters.";
+	private static final String GOOGLE_ADD_TASK_DESC = "Add a task directly to Google Calendar with optional parameters";
 	private static final String EMPTY_STRING = "";
 
 	//private static final int DESC_LIMIT = 50;
@@ -36,15 +40,24 @@ public class HelpCommands {
 	private static final String PARAMETER_TABLE_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Parameter", "Key", "Description");
 
 
+
 	public static String displayHelp(){
 		StringBuilder sb = new StringBuilder();
 
+		displayGeneralInformation(sb);
+		sb.append("\n \n");
 		displayCommands(sb);
 		sb.append("\n \n");
 		displayParameters(sb);
 		sb.append("\n \n");
 		displayListView(sb);
 		return sb.toString();
+	}
+
+	private static void displayGeneralInformation(StringBuilder sb) {
+		sb.append(GEN_INFO_1);
+		sb.append(GEN_INFO_2);
+		sb.append(GEN_INFO3);
 	}
 
 	private static void displayListView(StringBuilder sb) {
@@ -92,6 +105,8 @@ public class HelpCommands {
 		sb.append("\n");
 
 		sb.append(String.format(OUTPUT_FORMAT, count++, "Add", "add / +", ADD_TASK_DESC));
+		sb.append("\n");
+		sb.append(String.format(OUTPUT_FORMAT, count++, "Google Calendarr add", "googleAdd / ga", GOOGLE_ADD_TASK_DESC));
 		sb.append("\n");
 		sb.append(String.format(OUTPUT_FORMAT, count++, "Delete", "delete / -", DELETE_TASK_DESC));
 		sb.append("\n");
