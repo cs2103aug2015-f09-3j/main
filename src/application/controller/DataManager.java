@@ -24,10 +24,6 @@ import application.model.Task;
 
 import application.utils.GoogleCalendarUtility;
 
-/*
- * @author: Lim Qi Wen
- */
-
 public class DataManager {
 	public static final Integer WRONG_LINE_NUM = -5;
 	public static final Integer NO_PREV_COMMAND = -4;
@@ -193,7 +189,6 @@ public class DataManager {
 	// @@LimQiWen A0125980B
 
 	public Integer addNewTask(Task taskToAdd) {
-		// data.clearSearchList();
 		data.clearSearchList();
 		if (data.getTaskList().contains(taskToAdd)) {
 			return TASK_ALREADY_EXISTS;
@@ -255,10 +250,19 @@ public class DataManager {
 				break;
 			case Parameter.START_DATE_ARGUMENT_TYPE:
 				for (Task task : data.getTaskList()) {
-					if (task.getStart_date() != null) {
-						if (task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
+					if(para.getParaArg().equals("")){
+						if(task.getStart_date() == null){
 							if (!filteredList.contains(task)) {
 								filteredList.add(task);
+							}
+						}
+					}else{
+						if (task.getStart_date() != null) {
+							if (task.getStart_date().equals(ParserFacade.getInstance().
+									parseDate(para.getParaArg()))) {
+								if (!filteredList.contains(task)) {
+									filteredList.add(task);
+								}
 							}
 						}
 					}
@@ -266,10 +270,19 @@ public class DataManager {
 				break;
 			case Parameter.END_DATE_ARGUMENT_TYPE:
 				for (Task task : data.getTaskList()) {
-					if (task.isNonFloatingTask()) {
-						if (task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
+					if(para.getParaArg().equals("")){
+						if(task.getEnd_date() == null){
 							if (!filteredList.contains(task)) {
 								filteredList.add(task);
+							}
+						}
+					}else{
+						if (task.isNonFloatingTask()) {
+							if (task.getEnd_date().equals(ParserFacade.getInstance().
+									parseDate(para.getParaArg()))) {
+								if (!filteredList.contains(task)) {
+									filteredList.add(task);
+								}
 							}
 						}
 					}

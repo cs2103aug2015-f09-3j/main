@@ -187,9 +187,9 @@ public class Task implements Comparable<Task> {
 
 	@Override
 	public boolean equals(Object obj) {
-
+	
 		if (obj instanceof Task) {
-
+			boolean isDateEq1, isDateEq2;
 			Task taskCmp = (Task) obj;
 			if (this.isDone == taskCmp.isDone && this.place_argument.equals(taskCmp.getPlace_argument())
 					&& this.priority_argument.equals(taskCmp.getPriority_argument())
@@ -199,21 +199,33 @@ public class Task implements Comparable<Task> {
 
 				if (this.start_date != null && taskCmp.getStart_date() != null) {
 					if (this.start_date.equals(taskCmp.getStart_date())) {
-						return true;
+						isDateEq1 = true;
 					} else {
-						return false;
+						isDateEq1 = false;
+					}
+				}else{
+					if (this.start_date == null && taskCmp.getStart_date() == null){
+						isDateEq1 = true;
+					}else{
+						isDateEq1 = false;
 					}
 				}
 
 				if (this.end_date != null && taskCmp.getEnd_date() != null) {
 					if (this.end_date.equals(taskCmp.getEnd_date())) {
-						return true;
+						isDateEq2 = true;
 					} else {
-						return false;
+						isDateEq2 = false;
+					}
+				}else{
+					if (this.end_date == null && taskCmp.getEnd_date() == null){
+						isDateEq2 = true;
+					}else{
+						isDateEq2 = false;
 					}
 				}
 
-				return true;
+				return (isDateEq1 && isDateEq2);
 			} else {
 				return false;
 			}
