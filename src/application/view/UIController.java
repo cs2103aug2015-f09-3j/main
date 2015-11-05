@@ -42,14 +42,14 @@ public class UIController implements HotkeyListener {
 		return instance;
 	}
 
-	private UIController() {
+	private UIController() {  
 		try {
-			JIntellitype.getInstance();
+			JIntellitype.getInstance();  
 			JIntellitype.getInstance().registerHotKey(1, JIntellitypeConstants.MOD_CONTROL, 'T');
 			JIntellitype.getInstance().addHotKeyListener(this);
 		} catch (Exception e) {
 			LogManager.getInstance().log(this.getClass().getName(), "Unable to init Jintel");
-		}
+		}  
 	}
 
 	public void setMainApp(Main app) {
@@ -72,7 +72,7 @@ public class UIController implements HotkeyListener {
 	// Event Listener on MenuItem[#minimizeMenuItem].onAction
 	@FXML
 	public void onMinimize(ActionEvent event) {
-
+		
 	}
 
 	public void showToUser(String response) {

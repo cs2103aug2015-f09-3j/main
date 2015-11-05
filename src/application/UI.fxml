@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="400.0" prefWidth="1007.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<MenuBar VBox.vgrow="NEVER">
 			<menus>
@@ -48,26 +48,27 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
 					<items>
-						<MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+						<MenuItem mnemonicParsing="false" text="About toDoo" />
 					</items>
 				</Menu>
 			</menus>
 		</MenuBar>
-		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="375.0" prefWidth="721.0" VBox.vgrow="ALWAYS">
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
 			<children>
 				<Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
 					<font>
 						<Font size="18.0" />
 					</font>
 				</Label>
-				<Button fx:id="btSend" layoutX="844.0" layoutY="277.0" mnemonicParsing="false" onMouseClicked="#onMouseClicked" prefHeight="85.0" prefWidth="139.0" text="Enter" />
-				<TextField id="commandInput" fx:id="textCommandInput" layoutX="14.0" layoutY="277.0" onAction="#onEnter" prefHeight="85.0" prefWidth="818.0" promptText="Example : add buy milk at ntuc @ 5pm { \t personal \p high \sdate 3pm }" />
-				<Line endX="880.0" endY="-1.0" layoutX="115.0" layoutY="264.0" startX="-100.0" />
-				<TextArea id="consoleOutput" fx:id="textConsoleOutput" editable="false" layoutX="14.0" layoutY="13.0" prefHeight="239.0" prefWidth="978.0" wrapText="true">
+				<Button fx:id="btSend" layoutX="846.0" layoutY="474.0" mnemonicParsing="false" onMouseClicked="#onMouseClicked" prefHeight="85.0" prefWidth="139.0" text="Enter" AnchorPane.bottomAnchor="16.0" />
+				<TextField id="commandInput" fx:id="textCommandInput" layoutX="17.0" layoutY="476.0" onAction="#onEnter" prefHeight="85.0" prefWidth="818.0" promptText="Example : add buy milk at ntuc @ 5pm { \t personal \p high \sdate 3pm }" AnchorPane.bottomAnchor="14.0" />
+				<Line endX="880.0" endY="-1.0" layoutX="101.0" layoutY="465.0" startX="-100.0" />
+				<TextArea id="consoleOutput" fx:id="textConsoleOutput" editable="false" layoutX="17.0" layoutY="14.0" prefHeight="441.0" prefWidth="969.0" wrapText="true">
 					<font>
 						<Font name="Monospaced Regular" size="12.0" />
 					</font>
 				</TextArea>
+            <SplitPane layoutY="4.0" orientation="VERTICAL" />
 			</children>
 		</AnchorPane>
 	</children>
