@@ -36,14 +36,14 @@ public class CommandManager {
 	private static int prevCommandType;
 	private static ArrayList<Task> multipleMatchList = new ArrayList<Task>();
 
+	/**
+	 * This function executes the command that the user has input
+	 * @param cmd : command to be executed
+	 * @return : output to be shown to the user
+	 */
 	public static String executeCommand(Command cmd){
 		assert cmd != null;
 		int cmdType = cmd.getType();
-
-
-
-
-
 		switch (cmdType) {
 		    case Command.ADD_COMMAND_TYPE:
 		    	Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
@@ -241,6 +241,11 @@ public class CommandManager {
 		//return "testing";
 	}
 
+	/**
+	 * This function checks which view type the user wants to view the tasks
+	 * @param cmd : command which includes the view type
+	 * @return : type of view the user wants to view the tasks
+	 */
 	private static int determineViewType(Command cmd) {
 		assert cmd.getType() != null;
 		if (cmd.getTextContent().equals(TasksFormatter.PLAIN_VIEW)){
@@ -263,7 +268,11 @@ public class CommandManager {
 		return TasksFormatter.DETAIL_VIEW_TYPE;
 	}
 
-
+	/**
+	 * This function checks if the content of the command is an integer
+	 * @param cmd : command with text content
+	 * @return : true if content of command is an integer, false otherwise
+	 */
 	private static boolean isInteger(Command cmd) {
 		boolean isInt = false;
 		assert cmd.getTextContent() != null;
@@ -277,7 +286,11 @@ public class CommandManager {
 		return isInt;
 	}
 
-
+	/**
+	 * This function checks if there are duplicate tasks in the history
+	 * @param task: the task to be compared to tasks in history
+	 * @return : true if the tasks exists in history, false otherwise
+	 */
 	private static boolean checkDuplicateTask(Task task) {
 		for (int j=0; j<history.size(); j++){
 			if (history.get(j) == task){
@@ -287,7 +300,11 @@ public class CommandManager {
 		return false;
 	}
 
-
+	/**
+	 * This function limits the number of tasks to view, as given by the user
+	 * @param allTasks: ArrayList of Tasks of all tasks in system
+	 * @param limit: the number of tasks to view
+	 */
 	private static void limitNumberOfTasks(ArrayList<Task> allTasks, int limit) {
 		boolean flag = false;
 		assert allTasks.size() != 0;
