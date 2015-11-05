@@ -15,6 +15,14 @@ public class UKDateParser {
 	private static UKDateParser instance;
 
 	private UKDateParser() {
+		initListsOfDateFormat();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void initListsOfDateFormat() {
 		listsOfDateFormat = new ArrayList<String>();
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_1);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_2);
@@ -23,7 +31,7 @@ public class UKDateParser {
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_5);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_6);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_7);
-
+		
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_100);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_101);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_102);
@@ -36,7 +44,6 @@ public class UKDateParser {
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_109);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_110);
 		listsOfDateFormat.add(ParserFacade.DATE_FORMAT_TYPE_111);
-
 	}
 
 	static UKDateParser getInstance() {
@@ -46,6 +53,12 @@ public class UKDateParser {
 		return instance;
 	}
 
+	/**
+	 * This function parse the date using the listsOfDateFormat, it try one by one
+	 * until one is matched.
+	 * @param dateStr : date in string object.
+	 * @return The Date instance if parsing is successful. 
+	 */
 	public Date parseDate(String dateStr) {
 
 		DateFormat df1;
@@ -82,8 +95,6 @@ public class UKDateParser {
 					break;
 				} catch (ParseException e) {
 					// continue parsing
-					// LogManager.getInstance().log("Parse exception at date
-					// parsing");
 				}
 			}
 			count++;

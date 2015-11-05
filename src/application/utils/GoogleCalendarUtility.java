@@ -1,5 +1,5 @@
 package application.utils;
-
+//@@LimYouLiang A0125975U
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +23,10 @@ public class GoogleCalendarUtility {
 
 	}
 
+	/**
+	 * This function will add the eventId to its deletion records.
+	 * @param eventId : Google Calendar Event Id.
+	 */
 	public static void addToOfflineDeletionRecords(String eventId) {
 
 		try {
@@ -43,6 +47,11 @@ public class GoogleCalendarUtility {
 
 	}
 
+	
+	/**
+	 * Disclaimer : this method is from : http://www.journaldev.com/833/how-to-delete-a-directoryfolder-in-java-recursion
+	 * @param file
+	 */
 	public static void recursiveDelete(File file) {
 		// to end the recursive loop
 		if (!file.exists())
@@ -57,7 +66,6 @@ public class GoogleCalendarUtility {
 		}
 		// call delete to delete files and empty directory
 		file.delete();
-		System.out.println("Deleted file/folder: " + file.getAbsolutePath());
 	}
 
 }

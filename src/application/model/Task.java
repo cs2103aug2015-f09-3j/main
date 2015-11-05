@@ -161,16 +161,7 @@ public class Task implements Comparable<Task> {
 		}
 	}
 
-	/*
-	 * @Override public String toString(){ String format; if(isDone){ format =
-	 * "Task: " + textContent + "  Start Date & Time: " + start_date +
-	 * "  End Date & Time: " + end_date + "  Type: " + type_argument +
-	 * "  Priority: " + priority_argument + "  Location: " + place_argument +
-	 * "(DONE)"; }else{ format = "Task: " + textContent +
-	 * "  Start Date & Time: " + start_date + "  End Date & Time: " + end_date +
-	 * "  Type: " + type_argument + "  Priority: " + priority_argument +
-	 * "  Location: " + place_argument + "(NOT DONE)"; } return format; }
-	 */
+	
 
 	@Override
 	public int compareTo(Task task) {
@@ -235,7 +226,6 @@ public class Task implements Comparable<Task> {
 		return super.equals(obj);
 	}
 
-	// @@LimYouLiang A0125975U
 	public String getEDateInStr(String type) {
 
 		DateFormat df1 = new SimpleDateFormat(type);
@@ -293,6 +283,7 @@ public class Task implements Comparable<Task> {
 	public boolean compareGCalId(String gCalId) {
 		return this.isSyncedBefore() && this.getgCalId().equals(gCalId);
 	}
+	
 	@Override
 	public String toString() {
 
