@@ -39,8 +39,8 @@ public class LogicController {
 		for(Command cmd : cmds){
 			sb.append(CommandManager.executeCommand(cmd) + "\n");
 		}
-		return sb.toString();  
-			
+		return sb.toString();
+
 	}
 
 	/* Unused code as we changed our method of undo
@@ -63,7 +63,7 @@ public class LogicController {
 			return Command.DONE_COMMAND_TYPE;
 		}
 		return 0;
-	} */
+	}
 
 	private String printList(ArrayList<String> listAll) {
 		//System.out.println(LISTED_ALL_SUCCESS);
@@ -83,5 +83,5 @@ public class LogicController {
 		printList(possibleItems);
 		return -1;
 	}
-
+	*/
 }

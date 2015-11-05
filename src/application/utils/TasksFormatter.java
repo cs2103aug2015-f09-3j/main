@@ -5,11 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import application.controller.LogManager;
 import application.controller.parser.ParserFacade;
 import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String TASKS_FORMATTER_LOG = "TasksFormatter log";
 	private static final String LOCATION_HEADER = "LOCATION: ";
 	private static final String PRIORITY_HEADER = "PRIORITY: ";
 	private static final String FULLSTOP = ". ";
@@ -56,174 +58,211 @@ public class TasksFormatter {
 	 * @return the formatted text in String format.
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
-		StringBuilder sb = new StringBuilder();
-		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
-		DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
-		DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
-		switch (typeOfFormatting) {
+			StringBuilder sb = new StringBuilder();
+			DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
+			DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
+			DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
+		try {
+			switch (typeOfFormatting) {
 
-		case PLAIN_VIEW_TYPE:
-			int i = 1;
-			for(Task task: lists){
-				sb.append(String.format("%d. %s" + NEW_LINE, i++, task.getTextContent()));
-			}
-			break;
+			case PLAIN_VIEW_TYPE:
+				showPlainView(lists, sb);
+				break;
 
-		case DETAIL_VIEW_TYPE:
+			case DETAIL_VIEW_TYPE:
+				showDetailView(lists, sb, df1);
+				break;
 
-			sb.append(DETAIL_VIEW_HEADER);
+			case TIMELINE_VIEW_TYPE:
+				showTimelineView(lists, sb, df2, df3);
+				break;
 
-			sb.append("\n");
-			int count = 1;
-			for(Task task: lists){
+			case TYPE_VIEW_TYPE:
+				showTypeView(lists, sb);
 
-				String s_date = "";
-				String e_date = "";
+				break;
 
-				if(task.getStart_date() != null){
-					s_date = df1.format(task.getStart_date());
-					//s_date = DateFormat.getDateInstance().format(task.getStart_date());
-				}
-				if(task.getEnd_date() != null){
-					e_date = df1.format(task.getEnd_date());
-					//e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
-				}
-				sb.append(String.format(OUTPUT_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
-						,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));
+			case PRIORITY_VIEW_TYPE:
+				showPriorityView(lists, sb);
+				break;
 
+			case PLACE_VIEW_TYPE:
+				showPlaceView(lists, sb);
+				break;
 
-				sb.append("\n");
+			case FLOATING_VIEW_TYPE:
+				showFloatingView(lists, sb);
 			}
 
-			break;
-
-		case TIMELINE_VIEW_TYPE:
-			sb.append(TIMELINE_INST);
-			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
-			ArrayList<Task> floating = new ArrayList<Task>();
-			for (Task task:lists){
-				if (task.getEnd_date()!=null){
-					sortedByEDate.add(task);
-				} else {
-					floating.add(task);
-				}
-			}
-			ArrayList<Date> allDates = new ArrayList<Date>();
-			if (sortedByEDate.size() >= 1){
-				allDates.add(sortedByEDate.get(0).getEnd_date());
-				for (int a=1; a<sortedByEDate.size()-1; a++){
-					allDates.add(sortedByEDate.get(a).getEnd_date());
-					for (int b=a+1; b<sortedByEDate.size(); b++){
-						if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
-							allDates.remove(sortedByEDate.get(a).getEnd_date());
-						}
-					}
-				}
-			}
-			for (Date date:allDates){
-				String thisDate = df2.format(date);
-				sb.append(thisDate);
-				sb.append("\n");
-				for (Task task:sortedByEDate){
-					if (thisDate.equals(df2.format(task.getEnd_date()))){
-						if (task.getStart_date()!=null){
-							String start_time = df3.format(task.getStart_date());
-							String end_time = df3.format(task.getEnd_date());
-							sb.append("[" + start_time + " - " + end_time + "]   ");
-							sb.append(task.getTextContent() + NEW_LINE);
-						} else {
-							String time = df3.format(task.getEnd_date());
-							sb.append(time+DUE);
-							sb.append(task.getTextContent() + NEW_LINE);
-						}
-					}
-				}
-				sb.append("\n");
-			}
-			if (floating.size()>0){
-				sb.append(NEW_LINE + OUTSTANDING_TASKS_INFO);
-				int counter = 1;
-				for (Task task:floating){
-					sb.append(counter + FULLSTOP + task.getTextContent() + NEW_LINE);
-					counter++;
-				}
-			}
-
-			break;
-
-		case TYPE_VIEW_TYPE:
-			ArrayList<String> namesOfTypes = namesOfTypes(lists);
-			for (String type:namesOfTypes){
-				sb.append(TYPE_HEADER+type+NEW_LINE);
-				int counter = 1;
-				for (Task task:lists){
-					if (type.equals(task.getType_argument())){
-						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
-						counter++;
-					}
-				}
-				counter = 0;
-				sb.append(NEW_LINE);
-			}
-
-			break;
-
-		case PRIORITY_VIEW_TYPE:
-			ArrayList<String> namesOfPriorityLevel = namesOfPriorityLevels(lists);
-			for (String priority:namesOfPriorityLevel){
-				sb.append(PRIORITY_HEADER+priority+NEW_LINE);
-				int counter = 1;
-				for (Task task:lists){
-					if (priority.equals(task.getPriority_argument())){
-						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
-						counter++;
-					}
-				}
-				counter = 0;
-				sb.append(NEW_LINE);
-			}
-			break;
-
-		case PLACE_VIEW_TYPE:
-			ArrayList<String> locationNames = namesOfLocation(lists);
-			String nameOfLocation = EMPTY_STRING;
-			for (String location:locationNames){
-				if (location.equals(EMPTY_STRING)){
-					nameOfLocation = NOT_APPLICABLE;
-				} else {
-					nameOfLocation = location;
-				}
-				sb.append(LOCATION_HEADER+nameOfLocation+NEW_LINE);
-				int counter = 1;
-				for (Task task:lists){
-					if (location.equals(task.getPlace_argument())){
-						sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
-						counter++;
-					}
-				}
-				counter = 0;
-				sb.append(NEW_LINE);
-			}
-			break;
-
-		case FLOATING_VIEW_TYPE:
-			boolean isFloat = false;
-			int noOfFloatingTasks = 1;
-			for (Task task:lists){
-				if (task.getEnd_date() == null){
-					isFloat = true;
-				}
-				if (isFloat){
-					sb.append(noOfFloatingTasks + FULLSTOP + task.getTextContent() + NEW_LINE);
-					noOfFloatingTasks++;
-				}
-			}
+		} catch (NullPointerException e){
+			LogManager.getInstance().log(TASKS_FORMATTER_LOG, e.toString());
 		}
-
 		return sb.toString();
 	}
 
+	private static void showFloatingView(ArrayList<Task> lists, StringBuilder sb) {
+		boolean isFloat = false;
+		int noOfFloatingTasks = 1;
+		for (Task task:lists){
+			if (task.getEnd_date() == null){
+				isFloat = true;
+			}
+			if (isFloat){
+				sb.append(noOfFloatingTasks + FULLSTOP + task.getTextContent() + NEW_LINE);
+				noOfFloatingTasks++;
+			}
+		}
+	}
+
+	private static void showPlaceView(ArrayList<Task> lists, StringBuilder sb) {
+		ArrayList<String> locationNames = namesOfLocation(lists);
+		String nameOfLocation = EMPTY_STRING;
+		for (String location:locationNames){
+			if (location.equals(EMPTY_STRING)){
+				nameOfLocation = NOT_APPLICABLE;
+			} else {
+				nameOfLocation = location;
+			}
+			sb.append(LOCATION_HEADER+nameOfLocation+NEW_LINE);
+			int counter = 1;
+			for (Task task:lists){
+				if (location.equals(task.getPlace_argument())){
+					sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
+					counter++;
+				}
+			}
+			counter = 0;
+			sb.append(NEW_LINE);
+		}
+	}
+
+	private static void showPriorityView(ArrayList<Task> lists, StringBuilder sb) {
+		ArrayList<String> namesOfPriorityLevel = namesOfPriorityLevels(lists);
+		for (String priority:namesOfPriorityLevel){
+			sb.append(PRIORITY_HEADER+priority+NEW_LINE);
+			int counter = 1;
+			for (Task task:lists){
+				if (priority.equals(task.getPriority_argument())){
+					sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
+					counter++;
+				}
+			}
+			counter = 0;
+			sb.append(NEW_LINE);
+		}
+	}
+
+	private static void showTypeView(ArrayList<Task> lists, StringBuilder sb) {
+		ArrayList<String> namesOfTypes = namesOfTypes(lists);
+		for (String type:namesOfTypes){
+			sb.append(TYPE_HEADER+type+NEW_LINE);
+			int counter = 1;
+			for (Task task:lists){
+				if (type.equals(task.getType_argument())){
+					sb.append(counter+FULLSTOP+ task.getTextContent() +NEW_LINE);
+					counter++;
+				}
+			}
+			counter = 0;
+			sb.append(NEW_LINE);
+		}
+	}
+
+	private static void showTimelineView(ArrayList<Task> lists, StringBuilder sb, DateFormat df2, DateFormat df3) {
+		sb.append(TIMELINE_INST);
+		ArrayList<Task> sortedByEDate = new ArrayList<Task>();
+		ArrayList<Task> floating = new ArrayList<Task>();
+		for (Task task:lists){
+			if (task.getEnd_date()!=null){
+				sortedByEDate.add(task);
+			} else {
+				floating.add(task);
+			}
+		}
+		ArrayList<Date> allDates = new ArrayList<Date>();
+		if (sortedByEDate.size() >= 1){
+			allDates.add(sortedByEDate.get(0).getEnd_date());
+			for (int a=1; a<sortedByEDate.size()-1; a++){
+				allDates.add(sortedByEDate.get(a).getEnd_date());
+				for (int b=a+1; b<sortedByEDate.size(); b++){
+					if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
+						allDates.remove(sortedByEDate.get(a).getEnd_date());
+					}
+				}
+			}
+		}
+		for (Date date:allDates){
+			String thisDate = df2.format(date);
+			sb.append(thisDate);
+			sb.append("\n");
+			for (Task task:sortedByEDate){
+				if (thisDate.equals(df2.format(task.getEnd_date()))){
+					if (task.getStart_date()!=null){
+						String start_time = df3.format(task.getStart_date());
+						String end_time = df3.format(task.getEnd_date());
+						sb.append("[" + start_time + " - " + end_time + "]   ");
+						sb.append(task.getTextContent() + NEW_LINE);
+					} else {
+						String time = df3.format(task.getEnd_date());
+						sb.append(time+DUE);
+						sb.append(task.getTextContent() + NEW_LINE);
+					}
+				}
+			}
+			sb.append("\n");
+		}
+		if (floating.size()>0){
+			sb.append(NEW_LINE + OUTSTANDING_TASKS_INFO);
+			int counter = 1;
+			for (Task task:floating){
+				sb.append(counter + FULLSTOP + task.getTextContent() + NEW_LINE);
+				counter++;
+			}
+		}
+	}
+
+	private static void showDetailView(ArrayList<Task> lists, StringBuilder sb, DateFormat df1) {
+		sb.append(DETAIL_VIEW_HEADER);
+
+		sb.append("\n");
+		int count = 1;
+		for(Task task: lists){
+
+			String s_date = "";
+			String e_date = "";
+
+			if(task.getStart_date() != null){
+				s_date = df1.format(task.getStart_date());
+				//s_date = DateFormat.getDateInstance().format(task.getStart_date());
+			}
+			if(task.getEnd_date() != null){
+				e_date = df1.format(task.getEnd_date());
+				//e_date =  DateFormat.getDateInstance().format(task.getEnd_date());
+			}
+			sb.append(String.format(OUTPUT_FORMAT, count++, replaceWithDotIfTooLong(task.getTextContent(),DETAIL_DESCRIPTION_COUNT), s_date, e_date, replaceWithDotIfTooLong(task.getPlace_argument(),DETAIL_LOCATION_COUNT)
+					,replaceWithDotIfTooLong(task.getType_argument(),DETAIL_TYPE_COUNT),replaceWithDotIfTooLong(task.getPriority_argument(),DETAIL_PRIORITY_COUNT)));
+
+
+			sb.append("\n");
+		}
+	}
+
+	private static void showPlainView(ArrayList<Task> lists, StringBuilder sb) {
+		int i = 1;
+		for(Task task: lists){
+			sb.append(String.format("%d. %s" + NEW_LINE, i++, task.getTextContent()));
+		}
+	}
+
+	/**
+	 * This function checks if the two end dates entered are the same date
+	 * @param Date d1, d2:
+	 *            : The two dates to be compared
+	 * @return boolean if the two dates are the same
+	 */
 	private static boolean isSameEdate(Date d1, Date d2) {
+		assert d1 != null;
+		assert d2 != null;
 		DateFormat df = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 		String d1Str = df.format(d1);
 		String d2Str = df.format(d2);
@@ -233,6 +272,12 @@ public class TasksFormatter {
 		return false;
 	}
 
+	/**
+	 * This function compiles a list of locations the tasks are located at
+	 * @param lists
+	 *            : ArrayList of tasks to be checked
+	 * @return ArrayList of String of locations the tasks are at
+	 */
 	private static ArrayList<String> namesOfLocation(ArrayList<Task> lists) {
 		boolean isAdded = false;
 		ArrayList<String> locationNames = new ArrayList<String>();
@@ -251,6 +296,12 @@ public class TasksFormatter {
 		return locationNames;
 	}
 
+	/**
+	 * This function compiles the different priority levels the tasks are at
+	 * @param lists
+	 *            : ArrayList of tasks to be checked
+	 * @return ArrayList of String of the different priority levels
+	 */
 	private static ArrayList<String> namesOfPriorityLevels(ArrayList<Task> lists) {
 		boolean isAdded = false;
 		ArrayList<String> namesOfPriorityLevels = new ArrayList<String>();
@@ -269,6 +320,12 @@ public class TasksFormatter {
 		return namesOfPriorityLevels;
 	}
 
+	/**
+	 * This function compiles a list of different types of tasks
+	 * @param lists
+	 *            : ArrayList of tasks to be checked
+	 * @return ArrayList of String of type of tasks
+	 */
 	private static ArrayList<String> namesOfTypes(ArrayList<Task> list){
 		boolean isAdded = false;
 		ArrayList<String> namesOfTypes = new ArrayList<String>();
