@@ -17,6 +17,9 @@ import application.model.Task;
  */
 public class CommandParser {
 
+	private static final String COMMAND_DEFINITION_SEPERATOR = ":";
+	private static final String REGEX_INVERTED_SLASH = "\\\\";
+	private static final String SMART_PARSING_DATE_INDICATOR = "@";
 	private static final int ERROR_COMMAND_TYPE = -1;
 	private static final String REGEX_ATSIGN = " @ | @|@ ";
 	private static final String VERTICAL_DASH = "\\|";
@@ -138,17 +141,15 @@ public class CommandParser {
 	 * @param parameters : the list to store the parsed results.
 	 */
 	private void performSmartParsing(String command, ArrayList<Parameter> parameters) {
-		if (command.contains("@")) {
+		if (command.contains(SMART_PARSING_DATE_INDICATOR)) {
 
 			String[] strArr = command.split(REGEX_ATSIGN);
 			// use the first at, which the content is at [1]
 			// try to find @ if there is any
 			String[] strArr2;
 			if (strArr.length > 1) {
-				strArr2 = strArr[1].split("\\\\");
-				// parameters.add(new
-				// Parameter(Parameter.END_DATE_ARGUMENT_TYPE,
-				// strArr2[0].trim()));
+				strArr2 = strArr[1].split(REGEX_INVERTED_SLASH);
+
 				if (ParserFacade.getInstance().containMultiDate(strArr2[0].trim())) {
 					parameters.add(new Parameter(Parameter.START_END_DATE_ARGUMENT_TYPE, strArr2[0].trim()));
 				} else {
@@ -326,14 +327,14 @@ public class CommandParser {
 	 */
 	private boolean isCommandType(String cmdDefinition, String cmd) {
 
-		String[] cmdDef = cmdDefinition.split(":");
+		String[] cmdDef = cmdDefinition.split(COMMAND_DEFINITION_SEPERATOR);
 		for (int i = 0; i < cmdDef.length; i++) {
 			if (cmdDef[i].equals(cmd)) {
 				return true;
 			}
 		}
 		return false;
-
+ 
 	}
 
 	/**
