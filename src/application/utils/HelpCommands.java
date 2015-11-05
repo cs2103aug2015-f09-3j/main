@@ -1,6 +1,6 @@
 package application.utils;
 
-//@@nghuiyirebecca A0130876B
+//@@author A0130876B
 public class HelpCommands {
 	private static final String GEN_INFO3 = "When connected to the internet, it will automatically sync with your Google Calendar.";
 	private static final String GEN_INFO_2 = "Below are commands essential to the use of toDoo. \n";

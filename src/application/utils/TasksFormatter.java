@@ -1,5 +1,5 @@
 package application.utils;
-//@@nghuiyirebecca A0130876B
+//@@author A0130876B
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

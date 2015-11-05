@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@nghuiyirebecca A0130876B
+//@@author A0130876B
 
 import java.util.ArrayList;
 
@@ -50,43 +50,43 @@ public class CommandManager {
 			switch (cmdType) {
 			    case Command.ADD_COMMAND_TYPE:
 			    	return executeAddCommand(cmd);
-	
+
 			    case Command.LIST_COMMAND_TYPE:
 			    	return executeListCommand(cmd);
-	
+
 			    case Command.CHANGE_STORAGE_COMMAND_TYPE:
 			    	return executeChangeStorageCommand(cmd);
-	
+
 			    case Command.DELETE_COMMAND_TYPE:
 			    	return executeDeleteCommand(cmd);
-	
+
 			    case Command.UNDO_COMMAND_TYPE:
 			    	return executeUndoCommand();
-	
+
 			    case Command.EDIT_COMMAND_TYPE:
 			    	return executeEditCommand(cmd);
-	
+
 			    case Command.DONE_COMMAND_TYPE:
 			    	return executeSetDoneCommand(cmd);
-	
+
 			    case Command.UNDONE_COMMAND_TYPE:
 			    	return executeUndoneCommand(cmd);
-	
+
 			    case Command.SEARCH_COMMAND_TYPE:
 			    	return executeSearchCommand(cmd);
-	
+
 			    case Command.LIST_TODAY_COMMAND_TYPE:
 			    	return executeTodayCommand(cmd);
-	
+
 			    case Command.HELP_COMMAND_TYPE:
 			    	return executeHelpCommand();
-	
+
 			    case Command.SCHEDULE_COMMAND_TYPE:
 			    	return executeScheduleCommand(cmd);
-	
+
 			    case Command.GOOGLE_ADD_COMMAND_TYPE:
 			    	return executeGoogleQuickAddCommand(cmd);
-	
+
 			    default: return "testing-lc";
 			}
 			} catch (NullPointerException e) {
@@ -94,7 +94,7 @@ public class CommandManager {
 			}
 			return "Please enter text";
 		}
-	
+
 
 	/**
 	 * This function executes the Google Quick Add feature

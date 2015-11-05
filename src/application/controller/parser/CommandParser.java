@@ -106,7 +106,7 @@ public class CommandParser {
 	}
 
 	/**
-	 * 
+	 *
 	 * This function extracts the command main text and extract its paramter.
 	 * @param command : the raw command string.
 	 * @param parameters : the lists to store the parsed results
@@ -136,7 +136,7 @@ public class CommandParser {
 	}
 
 	/**
-	 * This function performs smart parsing syntax. 
+	 * This function performs smart parsing syntax.
 	 * @param command : the raw command string.
 	 * @param parameters : the list to store the parsed results.
 	 */
@@ -166,7 +166,7 @@ public class CommandParser {
 	 * @return the equivalent index of the first space.
 	 */
 	private int getEquivalentIndexForCommandWithoutParameter(String command, int indexOfFirstSpace) {
-		
+
 		// check if is a list command with no parameter. e.g list
 		if (isCommandType(Command.LIST_COMMAND, command.trim())) {
 			indexOfFirstSpace = command.length();
@@ -194,7 +194,7 @@ public class CommandParser {
 		return indexOfFirstSpace;
 	}
 
-	
+
 	/**
 	 * This function convert the an add command into Task.
 	 * @param cmd
@@ -235,7 +235,7 @@ public class CommandParser {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param indexOfFirstSpace
 	 * @param indexOfFirstInvertedSlash
 	 * @return True if the command is with parameter, else false.
@@ -311,8 +311,10 @@ public class CommandParser {
 			return Command.HELP_COMMAND_TYPE;
 		} else if (isCommandType(Command.SCHEDULE_COMMAND, cmd)) {
 			return Command.SCHEDULE_COMMAND_TYPE;
+		} else if (isCommandType(Command.UNDONE_COMMAND, cmd)) {
+			return Command.UNDONE_COMMAND_TYPE;
 		} else if (isCommandType(Command.GOOGLE_ADD_COMMAND, cmd)) {
-				return Command.GOOGLE_ADD_COMMAND_TYPE;
+			return Command.GOOGLE_ADD_COMMAND_TYPE;
 		} else {
 			return ERROR_COMMAND_TYPE;
 		}
@@ -320,8 +322,8 @@ public class CommandParser {
 	}
 
 	/**
-	 * 
-	 * @param cmdDefinition : The definition of the command. For e.g "add:+" 
+	 *
+	 * @param cmdDefinition : The definition of the command. For e.g "add:+"
 	 * @param cmd : the command to check. For E.g. add
 	 * @return true if matched, otherwise false.
 	 */
@@ -334,7 +336,7 @@ public class CommandParser {
 			}
 		}
 		return false;
- 
+
 	}
 
 	/**
