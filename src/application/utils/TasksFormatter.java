@@ -54,7 +54,7 @@ public class TasksFormatter {
 		DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 		DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
 		switch (typeOfFormatting) {
-		 //@@LimYouLiang A0125975U
+		
 		case PLAIN_VIEW_TYPE:
 			int i = 1;
 			for(Task task: lists){
@@ -89,7 +89,7 @@ public class TasksFormatter {
 			}
 
 			break;
-			//@@nghuiyirebecca A0130876B
+			
 		case TIMELINE_VIEW_TYPE:
 			sb.append(TIMELINE_INST);
 			ArrayList<Task> sortedByEDate = new ArrayList<Task>();
@@ -214,9 +214,9 @@ public class TasksFormatter {
 			}
 		}
 
-		return sb.toString(); //stub
+		return sb.toString(); 
 	}
-	//@@nghuiyirebecca A0130876B
+	
 	private static boolean isSameEdate(Date d1, Date d2) {
 		DateFormat df = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 		String d1Str = df.format(d1);

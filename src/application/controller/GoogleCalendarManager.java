@@ -155,8 +155,12 @@ public class GoogleCalendarManager {
 		return null;
 	}
 
+	/**
+	 * This function syncs records of deletion that happen during offline mode.
+	 * It clears its cache if successful.
+	 */
 	private void syncOfflineDeletionRecords() {
-		ArrayList<String> records = getListOfRecordsFromFile();
+		ArrayList<String> records = getListOfDeletionsRecordsFromFile();
 
 		if (records.size() == 0) {
 			return;
@@ -178,9 +182,9 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 *
+	 * This function get a list of deletions record from Cache.
 	 */
-	private ArrayList<String> getListOfRecordsFromFile() {
+	private ArrayList<String> getListOfDeletionsRecordsFromFile() {
 		ArrayList<String> records = new ArrayList<String>();
 
 		File file = new File(DELETION_FILE_NAME);
@@ -188,7 +192,18 @@ public class GoogleCalendarManager {
 		if (!file.exists()) {
 			return records;
 		}
+		getRecordsFromFile(records, file);
 
+		return records;
+	}
+
+	/**
+	 * This function take in a arraylist of records, and store the data into the file
+	 * to the records.
+	 * @param records : the place to be store in.
+	 * @param file : the file to be read from.
+	 */
+	private void getRecordsFromFile(ArrayList<String> records, File file) {
 		FileInputStream fIn = null;
 		try {
 			fIn = new FileInputStream(file);
@@ -210,12 +225,13 @@ public class GoogleCalendarManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		return records;
 	}
 
 	/**
-	 *
+	 * This function retrieves Event from Google Calendar API based on a syncToken, if syncToken is null
+	 * , It is the initial full sync.
+	 * @param syncToken : Can be null or the syncToken for the next sync.
+	 * @return : a list of events to be updated to local storage.
 	 */
 	private List<Event> getCalendarEvents(String syncToken) {
 
@@ -268,7 +284,7 @@ public class GoogleCalendarManager {
 
 			}
 
-			items = events.getItems();
+			items = events.getItems(); 
 			if (items.size() == 0) {
 				System.out.println("No upcoming events found.");
 			} else {
