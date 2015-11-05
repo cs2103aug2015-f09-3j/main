@@ -15,6 +15,14 @@ public class LogicControllerTest {
 	LocalStorage file;
 	String curFilePath;
 	
+	
+	
+	
+	public LogicControllerTest() {
+		super();
+		DataManager.getInstance().switchToTestingMode("testingLogicController.txt");
+	}
+
 	/* This is a boundary case for the listAll method */
 	@Test
 	public void testListAll() throws InvalidCommandException {

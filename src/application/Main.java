@@ -23,6 +23,7 @@ import javax.swing.ImageIcon;
 import com.melloware.jintellitype.JIntellitype;
 
 import application.controller.GoogleCalendarManager;
+import application.controller.LogManager;
 import application.utils.GoogleCalendarUtility;
 import application.view.UIController;
 import javafx.application.Application;
@@ -118,10 +119,15 @@ public class Main extends Application {
 
 		exitItem.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				tray.remove(trayIcon);
-				JIntellitype.getInstance().cleanUp();
+			public void actionPerformed(ActionEvent e) { 
+				try {
+					tray.remove(trayIcon);
+					JIntellitype.getInstance().cleanUp();
+				} catch (Exception err) {
+					LogManager.getInstance().log(err.toString());
+				}
 				System.exit(0);
+
 			}
 		});
 	}
