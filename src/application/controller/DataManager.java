@@ -66,7 +66,6 @@ public class DataManager {
 
 	public ArrayList<Task> getListOfTasksToUploadGCal() {
 
-		// data.clearSearchList();
 		ArrayList<Task> filteredList = new ArrayList<Task>();
 
 		for (Task task : data.getTaskList()) {
@@ -81,7 +80,6 @@ public class DataManager {
 
 	public ArrayList<Task> getListOfTaskToUpdateGCal() {
 
-		// data.clearSearchList();
 		ArrayList<Task> filteredList = new ArrayList<Task>();
 
 		for (Task task : data.getTaskList()) {

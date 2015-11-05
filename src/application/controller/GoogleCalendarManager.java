@@ -41,6 +41,10 @@ import com.google.api.services.calendar.model.Events;
 import application.model.Task;
 import application.utils.TokenManager;
 
+/**
+ * @author YL Lim
+ *
+ */
 public class GoogleCalendarManager {
 
 	private static GoogleCalendarManager instance;
@@ -122,14 +126,35 @@ public class GoogleCalendarManager {
 	}
 
 	
+	/**
+	 * Pre-Condition: Internet is up and quickAddMsg is not null. 
+	 * This function will call the google quickadd api and return the event created. If
+	 * Successful, it will return the Task, otherwise it will return null. 
+	 * @param quickAddMsg : quickAdd message
+	 * @return Task if successful in creation, or null if fail to create task.
+	 */
+	public Task quickAddToGCal(String quickAddMsg){
+		
+		Event createdEvent;
+		try {
+			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
+			Task task = this.convertEventToTask(createdEvent);
+			DataManager.getInstance().addNewTask(task);
+			return task;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	private void syncOfflineDeletionRecords() {
 		ArrayList<String> records = getListOfRecordsFromFile();
-		
-		if(records.size() == 0){
+
+		if (records.size() == 0) {
 			return;
 		}
-		
+
 		try {
 			for (String eventId : records) {
 				service.events().delete("primary", eventId).execute();
@@ -152,11 +177,11 @@ public class GoogleCalendarManager {
 		ArrayList<String> records = new ArrayList<String>();
 
 		File file = new File(DELETION_FILE_NAME);
-		
-		if(!file.exists()){
-			return records; 
+
+		if (!file.exists()) {
+			return records;
 		}
-		
+
 		FileInputStream fIn = null;
 		try {
 			fIn = new FileInputStream(file);
