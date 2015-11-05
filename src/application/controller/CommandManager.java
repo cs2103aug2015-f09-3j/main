@@ -13,6 +13,7 @@ import application.utils.TasksFormatter;
 
 public class CommandManager {
 
+	private static final String NUMBER_FORMAT_EXCEPTION = "Number format exception in CommandManager";
 	private static final String PREVIOUS_COMMAND_UNDONE = "Previous command undone";
 	private static final String NO_PREVIOUS_COMMAND = "no previous command";
 	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
@@ -382,7 +383,7 @@ public class CommandManager {
 			isInt = true;
 		}
 		catch (NumberFormatException e) {
-
+			LogManager.getInstance().log(NUMBER_FORMAT_EXCEPTION, e.getMessage());
 		}
 		return isInt;
 	}
@@ -392,7 +393,7 @@ public class CommandManager {
 	 * @param task: the task to be compared to tasks in history
 	 * @return : true if the tasks exists in history, false otherwise
 	 */
-	private static boolean checkDuplicateTask(Task task) {
+	private static boolean isDuplicateTask(Task task) {
 		for (int j=0; j<history.size(); j++){
 			if (history.get(j) == task){
 				return true;
@@ -411,7 +412,7 @@ public class CommandManager {
 		assert allTasks.size() != 0;
 		if (allTasks.size() > limit){
 			for (int i = allTasks.size()-1; i>=limit; i--){
-				flag = checkDuplicateTask(allTasks.get(i));
+				flag = isDuplicateTask(allTasks.get(i));
 				if (flag==false){
 					history.add(allTasks.remove(i));
 				} else {

@@ -100,6 +100,7 @@ public class TasksFormatter {
 		return sb.toString();
 	}
 
+	//return a String of floating tasks
 	private static void showFloatingView(ArrayList<Task> lists, StringBuilder sb) {
 		boolean isFloat = false;
 		int noOfFloatingTasks = 1;
@@ -114,6 +115,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//return a String of tasks listed by location
 	private static void showPlaceView(ArrayList<Task> lists, StringBuilder sb) {
 		ArrayList<String> locationNames = namesOfLocation(lists);
 		String nameOfLocation = EMPTY_STRING;
@@ -136,6 +138,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//return a string of tasks listed by priority
 	private static void showPriorityView(ArrayList<Task> lists, StringBuilder sb) {
 		ArrayList<String> namesOfPriorityLevel = namesOfPriorityLevels(lists);
 		for (String priority:namesOfPriorityLevel){
@@ -152,6 +155,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//return a string of tasks listed by type of task
 	private static void showTypeView(ArrayList<Task> lists, StringBuilder sb) {
 		ArrayList<String> namesOfTypes = namesOfTypes(lists);
 		for (String type:namesOfTypes){
@@ -168,6 +172,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//return a string of tasks by its date/time
 	private static void showTimelineView(ArrayList<Task> lists, StringBuilder sb, DateFormat df2, DateFormat df3) {
 		sb.append(TIMELINE_INST);
 		ArrayList<Task> sortedByEDate = new ArrayList<Task>();
@@ -221,6 +226,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//returns a string with all the relevant details
 	private static void showDetailView(ArrayList<Task> lists, StringBuilder sb, DateFormat df1) {
 		sb.append(DETAIL_VIEW_HEADER);
 
@@ -247,6 +253,7 @@ public class TasksFormatter {
 		}
 	}
 
+	//returns a string of tasks
 	private static void showPlainView(ArrayList<Task> lists, StringBuilder sb) {
 		int i = 1;
 		for(Task task: lists){
