@@ -14,10 +14,10 @@ import application.utils.TasksFormatter;
 public class LogicControllerTest {
 	LocalStorage file;
 	String curFilePath;
-	
-	
-	
-	
+
+
+
+
 	public LogicControllerTest() {
 		super();
 		DataManager.getInstance().switchToTestingMode("testingLogicController.txt");
@@ -37,7 +37,7 @@ public class LogicControllerTest {
 				TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
 		assertEquals(expectedResult, result);
 	}
-	
+
 	//@@ZhangLei A0093966L
 	/* This is a boundary case for the list done tasks */
 	@Test
@@ -50,12 +50,11 @@ public class LogicControllerTest {
 		LogicController.onCommandProcess("done llao llao with tenyee");
 		String cmd = "list done";
 		String result = LogicController.onCommandProcess(cmd);
-		String expectedResult = "Tasks that are done: \n" + 
+		String expectedResult = "Tasks that are done: \n" +
 				TasksFormatter.format(DataManager.getInstance().checkIfDone(), TasksFormatter.DETAIL_VIEW_TYPE) + "\n";
 		assertEquals(expectedResult, result);
 	}
-	
-	//@@ZhangLei A0093966L
+
 	/* This is a boundary case for the list tasks in specific location */
 	@Test
 	public void testListPlace() throws InvalidCommandException {
@@ -70,13 +69,15 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
+	//@@nghuiyirebecca A0130876B
+	//Test addition of task with all parameters
 	public void testAdd() throws InvalidCommandException {
 		String result = LogicController.onCommandProcess("add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc");
 		String expectedResult = "Added Description: cs2103 v0.2 Type: school Priority: high Location: soc Start Date: 23/10 09AM 2015"
 				+ "\n";
 		assertEquals(expectedResult, result);
 	}
-	
+
 	//@@ZhangLei A0093966L
 	/* This is a boundary case for adding the same task */
 	@Test
@@ -87,6 +88,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
+	//@@nghuiyirebecca A0130876B
 	/*
 	 * This is a boundary case for the delete method as deleting task that is
 	 * named in full
@@ -114,7 +116,7 @@ public class LogicControllerTest {
 		String expectedResult = "Successfully deleted: EE4240" + "\n";
 		assertEquals(expectedResult, result);
 	}
-	
+
 	//@@ZhangLei A0093966L
 	/*
 	 * This is a boundary case for the delete method as deleting one of the tasks having
@@ -134,8 +136,8 @@ public class LogicControllerTest {
 				"2   EE2021 homework                                                                               normal          normal         \n"+"\n";
 		assertEquals(expectedResult, result);
 	}
-	
-	//@@ZhangLei A0093966L
+
+
 	@Test
 	public void testEditTask() throws InvalidCommandException {
 		String cmd = "add EE2023 homework \\p high";
@@ -145,8 +147,8 @@ public class LogicControllerTest {
 		String expectedResult = "Successfully edited: EE2023 homework\n";
 		assertEquals(expectedResult, result);
 	}
-	
-	//@@ZhangLei A0093966L
+
+
 	@Test
 	public void testDoneTask() throws InvalidCommandException {
 		LogicController.onCommandProcess("add CS1010 homework");
@@ -155,8 +157,8 @@ public class LogicControllerTest {
 		String expectedResult = "Done task: CS1010 homework\n";
 		assertEquals(expectedResult, result);
 	}
-	
-	//@@ZhangLei A0093966L
+
+
 	@Test
 	public void testUndoTask() throws InvalidCommandException {
 		LogicController.onCommandProcess("add CS1010 homework");
