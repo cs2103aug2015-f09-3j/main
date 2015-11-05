@@ -41,13 +41,15 @@ public class DataManager {
 	private static Data data;
 	private ArrayList<Parameter> paraList;
 	private Stack<Operation> history;
+	private int histCount;
+
 	public static DataManager instance = null;
-	
 
 	private DataManager() {
 		data = new Data();
 		paraList = null;
 		history = new Stack<Operation>();
+		histCount = 0;
 	}
 
 	public static DataManager getInstance() {
@@ -69,7 +71,6 @@ public class DataManager {
 	 * @return
 	 */
 	public ArrayList<Task> getListOfUnSyncNonFloatingTasks() {
-		
 
 		ArrayList<Task> unSyncTasks = new ArrayList<Task>();
 
@@ -197,7 +198,7 @@ public class DataManager {
 			return TASK_ALREADY_EXISTS;
 		} else {
 			data.addToData(taskToAdd);
-			history.push(new Operation((taskToAdd),null,Op.ADD));
+			updateHistory(taskToAdd, null, Op.ADD);
 			return TASK_ADDED;
 		}
 	}
@@ -254,16 +255,15 @@ public class DataManager {
 				break;
 			case Parameter.START_DATE_ARGUMENT_TYPE:
 				for (Task task : data.getTaskList()) {
-					if(para.getParaArg().equals("")){
-						if(task.getStart_date() == null){
+					if (para.getParaArg().equals("")) {
+						if (task.getStart_date() == null) {
 							if (!filteredList.contains(task)) {
 								filteredList.add(task);
 							}
 						}
-					}else{
+					} else {
 						if (task.getStart_date() != null) {
-							if (task.getStart_date().equals(ParserFacade.getInstance().
-									parseDate(para.getParaArg()))) {
+							if (task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
 								if (!filteredList.contains(task)) {
 									filteredList.add(task);
 								}
@@ -274,16 +274,15 @@ public class DataManager {
 				break;
 			case Parameter.END_DATE_ARGUMENT_TYPE:
 				for (Task task : data.getTaskList()) {
-					if(para.getParaArg().equals("")){
-						if(task.getEnd_date() == null){
+					if (para.getParaArg().equals("")) {
+						if (task.getEnd_date() == null) {
 							if (!filteredList.contains(task)) {
 								filteredList.add(task);
 							}
 						}
-					}else{
+					} else {
 						if (task.isNonFloatingTask()) {
-							if (task.getEnd_date().equals(ParserFacade.getInstance().
-									parseDate(para.getParaArg()))) {
+							if (task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
 								if (!filteredList.contains(task)) {
 									filteredList.add(task);
 								}
@@ -314,7 +313,7 @@ public class DataManager {
 			return TASK_NOT_FOUND;
 		case 1:
 			data.removeFromData(searchList.get(0));
-			history.push(new Operation(searchList.get(0),null,Op.DELETE));
+			updateHistory(searchList.get(0), null, Op.DELETE);
 			if (searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")) {
 				if (GoogleCalendarUtility.hasInternetConnection()) {
 					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
@@ -335,7 +334,7 @@ public class DataManager {
 			return WRONG_LINE_NUM;
 		}
 		data.removeFromData(data.getSearchList().get(lineNum - 1));
-		history.push(new Operation(data.getSearchList().get(lineNum - 1),null,Op.DELETE));
+		updateHistory(data.getSearchList().get(lineNum - 1), null, Op.DELETE);
 		if (data.getSearchList().get(lineNum - 1).getgCalId() != null
 				&& !data.getSearchList().get(lineNum - 1).getgCalId().equals("")) {
 			if (GoogleCalendarUtility.hasInternetConnection()) {
@@ -361,36 +360,10 @@ public class DataManager {
 			Task newTask, prevTask;
 			prevTask = copyTask(searchList.get(0));
 			for (Parameter para : paraList) {
-				switch (para.getParaType()) {
-				case Parameter.PRIORITY_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(0))).setPriority_argument(para.getParaArg());
-					break;
-				case Parameter.TYPE_ARGUMENT_TYPE:
-					taskList.get(taskList.indexOf(searchList.get(0))).setType_argument(para.getParaArg());
-					break;
-				case Parameter.START_DATE_ARGUMENT_TYPE:
-					if (para.getParaArg().equals("")) {
-						taskList.get(taskList.indexOf(searchList.get(0))).setStart_date(null);
-					} else {
-						taskList.get(taskList.indexOf(searchList.get(0)))
-								.setStart_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
-					}
-					break;
-				case Parameter.END_DATE_ARGUMENT_TYPE:
-					if (para.getParaArg().equals("")) {
-						taskList.get(taskList.indexOf(searchList.get(0))).setEnd_date(null);
-					} else {
-						taskList.get(taskList.indexOf(searchList.get(0)))
-								.setEnd_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
-					}
-					break;
-				default:
-					taskList.get(taskList.indexOf(searchList.get(0))).setPlace_argument(para.getParaArg());
-					break;
-				}
+				editTaskByParameter(1,taskList,searchList,para);
 			}
 			newTask = searchList.get(0);
-			history.push(new Operation(newTask, prevTask, Op.EDIT));
+			updateHistory(newTask, prevTask, Op.EDIT);
 			taskList.get(taskList.indexOf(searchList.get(0))).setLastLocalUpdate(System.currentTimeMillis());
 			data.updateStorage();
 			return TASK_UPDATED;
@@ -407,32 +380,37 @@ public class DataManager {
 		ArrayList<Task> taskList = data.getTaskList();
 		ArrayList<Task> searchList = data.getSearchList();
 		Task newTask, prevTask;
-		prevTask = copyTask(searchList.get(lineNum-1));
+		prevTask = copyTask(searchList.get(lineNum - 1));
 		for (Parameter para : paraList) {
-			switch (para.getParaType()) {
-			case Parameter.PRIORITY_ARGUMENT_TYPE:
-				taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setPriority_argument(para.getParaArg());
-				break;
-			case Parameter.TYPE_ARGUMENT_TYPE:
-				taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setType_argument(para.getParaArg());
-				break;
-			case Parameter.START_DATE_ARGUMENT_TYPE:
-				taskList.get(taskList.indexOf(searchList.get(lineNum - 1)))
-						.setStart_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
-				break;
-			case Parameter.END_DATE_ARGUMENT_TYPE:
-				taskList.get(taskList.indexOf(searchList.get(lineNum - 1)))
-						.setEnd_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
-				break;
-			default:
-				taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setPlace_argument(para.getParaArg());
-				break;
-			}
+			editTaskByParameter(lineNum, taskList, searchList, para);
 		}
 		newTask = searchList.get(lineNum - 1);
-		history.push(new Operation(newTask, prevTask, Op.EDIT));
+		updateHistory(newTask, prevTask, Op.EDIT);
 		data.updateStorage();
 		return TASK_UPDATED;
+	}
+
+	private void editTaskByParameter(int lineNum, ArrayList<Task> taskList, 
+				ArrayList<Task> searchList,	Parameter para) {
+		switch (para.getParaType()) {
+		case Parameter.PRIORITY_ARGUMENT_TYPE:
+			taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setPriority_argument(para.getParaArg());
+			break;
+		case Parameter.TYPE_ARGUMENT_TYPE:
+			taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setType_argument(para.getParaArg());
+			break;
+		case Parameter.START_DATE_ARGUMENT_TYPE:
+			taskList.get(taskList.indexOf(searchList.get(lineNum - 1)))
+					.setStart_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
+			break;
+		case Parameter.END_DATE_ARGUMENT_TYPE:
+			taskList.get(taskList.indexOf(searchList.get(lineNum - 1)))
+					.setEnd_date(ParserFacade.getInstance().parseDate(para.getParaArg()));
+			break;
+		default:
+			taskList.get(taskList.indexOf(searchList.get(lineNum - 1))).setPlace_argument(para.getParaArg());
+			break;
+		}
 	}
 
 	public Integer setDoneToTask(Command cmd) {
@@ -446,7 +424,7 @@ public class DataManager {
 		case 1:
 			int index = taskList.indexOf(searchList.get(0));
 			taskList.get(index).setDone(true);
-			history.push(new Operation(searchList.get(0),null, Op.SETDONE));//TODO
+			updateHistory(searchList.get(0), null, Op.SETDONE);
 			data.updateStorage();
 			return TASK_SET_TO_DONE;
 		default:
@@ -460,7 +438,7 @@ public class DataManager {
 			return WRONG_LINE_NUM;
 		}
 		data.getSearchList().get(lineNum - 1).setDone(true);
-		history.push(new Operation(data.getSearchList().get(lineNum - 1),null, Op.SETDONE)); //TODO
+		updateHistory(data.getSearchList().get(lineNum - 1), null, Op.SETDONE);
 		data.updateStorage();
 		return TASK_SET_TO_DONE;
 	}
@@ -472,11 +450,12 @@ public class DataManager {
 
 	public Integer undoPrevCommand() {
 		data.clearSearchList();
-		if(history.empty()){
+		if (history.empty()) {
 			return NO_PREV_COMMAND;
-		}else{
+		} else {
 			Operation oper = history.pop();
 			oper.undo(data);
+			histCount--;
 			return PREV_COMMAND_UNDONE;
 		}
 	}
@@ -528,7 +507,7 @@ public class DataManager {
 			return WRONG_LINE_NUM;
 		}
 		data.getSearchList().get(lineNum - 1).setDone(false);
-		history.push(new Operation(data.getSearchList().get(lineNum - 1), null, Op.UNDONE)); //TODO
+		updateHistory(data.getSearchList().get(lineNum - 1), null, Op.UNDONE);
 		data.updateStorage();
 		return TASK_UNDONE;
 	}
@@ -544,7 +523,7 @@ public class DataManager {
 		case 1:
 			int index = taskList.indexOf(searchList.get(0));
 			taskList.get(index).setDone(false);
-			history.push(new Operation(searchList.get(0), null, Op.UNDONE)); //TODO
+			updateHistory(searchList.get(0), null, Op.UNDONE);
 			data.updateStorage();
 			return TASK_UNDONE;
 		default:
@@ -552,8 +531,7 @@ public class DataManager {
 			return MULTIPLE_MATCHES;
 		}
 	}
-	
-	
+
 	private Task copyTask(Task task1) {
 		Task task2 = new Task();
 		task2 = new Task(task1.getTextContent());
@@ -567,6 +545,26 @@ public class DataManager {
 		task2.setLastServerUpdate(task1.getLastServerUpdate());
 		task2.setLastLocalUpdate(task1.getLastLocalUpdate());
 		return task2;
+	}
+
+	private void updateHistory(Task task1, Task task2, Op oper) {
+		history.push(new Operation(task1, task2, oper));
+		histCount++;
+		limitHistory();
+	}
+
+	private void limitHistory() {
+		Stack<Operation> tempStack = new Stack<Operation>();
+		if (histCount > DataManager.MAX_HISTORY) {
+			while (!history.empty()) {
+				tempStack.push(history.pop());
+			}
+			tempStack.pop();
+			while (!tempStack.empty()) {
+				history.push(tempStack.pop());
+			}
+			histCount--;
+		}
 	}
 
 }
@@ -653,7 +651,7 @@ class Data {
 		}
 		return taskStrings;
 	}
-	
+
 }
 
 class StorageInterface {
@@ -741,15 +739,19 @@ class StorageInterface {
 		boolean success = true;
 		File tempfile;
 		try {
+			// determine storage path from filePath.txt in project directory
 			br = new BufferedReader(new FileReader(filePath));
 			wr = new BufferedWriter(new FileWriter(filePath, true));
 			text = br.readLine();
 			if (text == null) {
+				// if filePath.txt is empty, write the default storage path into
+				// it
 				wr.append(DEFAULT_FILE);
 				text = DEFAULT_FILE;
 				wr.close();
 				br.close();
 			} else {
+				// test if the path stored in filePath.txt is valid
 				tempfile = new File(text);
 				tempfile.createNewFile();
 			}
@@ -778,18 +780,16 @@ class Operation {
 	private Task task;
 	private Task prevTask;
 	private Op op;
-	
 
-	public Operation(Task task, Task prevTask, Op op){
+	public Operation(Task task, Task prevTask, Op op) {
 		this.task = task;
 		this.prevTask = prevTask;
 		this.op = op;
 	}
-	
 
-	public void undo(Data data){
+	public void undo(Data data) {
 		int index;
-		switch(op){
+		switch (op) {
 		case ADD:
 			data.removeFromData(task);
 			break;
@@ -797,8 +797,17 @@ class Operation {
 			data.addToData(task);
 			break;
 		case EDIT:
-			data.removeFromData(task);
-			data.addToData(prevTask);
+			index = data.getTaskList().indexOf(task);
+			Task temp = data.getTaskList().get(index);
+			temp.setgCalId(prevTask.getgCalId());
+			temp.setLastServerUpdate(prevTask.getLastServerUpdate());
+			temp.setLastLocalUpdate(prevTask.getLastLocalUpdate());
+			temp.setDone(prevTask.isDone());
+			temp.setPriority_argument(prevTask.getPriority_argument());
+			temp.setType_argument(prevTask.getType_argument());
+			temp.setStart_date(prevTask.getStart_date());
+			temp.setEnd_date(prevTask.getEnd_date());
+			temp.setPlace_argument(prevTask.getPlace_argument());
 			break;
 		case SETDONE:
 			index = data.getTaskList().indexOf(task);
@@ -808,9 +817,9 @@ class Operation {
 			index = data.getTaskList().indexOf(task);
 			data.getTaskList().get(index).setDone(true);
 		}
-	}	
+	}
 }
 
 enum Op {
-    ADD, DELETE, EDIT, SETDONE, UNDONE
+	ADD, DELETE, EDIT, SETDONE, UNDONE
 }
