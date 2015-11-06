@@ -185,21 +185,11 @@ public class TasksFormatter {
 			}
 		}
 		ArrayList<Date> allDates = new ArrayList<Date>();
-		if (sortedByEDate.size() >= 1){
-			allDates.add(sortedByEDate.get(0).getEnd_date());
-			for (int a=1; a<sortedByEDate.size()-1; a++){
-				allDates.add(sortedByEDate.get(a).getEnd_date());
-				for (int b=a+1; b<sortedByEDate.size(); b++){
-					if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
-						allDates.remove(sortedByEDate.get(a).getEnd_date());
-					}
-				}
-			}
-		}
+		getAllPossibleEDates(sortedByEDate, allDates);
 		for (Date date:allDates){
 			String thisDate = df2.format(date);
 			sb.append(thisDate);
-			sb.append("\n");
+			sb.append(NEW_LINE);
 			for (Task task:sortedByEDate){
 				if (thisDate.equals(df2.format(task.getEnd_date()))){
 					if (task.getStart_date()!=null){
@@ -224,6 +214,34 @@ public class TasksFormatter {
 				counter++;
 			}
 		}
+	}
+
+	/**
+	 * This function compiles an ArrayList<Date> based on the number of different endDates/
+	 * @param ArrayList<Task> sortedByEDate: ArrayList<Task> with end dates
+	 * @param ArrayList<Date> allDates: ArrayList<Date> of different end dates
+	 * @return boolean if the two dates are the same
+	 */
+	private static void getAllPossibleEDates(ArrayList<Task> sortedByEDate, ArrayList<Date> allDates) {
+		int numDates = 1;
+		if (sortedByEDate.size() == 1){
+			allDates.add(sortedByEDate.get(0).getEnd_date());
+		} else if (sortedByEDate.size() > 1){
+				//allDates.add(sortedByEDate.get(0).getEnd_date());
+				for (int a=1; a<sortedByEDate.size()-1; a++){
+					allDates.add(sortedByEDate.get(a).getEnd_date());
+					for (int b=a+1; b<sortedByEDate.size(); b++){
+						if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
+							allDates.remove(sortedByEDate.get(a).getEnd_date());
+						} else {
+							numDates++;
+						}
+					}
+				}
+				if (numDates == 1) {
+					allDates.add(sortedByEDate.get(0).getEnd_date());
+				}
+			}
 	}
 
 	//returns a string with all the relevant details
