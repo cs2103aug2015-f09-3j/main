@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@LimYouLiang A0125975U
+//@@author LimYouLiang A0125975U
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -183,7 +183,7 @@ public class GoogleCalendarManager {
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
-	// @@LimYouLiang A0125975U
+	// @@author LimYouLiang A0125975U
 
 	private GoogleCalendarManager() {
 		try {

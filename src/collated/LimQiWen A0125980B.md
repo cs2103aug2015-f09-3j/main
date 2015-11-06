@@ -59,7 +59,7 @@ public class DataManager {
 		return instance;
 	}
 
-	// @@LimYouLiang A0125975U
+	// @@author LimYouLiang A0125975U
 	public void switchToTestingMode(String filePath) {
 		data = new Data(filePath);
 		paraList = null;

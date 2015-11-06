@@ -1,5 +1,5 @@
 package application.model;
-//@@ZhangLei A0093966L
+//@@author ZhangLei A0093966L
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

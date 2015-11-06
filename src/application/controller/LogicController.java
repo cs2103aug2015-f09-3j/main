@@ -12,7 +12,7 @@ import application.model.Command;
  * @author youlianglim
  *
  */
-//@@nauthor A0130876B
+//@@author nghuiyirebecca A0130876B
 public class LogicController {
 
 //	private static final String ADDED_SUCCESS = "Added ";

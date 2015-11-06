@@ -38,7 +38,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@ZhangLei A0093966L
+	//@@author ZhangLei A0093966L
 	/* This is a boundary case for the list done tasks */
 	@Test
 	public void testListDone() throws InvalidCommandException {
@@ -78,7 +78,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@ZhangLei A0093966L
+	//@@author ZhangLei A0093966L
 	/* This is a boundary case for adding the same task */
 	@Test
 	public void testAddRepeat() throws InvalidCommandException {
@@ -117,7 +117,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@ZhangLei A0093966L
+	//@@author ZhangLei A0093966L
 	/*
 	 * This is a boundary case for the delete method as deleting one of the tasks having
 	 * the same names i.e. multiple occurrence

@@ -1,6 +1,6 @@
 package application.model;
 
-// @@LimYouLiang A0125975U
+// @@author LimYouLiang A0125975U
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;

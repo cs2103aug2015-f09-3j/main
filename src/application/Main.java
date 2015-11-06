@@ -1,6 +1,6 @@
 package application;
 
-//@@LimYouLiang A0125975U
+//@@author LimYouLiang A0125975U
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
