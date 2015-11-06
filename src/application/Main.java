@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.ImageIcon;
 
-import com.melloware.jintellitype.JIntellitype;
+
 
 import application.controller.GoogleCalendarManager;
 import application.controller.LogManager;
@@ -57,6 +57,8 @@ public class Main extends Application {
 			if (GoogleCalendarUtility.hasInternetConnection()) {
 				GoogleCalendarManager.getInstance().performSync();
 			}
+			
+			UIController.getInstance().processManualRequest("today");
 			
 
 		} catch (Exception e) {
@@ -104,6 +106,8 @@ public class Main extends Application {
 					@Override
 					public void run() {
 						stage.show();
+						UIController.getInstance().clearConsole();
+						UIController.getInstance().processManualRequest("today");						
 					}
 				});
 
@@ -115,7 +119,7 @@ public class Main extends Application {
 			public void actionPerformed(ActionEvent e) { 
 				try {
 					tray.remove(trayIcon);
-					JIntellitype.getInstance().cleanUp();
+				
 				} catch (Exception err) {
 					LogManager.getInstance().log(this.getClass().getName(), err.toString());
 				}

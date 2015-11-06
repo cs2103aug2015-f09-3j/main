@@ -1,17 +1,13 @@
 package application.view;
 
 //@@author  A0125975U
-import com.melloware.jintellitype.HotkeyListener;
-import com.melloware.jintellitype.JIntellitype;
-import com.melloware.jintellitype.JIntellitypeConstants;
+
 
 import application.Main;
 import application.controller.GoogleCalendarManager;
-import application.controller.LogManager;
 import application.controller.LogicController;
 import application.exception.InvalidCommandException;
 import application.utils.GoogleCalendarUtility;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,9 +15,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Window;
 
-public class UIController implements HotkeyListener {
+public class UIController {
 	@FXML
 	private MenuItem minimizeMenuItem;
 	@FXML
@@ -43,13 +38,7 @@ public class UIController implements HotkeyListener {
 	}
 
 	private UIController() {  
-		try {
-			JIntellitype.getInstance();  
-			JIntellitype.getInstance().registerHotKey(1, JIntellitypeConstants.MOD_CONTROL, 'T');
-			JIntellitype.getInstance().addHotKeyListener(this);
-		} catch (Exception e) {
-			LogManager.getInstance().log(this.getClass().getName(), "Unable to init Jintel");
-		}  
+		
 	}
 
 	public void setMainApp(Main app) {
@@ -57,17 +46,6 @@ public class UIController implements HotkeyListener {
 
 	}
 
-	public void toggleWindow() {
-
-		Window window = btSend.getScene().getWindow();
-
-		if (window.isShowing()) {
-			window.hide();
-		} else {
-			mainApp.stage.show();
-		}
-
-	}
 
 	// Event Listener on MenuItem[#minimizeMenuItem].onAction
 	@FXML
@@ -88,6 +66,8 @@ public class UIController implements HotkeyListener {
 		processUIRequest();
 
 	}
+	
+	
 
 	private String onCommandReceived(String command) {
 
@@ -122,18 +102,24 @@ public class UIController implements HotkeyListener {
 			textCommandInput.clear();
 		}
 	}
-
-	@Override
-	public void onHotKey(int arg0) {
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-
-				toggleWindow();
-			}
-		});
-
+	
+	public void processManualRequest(String command){
+		try {
+			String response = onCommandReceived(command) + "\n";
+			showToUser(response);
+		} catch (NullPointerException ex) {
+			showToUser("Please try again with command details. \n");
+		} finally {
+			textCommandInput.clear();
+		}
 	}
+	
+	public void clearConsole(){
+		if(this.textConsoleOutput != null){
+			this.textConsoleOutput.clear();
+		}	 
+	}
+
+
 
 }

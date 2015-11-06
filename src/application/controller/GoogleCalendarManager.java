@@ -52,7 +52,7 @@ public class GoogleCalendarManager {
 	/** Default File name for deletion offline record **/
 	public static final String DELETION_FILE_NAME = "deletionCache.txt";
 
-	/** Application name. */
+	/** Application name. */ 
 	private static final String APPLICATION_NAME = "toDoo"; 
 
 	/** Directory to store user credentials for this application. */

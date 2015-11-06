@@ -6,11 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/gson lib/gson-2.4.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jintel">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="toDoo/libs/JintelDLL"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="libs/google-api-client-1.19.0.jar"/>
 	<classpathentry kind="lib" path="libs/google-api-services-tasks-v1-rev38-1.19.0.jar"/>
 	<classpathentry kind="lib" path="libs/google-http-client-jackson2-1.19.0.jar"/>
