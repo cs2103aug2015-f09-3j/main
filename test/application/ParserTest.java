@@ -1,5 +1,5 @@
 package application;
-//@@author LimYouLiang A0125975U
+//@@author  A0125975U
 import static org.junit.Assert.assertEquals;
 
 import java.text.DateFormat;

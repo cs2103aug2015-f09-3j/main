@@ -350,7 +350,7 @@ public class TasksFormatter {
 		}
 		return namesOfTypes;
 	}
-	//@@author LimYouLiang A0125975U
+	//@@author  A0125975U
 	private static String replaceWithDotIfTooLong(String string, int limit){
 
 		if(string.length() > (limit * 0.7)){

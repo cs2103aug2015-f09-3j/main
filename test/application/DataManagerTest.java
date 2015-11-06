@@ -1,5 +1,5 @@
 package application;
-//@@author LimQiWen A0125980B
+//@@author   A0125980B
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;

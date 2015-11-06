@@ -1,5 +1,5 @@
 package application.utils;
-//@@author LimYouLiang A0125975U
+//@@author  A0125975U
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

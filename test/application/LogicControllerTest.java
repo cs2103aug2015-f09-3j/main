@@ -1,5 +1,5 @@
 package application;
-//@@nghuiyirebecca A0130876B
+//@@ A0130876B
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@author ZhangLei A0093966L
+	//@@author   A0093966L
 	/* This is a boundary case for the list done tasks */
 	@Test
 	public void testListDone() throws InvalidCommandException {
@@ -69,7 +69,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@nghuiyirebecca A0130876B
+	//@@ A0130876B
 	//Test addition of task with all parameters
 	public void testAdd() throws InvalidCommandException {
 		String result = LogicController.onCommandProcess("add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc");
@@ -78,7 +78,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@author ZhangLei A0093966L
+	//@@author   A0093966L
 	/* This is a boundary case for adding the same task */
 	@Test
 	public void testAddRepeat() throws InvalidCommandException {
@@ -88,7 +88,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@nghuiyirebecca A0130876B
+	//@@ A0130876B
 	/*
 	 * This is a boundary case for the delete method as deleting task that is
 	 * named in full
@@ -117,7 +117,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@author ZhangLei A0093966L
+	//@@author   A0093966L
 	/*
 	 * This is a boundary case for the delete method as deleting one of the tasks having
 	 * the same names i.e. multiple occurrence

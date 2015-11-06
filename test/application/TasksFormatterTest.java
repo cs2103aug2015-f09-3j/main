@@ -53,7 +53,7 @@ public class TasksFormatterTest {
 		assertEquals("Description                    Start Date           End Date             Location             Type            Priority       \n1   Buy Milk YOYOYOY               09/10/35 08:10PM     09/10/35 08:10PM     bukit panjang        Meeting         high           \n2   Buy Milk YOYOYOY               09/10/35 08:10PM     09/10/35 08:10PM     bukit panjang        Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
 	}
 
-	//@@nghuiyirebecca A0130876B
+	//@@ A0130876B
 	@Test
 	public void testViewSchedule(){
 

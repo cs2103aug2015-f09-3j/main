@@ -1,6 +1,6 @@
 package application.model;
 
-// @@author LimYouLiang A0125975U
+// @@author  A0125975U
 import java.util.ArrayList;
 
 public class Command {

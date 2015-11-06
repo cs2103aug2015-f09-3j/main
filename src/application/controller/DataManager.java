@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@author LimQiWen A0125980B
+//@@author   A0125980B
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +59,7 @@ public class DataManager {
 		return instance;
 	}
 
-	// @@author LimYouLiang A0125975U
+	// @@author  A0125975U
 	public void switchToTestingMode(String filePath) {
 		data = new Data(filePath);
 		paraList = null;
@@ -67,7 +67,7 @@ public class DataManager {
 
 	/**
 	 * This function return a list of suitable task for its first sync.
-	 * 
+	 *
 	 * @return
 	 */
 	public ArrayList<Task> getListOfUnSyncNonFloatingTasks() {
@@ -86,7 +86,7 @@ public class DataManager {
 
 	/**
 	 * This function will return a list of modified gCal Sync-ed task.
-	 * 
+	 *
 	 * @return a list of Tasks that have been modified locally since last server
 	 *         update.
 	 */
@@ -105,7 +105,7 @@ public class DataManager {
 
 	/**
 	 * This function finds local task by its GCalId.
-	 * 
+	 *
 	 * @param gCalId
 	 * @return return tasks with that GCalId, If Any. Otherwise, return null.
 	 */
@@ -121,7 +121,7 @@ public class DataManager {
 
 	/**
 	 * This function deletes task by its GCalId, If Any.
-	 * 
+	 *
 	 * @param gCalId
 	 */
 	public void deleteTaskByGCalId(String gCalId) {
@@ -139,10 +139,10 @@ public class DataManager {
 	/**
 	 * This function takes in HashMap of Task and String, It takes the
 	 * value(GCalId) and update its key(Task).
-	 * 
+	 *
 	 * @param lists
 	 *            : HashMap of key(Task) and value(String)(GCalId) pair.
-	 * 
+	 *
 	 */
 	public void updateGCalId(HashMap<Task, String> lists) {
 
@@ -158,7 +158,7 @@ public class DataManager {
 	/**
 	 * This function takes in HashMap of Task and Long, It takes the
 	 * value(LastServerUpdateTime) and update its key(Task).
-	 * 
+	 *
 	 * @param :
 	 *            HashMap of key(Task) and value(Long)(lastServerUpdate) pair.
 	 */
@@ -175,7 +175,7 @@ public class DataManager {
 
 	/**
 	 * This function updates the local storage with the updated remote task.
-	 * 
+	 *
 	 * @param remoteTask
 	 *            : latest remote task from google calendar api.
 	 */
@@ -190,7 +190,7 @@ public class DataManager {
 
 	}
 
-	// @@LimQiWen A0125980B
+	//@@author  A0125980B
 
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
@@ -390,7 +390,7 @@ public class DataManager {
 		return TASK_UPDATED;
 	}
 
-	private void editTaskByParameter(int lineNum, ArrayList<Task> taskList, 
+	private void editTaskByParameter(int lineNum, ArrayList<Task> taskList,
 				ArrayList<Task> searchList,	Parameter para) {
 		switch (para.getParaType()) {
 		case Parameter.PRIORITY_ARGUMENT_TYPE:

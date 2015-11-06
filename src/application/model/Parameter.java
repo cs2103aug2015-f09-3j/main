@@ -1,6 +1,6 @@
 package application.model;
 
-// @@author LimYouLiang A0125975U
+// @@author  A0125975U
 public class Parameter {
 
 	public static final String PRIORITY_ARGUMENT = "p";

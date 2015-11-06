@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@author nghuiyirebecca A0130876B
+//@@author  A0130876B
 
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
 package application.view;
 
-//@@author LimYouLiang A0125975U
+//@@author  A0125975U
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
 import com.melloware.jintellitype.JIntellitypeConstants;
