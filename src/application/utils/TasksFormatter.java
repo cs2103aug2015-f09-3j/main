@@ -190,20 +190,7 @@ public class TasksFormatter {
 			String thisDate = df2.format(date);
 			sb.append(thisDate);
 			sb.append(NEW_LINE);
-			for (Task task:sortedByEDate){
-				if (thisDate.equals(df2.format(task.getEnd_date()))){
-					if (task.getStart_date()!=null){
-						String start_time = df3.format(task.getStart_date());
-						String end_time = df3.format(task.getEnd_date());
-						sb.append("[" + start_time + " - " + end_time + "]   ");
-						sb.append(task.getTextContent() + NEW_LINE);
-					} else {
-						String time = df3.format(task.getEnd_date());
-						sb.append(time+DUE);
-						sb.append(task.getTextContent() + NEW_LINE);
-					}
-				}
-			}
+			listAllTaskOnDate(sb, df2, df3, sortedByEDate, thisDate);
 			sb.append("\n");
 		}
 		if (floating.size()>0){
@@ -215,12 +202,35 @@ public class TasksFormatter {
 			}
 		}
 	}
+	/**
+	 * This function adds to StringBuilder the tasks with due date on thisDate
+	 * @param sb - StringBuilder to add string
+	 * @param df2, df3: Different date formats for addition to sb
+	 * @param sortedByEDate: ArrayList<Task> that contains all tasks with end dates
+	 * @param thisDate: the date on which the tasks to list are on.
+	 */
+	private static void listAllTaskOnDate(StringBuilder sb, DateFormat df2, DateFormat df3,
+			ArrayList<Task> sortedByEDate, String thisDate) {
+		for (Task task:sortedByEDate){
+			if (thisDate.equals(df2.format(task.getEnd_date()))){
+				if (task.getStart_date()!=null){
+					String start_time = df3.format(task.getStart_date());
+					String end_time = df3.format(task.getEnd_date());
+					sb.append("[" + start_time + " - " + end_time + "]   ");
+					sb.append(task.getTextContent() + NEW_LINE);
+				} else {
+					String time = df3.format(task.getEnd_date());
+					sb.append(time+DUE);
+					sb.append(task.getTextContent() + NEW_LINE);
+				}
+			}
+		}
+	}
 
 	/**
 	 * This function compiles an ArrayList<Date> based on the number of different endDates/
 	 * @param ArrayList<Task> sortedByEDate: ArrayList<Task> with end dates
 	 * @param ArrayList<Date> allDates: ArrayList<Date> of different end dates
-	 * @return boolean if the two dates are the same
 	 */
 	private static void getAllPossibleEDates(ArrayList<Task> sortedByEDate, ArrayList<Date> allDates) {
 		int numDates = 1;

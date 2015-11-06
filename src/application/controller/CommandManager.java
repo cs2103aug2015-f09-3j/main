@@ -13,6 +13,7 @@ import application.utils.TasksFormatter;
 
 public class CommandManager {
 
+	private static final String DONE = "done";
 	private static final String PLEASE_ENTER_TEXT = "Please enter text";
 	private static final String NUMBER_FORMAT_EXCEPTION = "Number format exception in CommandManager";
 	private static final String PREVIOUS_COMMAND_UNDONE = "Previous command undone";
@@ -174,7 +175,7 @@ public class CommandManager {
 		    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetUndone;
 		} else if(setUndoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    return SET_UNDONE_SUCCESS + cmd.getTextContent();
-		} else if(setUndoneSuccess == DataManager.TASK_UNDONE){ 
+		} else if(setUndoneSuccess == DataManager.TASK_UNDONE){
 			return SET_UNDONE_SUCCESS + cmd.getTextContent();
 		}else{
 			return WRONG_LINE_NUM;
@@ -188,7 +189,7 @@ public class CommandManager {
 	 */
 	private static String executeSetDoneCommand(Command cmd) {
 		int setDoneSuccess = ZERO_INT;
-		if (isInteger(cmd)){
+		if (isInteger(cmd) && prevCommandType == Command.DONE_COMMAND_TYPE){
 			setDoneSuccess = DataManager.getInstance().setDoneToTask(Integer.parseInt(cmd.getTextContent()));
 		} else {
 			setDoneSuccess= DataManager.getInstance().setDoneToTask(cmd);
@@ -197,6 +198,7 @@ public class CommandManager {
 			return EMPTY_FILE_DONE;
 		} else if (setDoneSuccess == DataManager.MULTIPLE_MATCHES){
 			String multipleTasksToSetDone = TasksFormatter.format(multipleMatchList, TasksFormatter.DETAIL_VIEW_TYPE);
+			prevCommandType = Command.DONE_COMMAND_TYPE;
 		    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetDone;
 		} else if(setDoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    return SET_DONE_SUCCESS + cmd.getTextContent();
@@ -236,10 +238,12 @@ public class CommandManager {
 	 * @return : output to show to the user if successful/failed to undo the previous command
 	 */
 	private static String executeUndoCommand() {
-		if(DataManager.getInstance().undoPrevCommand() == DataManager.NO_PREV_COMMAND)
+		prevCommandType = Command.UNDO_COMMAND_TYPE;
+		if(DataManager.getInstance().undoPrevCommand() == DataManager.NO_PREV_COMMAND){
 			return NO_PREVIOUS_COMMAND;
-		else
+		} else {
 			return PREVIOUS_COMMAND_UNDONE;
+		}
 	}
 	/**
 	 * This function lets the user delete a task that exists in the system.
@@ -271,6 +275,7 @@ public class CommandManager {
 	 * @return : output to show to the user if successful/failed change the storage location
 	 */
 	private static String executeChangeStorageCommand(Command cmd) {
+		prevCommandType = Command.CHANGE_STORAGE_COMMAND_TYPE;
 		int changePathSuccess = ZERO_INT;
 		changePathSuccess = DataManager.getInstance().changeStorageLocation(cmd);
 		if (changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS_FILE_NONEXIST){
@@ -287,10 +292,11 @@ public class CommandManager {
 	 * @return : output to show to the user the list of tasks that match the keyword or type of list
 	 */
 	private static String executeListCommand(Command cmd) {
+		prevCommandType = Command.LIST_COMMAND_TYPE;
 		history.clear();
 		String msg = EMPTY_STRING;
 		ArrayList<Task> allTasks = new ArrayList<Task>();
-		if (cmd.getTextContent().equals("done")){
+		if (cmd.getTextContent().equals(DONE)){
 			allTasks = DataManager.getInstance().checkIfDone();
 			msg = SHOW_DONE_TASKS + TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
 		}else{
