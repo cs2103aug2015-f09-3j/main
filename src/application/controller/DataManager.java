@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@author   A0125980B
+//@@author  A0125980B
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,6 +23,7 @@ import application.model.Parameter;
 import application.model.Task;
 
 import application.utils.GoogleCalendarUtility;
+import application.utils.TokenManager;
 
 public class DataManager {
 	public static final Integer WRONG_LINE_NUM = -5;
@@ -67,7 +68,7 @@ public class DataManager {
 
 	/**
 	 * This function return a list of suitable task for its first sync.
-	 *
+	 * 
 	 * @return
 	 */
 	public ArrayList<Task> getListOfUnSyncNonFloatingTasks() {
@@ -86,7 +87,7 @@ public class DataManager {
 
 	/**
 	 * This function will return a list of modified gCal Sync-ed task.
-	 *
+	 * 
 	 * @return a list of Tasks that have been modified locally since last server
 	 *         update.
 	 */
@@ -105,7 +106,7 @@ public class DataManager {
 
 	/**
 	 * This function finds local task by its GCalId.
-	 *
+	 * 
 	 * @param gCalId
 	 * @return return tasks with that GCalId, If Any. Otherwise, return null.
 	 */
@@ -121,7 +122,7 @@ public class DataManager {
 
 	/**
 	 * This function deletes task by its GCalId, If Any.
-	 *
+	 * 
 	 * @param gCalId
 	 */
 	public void deleteTaskByGCalId(String gCalId) {
@@ -139,10 +140,10 @@ public class DataManager {
 	/**
 	 * This function takes in HashMap of Task and String, It takes the
 	 * value(GCalId) and update its key(Task).
-	 *
+	 * 
 	 * @param lists
 	 *            : HashMap of key(Task) and value(String)(GCalId) pair.
-	 *
+	 * 
 	 */
 	public void updateGCalId(HashMap<Task, String> lists) {
 
@@ -158,7 +159,7 @@ public class DataManager {
 	/**
 	 * This function takes in HashMap of Task and Long, It takes the
 	 * value(LastServerUpdateTime) and update its key(Task).
-	 *
+	 * 
 	 * @param :
 	 *            HashMap of key(Task) and value(Long)(lastServerUpdate) pair.
 	 */
@@ -175,7 +176,7 @@ public class DataManager {
 
 	/**
 	 * This function updates the local storage with the updated remote task.
-	 *
+	 * 
 	 * @param remoteTask
 	 *            : latest remote task from google calendar api.
 	 */
@@ -390,7 +391,7 @@ public class DataManager {
 		return TASK_UPDATED;
 	}
 
-	private void editTaskByParameter(int lineNum, ArrayList<Task> taskList,
+	private void editTaskByParameter(int lineNum, ArrayList<Task> taskList, 
 				ArrayList<Task> searchList,	Parameter para) {
 		switch (para.getParaType()) {
 		case Parameter.PRIORITY_ARGUMENT_TYPE:
@@ -415,7 +416,7 @@ public class DataManager {
 
 	public Integer setDoneToTask(Command cmd) {
 		data.clearSearchList();
-		ArrayList<Task> searchList = searchTasksForMatches(cmd);
+		ArrayList<Task> searchList = searchUndoneTasksForMatches(cmd);
 		data.saveToSearchList(searchList);
 		ArrayList<Task> taskList = data.getTaskList();
 		switch (searchList.size()) {
@@ -460,20 +461,6 @@ public class DataManager {
 		}
 	}
 
-	private ArrayList<Task> searchTasksForMatches(Command cmd) {
-		ArrayList<Task> searchList = new ArrayList<Task>();
-		for (int i = 0; i < data.getTaskList().size(); i++) {
-			if (data.getTaskList().get(i).getTextContent().contains(cmd.getTextContent())) {
-				searchList.add(data.getTaskList().get(i));
-			}
-		}
-		return searchList;
-	}
-
-	private void sort(ArrayList<Task> list) {
-		Collections.sort(list);
-	}
-
 	@SuppressWarnings("deprecation")
 	public ArrayList<Task> listToday(Command cmd) {
 		Date today = new Date();
@@ -514,7 +501,7 @@ public class DataManager {
 
 	public int setUndoneToTask(Command cmd) {
 		data.clearSearchList();
-		ArrayList<Task> searchList = searchTasksForMatches(cmd);
+		ArrayList<Task> searchList = searchDoneTasksForMatches(cmd);
 		data.saveToSearchList(searchList);
 		ArrayList<Task> taskList = data.getTaskList();
 		switch (searchList.size()) {
@@ -567,6 +554,42 @@ public class DataManager {
 		}
 	}
 
+	private ArrayList<Task> searchTasksForMatches(Command cmd) {
+		ArrayList<Task> searchList = new ArrayList<Task>();
+		for (Task task: data.getTaskList()) {
+			if (task.getTextContent().contains(cmd.getTextContent())) {
+				searchList.add(task);
+			}
+		}
+		return searchList;
+	}
+	
+	private ArrayList<Task> searchDoneTasksForMatches(Command cmd) {
+		ArrayList<Task> searchList = new ArrayList<Task>();
+		for (Task task: data.getTaskList()) {
+			if (task.getTextContent().contains(cmd.getTextContent())) {
+				if(task.isDone())
+					searchList.add(task);
+			}
+		}
+		return searchList;
+	}
+	
+	private ArrayList<Task> searchUndoneTasksForMatches(Command cmd) {
+		ArrayList<Task> searchList = new ArrayList<Task>();
+		for (Task task: data.getTaskList()) {
+			if (task.getTextContent().contains(cmd.getTextContent())) {
+				if(!task.isDone()){
+					searchList.add(task);
+				}
+			}
+		}
+		return searchList;
+	}
+
+	private void sort(ArrayList<Task> list) {
+		Collections.sort(list);
+	}
 }
 
 class Data {
@@ -626,7 +649,13 @@ class Data {
 	}
 
 	public Integer changeFileLocation(String location) {
-		return storageIO.changeFilePath(location);
+		int changePathResult;
+		changePathResult = storageIO.changeFilePath(location);
+		if(changePathResult == LocalStorage.CHANGE_PATH_SUCCESS_FILE_EXIST){
+			taskList = initializeTaskList();
+			TokenManager.getInstance().clearToken();
+		}
+		return changePathResult;	
 	}
 
 	private ArrayList<Task> initializeTaskList() {
@@ -728,7 +757,7 @@ class StorageInterface {
 				return LocalStorage.WRONG_DIRECTORY;
 			}
 		} else {
-			return LocalStorage.CHANGE_PATH_SUCCESS;
+			return success;
 		}
 	}
 

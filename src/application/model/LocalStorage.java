@@ -1,5 +1,5 @@
 package application.model;
-//@@author   A0093966L
+//@@author  A0093966L
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +17,8 @@ public class LocalStorage {
 
 	public static final Integer WRONG_DIRECTORY = -1;
 	public static final Integer CHANGE_PATH_SUCCESS = 1;
+	public static final Integer CHANGE_PATH_SUCCESS_FILE_EXIST = 2;
+	public static final Integer CHANGE_PATH_SUCCESS_FILE_NONEXIST = 3;
 	
 	private static Logger logger = Logger.getLogger("LocalStorage");
 
@@ -44,17 +46,23 @@ public class LocalStorage {
 	//change file name
 	public int changePath(String newPath) {
 		File newFile = new File(newPath);
+		boolean isFileExist = false;
 		try{
-			newFile.createNewFile();
+			isFileExist = !newFile.createNewFile();
 		}catch(IOException ex){
 			return WRONG_DIRECTORY;
 		}
-		clear(newFile);
-		saveToFile(readFile(),newFile);
-		fileName = newPath;
-		file.delete();
-		file = newFile;
-		return CHANGE_PATH_SUCCESS;		
+		if(isFileExist){
+			file = newFile;
+			return CHANGE_PATH_SUCCESS_FILE_EXIST;
+		}else{
+			clear(newFile);
+			saveToFile(readFile(),newFile);
+			fileName = newPath;
+			file.delete();
+			file = newFile;
+			return CHANGE_PATH_SUCCESS_FILE_NONEXIST;
+		}
 	}
 
 	public ArrayList<String> readFile() {
@@ -64,6 +72,7 @@ public class LocalStorage {
 			fIn = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		}
 		BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
         String aDataRow = "";

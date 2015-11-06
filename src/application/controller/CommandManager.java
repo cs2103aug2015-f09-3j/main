@@ -23,6 +23,7 @@ public class CommandManager {
 	private static final int ZERO_INT = 0;
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
+	private static final String CHANGED_STORAGE_LOCATION_SUCCESS_FILE_EXIST = "Existing file in this directory so contents it it will be used";
 	private static final String EMPTY_FILE = "There are no tasks to delete";
 	private static final String DELETE_SUCCESS = "Successfully deleted: ";
 	private static final String EDIT_SUCCESS = "Successfully edited: ";
@@ -272,8 +273,10 @@ public class CommandManager {
 	private static String executeChangeStorageCommand(Command cmd) {
 		int changePathSuccess = ZERO_INT;
 		changePathSuccess = DataManager.getInstance().changeStorageLocation(cmd);
-		if (changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS){
+		if (changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS_FILE_NONEXIST){
 			return CHANGED_STORAGE_LOCATION_SUCCESS + cmd.getTextContent();
+		}else if(changePathSuccess == LocalStorage.CHANGE_PATH_SUCCESS_FILE_EXIST){
+			return CHANGED_STORAGE_LOCATION_SUCCESS_FILE_EXIST;
 		}else{
 			return WRONG_DIRECTORY;
 		}
