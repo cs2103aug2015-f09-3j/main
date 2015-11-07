@@ -314,6 +314,9 @@ public class CommandManager {
 				} else {
 					int type=determineViewType(cmd);
 					switch (type){
+						case TasksFormatter.PLAIN_VIEW_TYPE:
+							msg = TasksFormatter.format(allTasks, TasksFormatter.PLAIN_VIEW_TYPE);
+							break;
 						case TasksFormatter.DETAIL_VIEW_TYPE:
 							msg = TasksFormatter.format(allTasks, TasksFormatter.DETAIL_VIEW_TYPE);
 							break;
