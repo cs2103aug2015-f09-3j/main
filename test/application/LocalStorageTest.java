@@ -13,7 +13,7 @@ public class LocalStorageTest {
 
 	@Test
 	public void changePaths() {
-		assertEquals(1, ls.changePath("test.txt"));
+		assertEquals(3, ls.changePath("test.txt"));
 	}
 
 }
