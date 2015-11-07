@@ -26,6 +26,7 @@ import application.utils.GoogleCalendarUtility;
 import application.utils.TokenManager;
 
 public class DataManager {
+	
 	public static final Integer WRONG_LINE_NUM = -5;
 	public static final Integer NO_PREV_COMMAND = -4;
 	public static final Integer TASK_ALREADY_EXISTS = -3;
@@ -317,7 +318,7 @@ public class DataManager {
 			updateHistory(searchList.get(0), null, Op.DELETE);
 			if (searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")) {
 				if (GoogleCalendarUtility.hasInternetConnection()) {
-					GoogleCalendarManager.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
+					GoogleCalendarManagerInterface.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
 				} else {
 					GoogleCalendarUtility.addToOfflineDeletionRecords(searchList.get(0).getgCalId());
 				}
@@ -339,7 +340,7 @@ public class DataManager {
 		if (data.getSearchList().get(lineNum - 1).getgCalId() != null
 				&& !data.getSearchList().get(lineNum - 1).getgCalId().equals("")) {
 			if (GoogleCalendarUtility.hasInternetConnection()) {
-				GoogleCalendarManager.getInstance()
+				GoogleCalendarManagerInterface.getInstance()
 						.removeTaskFromServer(data.getSearchList().get(lineNum - 1).getgCalId());
 			} else {
 				GoogleCalendarUtility.addToOfflineDeletionRecords(data.getSearchList().get(lineNum - 1).getgCalId());

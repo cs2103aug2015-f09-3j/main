@@ -8,11 +8,12 @@ import application.controller.parser.ParserFacade;
 import application.model.Command;
 import application.model.LocalStorage;
 import application.model.Task;
+import application.utils.GoogleCalendarUtility;
 import application.utils.HelpCommands;
 import application.utils.TasksFormatter;
 
 public class CommandManager {
-
+	private static final String NO_INTERNET_CONNECTION = "This feature does not work in offline mode, please check your internet connection.";
 	private static final String DONE = "done";
 	private static final String PLEASE_ENTER_TEXT = "Please enter text";
 	private static final String NUMBER_FORMAT_EXCEPTION = "Number format exception in CommandManager";
@@ -106,7 +107,12 @@ public class CommandManager {
 	 * @return : output to be shown to the user
 	 */
 	private static String executeGoogleQuickAddCommand(Command cmd) {
-		Integer googleAddSuccess= GoogleCalendarManager.getInstance().quickAddToGCal(cmd.getTextContent());
+		Integer googleAddSuccess;
+		if(GoogleCalendarUtility.hasInternetConnection()){
+			googleAddSuccess= GoogleCalendarManagerInterface.getInstance().quickAddToGCal(cmd.getTextContent());
+		}else{
+			return NO_INTERNET_CONNECTION;
+		}
 		if(googleAddSuccess == DataManager.TASK_ADDED){
 			return ADDED_SUCCESS + cmd.getTextContent();
 		}else{

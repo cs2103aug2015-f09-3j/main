@@ -85,6 +85,10 @@ public class GoogleCalendarManager {
 			System.exit(1);
 		}
 	}
+	
+	public com.google.api.services.calendar.Calendar getService(){
+		return service;
+	}
 
 
 	public static GoogleCalendarManager getInstance() {
@@ -107,50 +111,7 @@ public class GoogleCalendarManager {
 	}
 
 	
-	/**
-	 * Pre-Condition: Internet is up and quickAddMsg is not null. This function
-	 * will call the google quickadd api and return the event created. If
-	 * Successful, it will return the Task, otherwise it will return null.
-	 * 
-	 * @param quickAddMsg
-	 *            : quickAdd message
-	 * @return Task if successful in creation, or null if fail to create task.
-	 */
-
-	public Integer quickAddToGCal(String quickAddMsg) {
-
-		Event createdEvent;
-		try {
-			createdEvent = service.events().quickAdd("primary", quickAddMsg).execute();
-			Task task = this.mapEventToTask(createdEvent);
-			int googleAddSuccess = DataManager.getInstance().addNewTask(task);
-			return googleAddSuccess;
-		} catch (IOException e) {
-			LogManager.getInstance().log(this.getClass().getName(), e.toString());
-		}
-		return null;
-	}
 	
-	/**
-	 * remove events from Gooogle Calendar by eventId
-	 * 
-	 * @param eventId
-	 *            : Google Calendar Event Id
-	 */
-	public void removeTaskFromServer(String eventId) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					service.events().delete("primary", eventId).execute();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	} 
-
 	
 	/**
 	 * Creates an authorized Credential object.
@@ -232,43 +193,12 @@ public class GoogleCalendarManager {
 		if (!file.exists()) {
 			return records;
 		}
-		getRecordsFromFile(records, file);
+		GoogleCalendarUtility.getRecordsFromFile(records, file);
 
 		return records;
 	}
 
-	/**
-	 * This function take in a arraylist of records, and store the data into the
-	 * file to the records.
-	 * 
-	 * @param records
-	 *            : the place to be store in.
-	 * @param file
-	 *            : the file to be read from.
-	 */
-	private void getRecordsFromFile(ArrayList<String> records, File file) {
-		FileInputStream fIn = null;
-		try {
-			fIn = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-		String aDataRow = "";
-
-		try {
-			while ((aDataRow = myReader.readLine()) != null) {
-				records.add(aDataRow);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			myReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	/**
 	 * This function retrieves Event from Google Calendar API based on a
@@ -406,7 +336,7 @@ public class GoogleCalendarManager {
 
 		for (Event event : lists) {
 			if (!event.getStatus().equals("cancelled")) {
-				taskArr.add(mapEventToTask(event));
+				taskArr.add(GoogleCalendarUtility.mapEventToTask(event));
 			} else {
 				DataManager.getInstance().deleteTaskByGCalId(event.getId());
 			}
@@ -427,7 +357,7 @@ public class GoogleCalendarManager {
 				// compare lastUpdate here
 				if (localTask.getLastServerUpdate() > task.getLastServerUpdate()) {
 					// update server
-					Event event = mapTaskToEvent(localTask);
+					Event event = GoogleCalendarUtility.mapTaskToEvent(localTask);
 					updateGCalEvent(event);
 
 				} else {
@@ -463,62 +393,6 @@ public class GoogleCalendarManager {
 		}
 	}
 
-	/**
-	 * This function maps Event Object to Task Object
-	 * 
-	 * @param event
-	 *            : Google Calendar Event Object
-	 */
-	private Task mapEventToTask(Event event) {
-
-		Task tmpTask = new Task();
-
-		tmpTask.setTextContent(event.getSummary());
-
-		if (event.getExtendedProperties() != null && event.getExtendedProperties().getShared() != null) {
-			tmpTask.setType_argument(event.getExtendedProperties().getShared().get("type"));
-		}
-
-		tmpTask.setPriority_argument(event.getDescription()); 
-
-		tmpTask.setPlace_argument(event.getLocation());
-		tmpTask.setLastServerUpdate(event.getUpdated().getValue());
-		tmpTask.setgCalId(event.getId());
-		String has_start_date = null;
-		ExtendedProperties prop = event.getExtendedProperties();
-		Map<String, String> hash = null;
-		if (prop != null) {
-			hash = prop.getShared();
-		}
-
-		if (hash != null) {
-			has_start_date = hash.get("has_start_date");
-		}
-
-		if (has_start_date == null) {
-			has_start_date = "yes";
-		}
-
-		if (event.getStart() != null && has_start_date.equals("yes")) {
-			DateTime dt = event.getStart().getDate();
-			if (dt == null) {
-				dt = event.getStart().getDateTime();
-			}
-			tmpTask.setStart_date(new Date(dt.getValue()));
-		} else {
-			tmpTask.setStart_date(null);
-		}
-
-		if (event.getEnd() != null) {
-			DateTime dt = event.getEnd().getDate();
-			if (dt == null) {
-				dt = event.getEnd().getDateTime();
-			}
-			tmpTask.setEnd_date(new Date(dt.getValue()));
-		}
-
-		return tmpTask;
-	}
 
 	/**
 	 * This function perform sync from local to server.
@@ -538,7 +412,7 @@ public class GoogleCalendarManager {
 
 		for (Task task : lists) {
 
-			Event event = mapTaskToEvent(task);
+			Event event = GoogleCalendarUtility.mapTaskToEvent(task);
 
 			try {
 				event = service.events().update("primary", task.getgCalId(), event).execute();
@@ -560,14 +434,14 @@ public class GoogleCalendarManager {
 		HashMap<Task, String> hashmap = new HashMap<Task, String>();
 		for (Task task : lists) {
 
-			Event event = mapTaskToEvent(task);
+			Event event = GoogleCalendarUtility.mapTaskToEvent(task);
 
 			EventReminder[] reminderOverrides = new EventReminder[] {
 					new EventReminder().setMethod("email").setMinutes(24 * 60),
 					new EventReminder().setMethod("popup").setMinutes(10), };
 			Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
 					.setOverrides(Arrays.asList(reminderOverrides));
-			event.setReminders(reminders);
+			event.setReminders(reminders); 
 
 			try {
 				event = service.events().insert("primary", event).execute();
@@ -581,54 +455,6 @@ public class GoogleCalendarManager {
 		DataManager.getInstance().updateGCalId(hashmap);
 	}
 
-	/**
-	 * This function maps Task to Event Object.
-	 * @param task : toDoo task model.
-	 * @return Google Calendar Event object.
-	 */
-	private Event mapTaskToEvent(Task task) {
-		Event event = new Event().setSummary(task.getTextContent()).setLocation(task.getPlace_argument())
-				.setDescription(task.getPriority_argument());
-		Map<String, String> hashMap = new HashMap<String, String>();
-		hashMap.put("type", task.getType_argument());
-
-		if (!task.getgCalId().equals("")) {
-			event.setId(task.getgCalId());
-		}
-
-		EventDateTime start = new EventDateTime();
-		if (task.getStart_date() != null) {
-			start.setDateTime(new DateTime(task.getStart_date()));
-		}
-
-		EventDateTime end = new EventDateTime();
-		if (task.getEnd_date() != null) {
-			end.setDateTime(new DateTime(task.getEnd_date()));
-
-		}
-
-		EventDateTime endMinus1Hr = new EventDateTime();
-		endMinus1Hr.setDateTime(new DateTime(new Date(task.getEnd_date().getTime() - 3600000)));
-
-		if (task.getStart_date() == null) {
-			event.setStart(endMinus1Hr);
-			event.setEnd(end);
-			hashMap.put("has_start_date", "no");
-			ExtendedProperties prop = new ExtendedProperties();
-			prop.setShared(hashMap);
-			event.setExtendedProperties(prop);
-
-		} else {
-			event.setStart(start);
-			event.setEnd(end);
-			hashMap.put("has_start_date", "yes");
-			ExtendedProperties prop = new ExtendedProperties();
-			prop.setShared(hashMap);
-			event.setExtendedProperties(prop);
-		}
-
-		return event;
-	}
-
+	
 
 }
