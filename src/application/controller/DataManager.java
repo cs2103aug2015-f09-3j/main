@@ -25,6 +25,7 @@ import application.model.Task;
 import application.utils.GoogleCalendarUtility;
 import application.utils.TokenManager;
 
+//Class to interact with other components and manage the Data Class
 public class DataManager {
 	
 	public static final Integer WRONG_LINE_NUM = -5;
@@ -194,6 +195,13 @@ public class DataManager {
 
 	//@@author  A0125980B
 
+	/**
+	 * This method takes in a task object and calls Data class to add it.
+	 * 
+	 * @param taskToAdd
+	 * @return Integer code for result of operation
+	 */
+	
 	public Integer addNewTask(Task taskToAdd) {
 		data.clearSearchList();
 		if (data.getTaskList().contains(taskToAdd)) {
@@ -204,37 +212,53 @@ public class DataManager {
 			return TASK_ADDED;
 		}
 	}
+	
+	/**
+	 * @param cmd
+	 * @return ArrayList of tasks depending on parameters in cmd
+	 */
 
 	public ArrayList<Task> listAll(Command cmd) {
 		data.clearSearchList();
 		ArrayList<Task> filteredList = new ArrayList<Task>();
-		if (cmd.getParameter().size() == 0) {
-			for (Task task : data.getTaskList()) {
-				if (!task.isDone()) {
-					filteredList.add(task);
-				}
-			}
-		} else {
-			ArrayList<Parameter> parameter = new ArrayList<Parameter>();
-			parameter = cmd.getParameter();
-			filterListByParameter(filteredList, parameter);
-		}
+		determineTasksToList(cmd, filteredList);
 		sort(filteredList);
 		return filteredList;
 	}
 
-	public ArrayList<Task> checkIfDone() {
-		data.clearSearchList();
-		ArrayList<Task> list = new ArrayList<Task>();
-		for (Task task : data.getTaskList()) {
-			if (task.isDone()) {
-				list.add(task);
-			}
+	/**
+	 * This method checks the whether any parameters are listed in cmd. If there are no
+	 * parameters, the whole list of undone tasks will be returned, otherwise the tasks will
+	 * be filtered accordingly to the parameter and returned to caller.
+	 * @param cmd
+	 * @param filteredList
+	 */
+	private void determineTasksToList(Command cmd, ArrayList<Task> filteredList) {
+		if (cmd.getParameter().size() == 0) {
+			listWithoutParameters(filteredList);
+		} else {
+			listWithParameters(cmd, filteredList);
 		}
-		return list;
 	}
 
-	private void filterListByParameter(ArrayList<Task> filteredList, ArrayList<Parameter> parameter) {
+
+	private void listWithParameters(Command cmd, ArrayList<Task> filteredList) {
+		ArrayList<Parameter> parameter = new ArrayList<Parameter>();
+		parameter = cmd.getParameter();
+		filterListByParameter(filteredList, parameter);
+	}
+
+	private void listWithoutParameters(ArrayList<Task> filteredList) {
+		for (Task task : data.getTaskList()) {
+			if (!task.isDone()) {
+				filteredList.add(task);
+			}
+		}
+	}
+	
+
+	private void filterListByParameter(ArrayList<Task> filteredList,
+			ArrayList<Parameter> parameter) {
 		for (Parameter para : parameter) {
 			switch (para.getParaType()) {
 			case Parameter.PRIORITY_ARGUMENT_TYPE:
@@ -265,7 +289,8 @@ public class DataManager {
 						}
 					} else {
 						if (task.getStart_date() != null) {
-							if (task.getStart_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
+							if (task.getStart_date().equals(ParserFacade.
+									getInstance().parseDate(para.getParaArg()))) {
 								if (!filteredList.contains(task)) {
 									filteredList.add(task);
 								}
@@ -284,7 +309,8 @@ public class DataManager {
 						}
 					} else {
 						if (task.isNonFloatingTask()) {
-							if (task.getEnd_date().equals(ParserFacade.getInstance().parseDate(para.getParaArg()))) {
+							if (task.getEnd_date().equals(ParserFacade.
+									getInstance().parseDate(para.getParaArg()))) {
 								if (!filteredList.contains(task)) {
 									filteredList.add(task);
 								}
@@ -306,6 +332,36 @@ public class DataManager {
 		}
 	}
 
+	
+	/**
+	 * @param filteredList
+	 * @return ArrayList of done tasks
+	 */
+
+	public ArrayList<Task> checkIfDone() {
+		data.clearSearchList();
+		ArrayList<Task> list = new ArrayList<Task>();
+		addDoneTasksToList(list);
+		return list;
+	}
+
+	
+	private void addDoneTasksToList(ArrayList<Task> list) {
+		for (Task task : data.getTaskList()) {
+			if (task.isDone()) {
+				list.add(task);
+			}
+		}
+	}
+
+	/**
+	 * This method searches the list of tasks for matches with the task name passed in by 
+	 * the cmd object. If the number of matches is 0, and error code will be returned. If the 
+	 * number of matches is 1, data will be called to remove the matching task. If there are
+	 * more than 1 matches, the list of matching task will be passed to CommandManager.
+	 * @param cmd
+	 * @return Integer code for result of operation
+	 */
 	public Integer removeTask(Command cmd) {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchTasksForMatches(cmd);
@@ -316,13 +372,7 @@ public class DataManager {
 		case 1:
 			data.removeFromData(searchList.get(0));
 			updateHistory(searchList.get(0), null, Op.DELETE);
-			if (searchList.get(0).getgCalId() != null && !searchList.get(0).getgCalId().equals("")) {
-				if (GoogleCalendarUtility.hasInternetConnection()) {
-					GoogleCalendarManagerInterface.getInstance().removeTaskFromServer(searchList.get(0).getgCalId());
-				} else {
-					GoogleCalendarUtility.addToOfflineDeletionRecords(searchList.get(0).getgCalId());
-				}
-			}
+			syncRemovalOfTask(searchList.get(0));
 			return TASK_REMOVED;
 		default:
 			CommandManager.setMultipleMatchList(searchList);
@@ -330,26 +380,53 @@ public class DataManager {
 		}
 
 	}
-
+	
+	/**
+	 * This method facilitates the removal of task by their line number. From the 
+	 * removeTask(cmd) method, if there are multiple matching tasks of similar names, the 
+	 * matching task will be returned to caller. The line number of the task is passed into this 
+	 * method for removal by line number.
+	 * @param lineNum
+	 * @return Integer code for result of operation
+	 */
 	public Integer removeTask(int lineNum) {
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
 		}
 		data.removeFromData(data.getSearchList().get(lineNum - 1));
 		updateHistory(data.getSearchList().get(lineNum - 1), null, Op.DELETE);
-		if (data.getSearchList().get(lineNum - 1).getgCalId() != null
-				&& !data.getSearchList().get(lineNum - 1).getgCalId().equals("")) {
-			if (GoogleCalendarUtility.hasInternetConnection()) {
-				GoogleCalendarManagerInterface.getInstance()
-						.removeTaskFromServer(data.getSearchList().get(lineNum - 1).getgCalId());
-			} else {
-				GoogleCalendarUtility.addToOfflineDeletionRecords(data.getSearchList().get(lineNum - 1).getgCalId());
-			}
-		}
+		syncRemovalOfTask(data.getSearchList().get(lineNum -1));
 		return TASK_REMOVED;
 	}
-
+	
+	/**
+	 * This method removes the task if it has a valid gCalId. If Internet connection
+	 * is available, it will be removed straight from google's server. Otherwise it will be
+	 * stored in an offline record.
+	 * @param Task
+	 */
+	private void syncRemovalOfTask(Task task) {
+		if (task.getgCalId() != null && !task.getgCalId().equals("")) {
+			if (GoogleCalendarUtility.hasInternetConnection()) {
+				GoogleCalendarManagerInterface.getInstance().
+				removeTaskFromServer(task.getgCalId());
+			} else {
+				GoogleCalendarUtility.addToOfflineDeletionRecords(task.getgCalId());
+			}
+		}
+	}
+		
+	/**
+	 * This method searches the list of tasks for matches with the name passed in by the cmd
+	 * object. If the number of matches is 0, an error code will be returned. If the number
+	 * of matches is 1, the matching task will be edited according to the parameters passed in by
+	 * the cmd object. If there are multiple matches, the list of matching tasks will be passed
+	 * to CommandManager.
+	 * @param cmd
+	 * @return Integer code for result of operation
+	 */
 	public Integer editTask(Command cmd) {
+		assert cmd.getParameter().size() != 0; //assert that there are parameters to edit
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchTasksForMatches(cmd);
 		data.saveToSearchList(searchList);
@@ -366,7 +443,8 @@ public class DataManager {
 			}
 			newTask = searchList.get(0);
 			updateHistory(newTask, prevTask, Op.EDIT);
-			taskList.get(taskList.indexOf(searchList.get(0))).setLastLocalUpdate(System.currentTimeMillis());
+			taskList.get(taskList.indexOf(searchList.get(0))).
+				setLastLocalUpdate(System.currentTimeMillis());
 			data.updateStorage();
 			return TASK_UPDATED;
 		default:
@@ -375,13 +453,23 @@ public class DataManager {
 		}
 	}
 
+	/**
+	 * This method facilitates the editing of tasks by lineNum. This method can be called after
+	 * calling the editTask(cmd) method and getting a list of matching tasks. The line number of
+	 * the task can be passed into this method for editing.
+	 * @param listNum
+	 * @return Integer code for result of operation
+	 */
 	public Integer editTask(int lineNum) {
+		
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
 		}
+		
 		ArrayList<Task> taskList = data.getTaskList();
 		ArrayList<Task> searchList = data.getSearchList();
 		Task newTask, prevTask;
+		
 		prevTask = copyTask(searchList.get(lineNum - 1));
 		for (Parameter para : paraList) {
 			editTaskByParameter(lineNum, taskList, searchList, para);
@@ -414,7 +502,15 @@ public class DataManager {
 			break;
 		}
 	}
-
+	
+	/**
+	 * This method searches the list of tasks for matches with the name passed in by the cmd
+	 * object. If the number of matches is 0, an error code will be returned. If the number
+	 * of matches is 1, the matching task will be set to done. If there are multiple matches, 
+	 * the list of matching tasks will be passed to CommandManager.
+	 * @param cmd
+	 * @return Integer code for result of operation
+	 */
 	public Integer setDoneToTask(Command cmd) {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchUndoneTasksForMatches(cmd);
@@ -434,7 +530,14 @@ public class DataManager {
 			return MULTIPLE_MATCHES;
 		}
 	}
-
+	
+	/**
+	 * This method facilitates the setting done of tasks by lineNum. This method can be called 
+	 * after calling the setDoneToTask(cmd) method and getting a list of matching tasks. 
+	 * The line number of the task can be passed into this method for setting done.
+	 * @param listNum
+	 * @return Integer code for result of operation
+	 */
 	public Integer setDoneToTask(int lineNum) {
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
@@ -449,7 +552,10 @@ public class DataManager {
 		data.clearSearchList();
 		return data.changeFileLocation(cmd.getTextContent());
 	}
-
+	
+	/**
+	 * This method retrieves the most recent change to data and undo it.
+	 */
 	public Integer undoPrevCommand() {
 		data.clearSearchList();
 		if (history.empty()) {
@@ -461,12 +567,29 @@ public class DataManager {
 			return PREV_COMMAND_UNDONE;
 		}
 	}
-
-	@SuppressWarnings("deprecation")
-	public ArrayList<Task> listToday(Command cmd) {
+	
+	
+	/**
+	 * @return the list of tasks that have their end date on the current date.
+	 * 
+	 */
+	public ArrayList<Task> listToday() {
 		Date today = new Date();
 		ArrayList<Task> tasksDueToday = new ArrayList<Task>();
 
+		checkTasksDateIfToday(today, tasksDueToday);
+		return tasksDueToday;
+	}
+
+	/**
+	 * This method checks the date object in each tasks in the task list and if a task matches
+	 * the current date, it will be added to a list and the list will be returned. 
+	 * The maximum number of tasks in the list is 10.
+	 * @param today
+	 * @param tasksDueToday
+	 */
+	@SuppressWarnings("deprecation")
+	private void checkTasksDateIfToday(Date today, ArrayList<Task> tasksDueToday) {
 		for (Task task : data.getTaskList()) {
 			if (!task.isDone()) {
 				if (task.isNonFloatingTask()) {
@@ -483,13 +606,19 @@ public class DataManager {
 				}
 			}
 		}
-		return tasksDueToday;
 	}
 
 	public ArrayList<Task> searchTasks(Command cmd) {
 		return searchTasksForMatches(cmd);
 	}
 
+	/**
+	 * This method facilitates the setting undone of tasks by lineNum. This method can be called 
+	 * after calling the setUndoneToTask(cmd) method and getting a list of matching tasks. 
+	 * The line number of the task can be passed into this method for setting undone.
+	 * @param listNum
+	 * @return Integer code for result of operation
+	 */
 	public int setUndoneToTask(int lineNum) {
 		if (lineNum > data.getSearchList().size()) {
 			return WRONG_LINE_NUM;
@@ -499,7 +628,15 @@ public class DataManager {
 		data.updateStorage();
 		return TASK_UNDONE;
 	}
-
+	
+	/**
+	 * This method searches the list of tasks for matches with the name passed in by the cmd
+	 * object. If the number of matches is 0, an error code will be returned. If the number
+	 * of matches is 1, the matching task will be set to undone. If there are multiple matches, 
+	 * the list of matching tasks will be passed to CommandManager.
+	 * @param cmd
+	 * @return Integer code for result of operation
+	 */
 	public int setUndoneToTask(Command cmd) {
 		data.clearSearchList();
 		ArrayList<Task> searchList = searchDoneTasksForMatches(cmd);
@@ -519,7 +656,12 @@ public class DataManager {
 			return MULTIPLE_MATCHES;
 		}
 	}
-
+	
+	/**
+	 * This method copies the content of task1 into a new Task object and returns it.
+	 * @param task1
+	 * @return new Task object with same attributes as task1
+	 */
 	private Task copyTask(Task task1) {
 		Task task2 = new Task();
 		task2 = new Task(task1.getTextContent());
@@ -534,13 +676,24 @@ public class DataManager {
 		task2.setLastLocalUpdate(task1.getLastLocalUpdate());
 		return task2;
 	}
-
+	
+	
+	/**
+	 * This method pushes the latest update to data  into a Stack of Operation objects. The 
+	 * maximum size of the stack is 10. task1 is the task being operated on. task2 is previous
+	 * task before update. oper is the type of operation.
+	 * @param task1, task2, oper
+	 */
 	private void updateHistory(Task task1, Task task2, Op oper) {
 		history.push(new Operation(task1, task2, oper));
 		histCount++;
 		limitHistory();
 	}
 
+	
+	/**
+	 * This method limits the History stack to a size of 10.
+	 */
 	private void limitHistory() {
 		Stack<Operation> tempStack = new Stack<Operation>();
 		if (histCount > DataManager.MAX_HISTORY) {
@@ -593,6 +746,7 @@ public class DataManager {
 	}
 }
 
+//Class holding the Data to be modified
 class Data {
 	private ArrayList<Task> taskList;
 	private ArrayList<Task> searchList;
@@ -684,9 +838,13 @@ class Data {
 
 }
 
+//Class to interface with LocalStorage class
 class StorageInterface {
 	private LocalStorage file;
 	private File filePath;
+	
+	public static final String	PATH_ERROR = "Path error";
+	public static final String	RESET_TO_DEFAULT_PATH = "Resetting to default directory";
 	public static final String FILE_PATH_TXT = "filePath.txt";
 	public static String DEFAULT_FILE = "toDoo.txt";
 
@@ -727,11 +885,12 @@ class StorageInterface {
 		String oldPath = null;
 		int success = 0;
 		try {
+			// read and store the old path before clearing it
 			br = new BufferedReader(new FileReader(filePath));
 			oldPath = br.readLine();
 			wr = new BufferedWriter(new FileWriter(filePath, false));
 			wr.close();
-			wr = new BufferedWriter(new FileWriter(filePath, true));
+			wr = new BufferedWriter(new FileWriter(filePath));
 			wr.append(newPath);
 			br.close();
 			wr.close();
@@ -744,12 +903,13 @@ class StorageInterface {
 		}
 		if (success == LocalStorage.WRONG_DIRECTORY) {
 			try {
+				// if new path is wrong directory, reset filePath to old path
 				if (oldPath == null) {
 					oldPath = DEFAULT_FILE;
 				}
 				wr = new BufferedWriter(new FileWriter(filePath, false));
 				wr.close();
-				wr = new BufferedWriter(new FileWriter(filePath, true));
+				wr = new BufferedWriter(new FileWriter(filePath));
 				wr.append(oldPath);
 				wr.close();
 				return LocalStorage.WRONG_DIRECTORY;
@@ -767,39 +927,49 @@ class StorageInterface {
 		BufferedReader br = null;
 		BufferedWriter wr = null;
 		boolean success = true;
-		File tempfile;
 		try {
 			// determine storage path from filePath.txt in project directory
 			br = new BufferedReader(new FileReader(filePath));
-			wr = new BufferedWriter(new FileWriter(filePath, true));
+
 			text = br.readLine();
 			if (text == null) {
-				// if filePath.txt is empty, write the default storage path into
-				// it
+				// if filePath.txt is empty, write the default storage path into it
+				wr = new BufferedWriter(new FileWriter(filePath));
 				wr.append(DEFAULT_FILE);
 				text = DEFAULT_FILE;
 				wr.close();
 				br.close();
 			} else {
 				// test if the path stored in filePath.txt is valid
-				tempfile = new File(text);
-				tempfile.createNewFile();
+				success = new File(text).exists();
+				br.close();
 			}
 		} catch (IOException ex) {
 			success = false;
 		}
 		if (success == false) {
-			try {
-				wr = new BufferedWriter(new FileWriter(filePath, false));
-				wr.close();
-				wr = new BufferedWriter(new FileWriter(filePath, true));
-				wr.append(DEFAULT_FILE);
-				wr.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				text = DEFAULT_FILE;
-			}
+			LogManager.getInstance().log(PATH_ERROR,RESET_TO_DEFAULT_PATH);
+			text = resetFilePathToDefault();
+		}
+		return text;
+	}
+
+	/**
+	 * @return: a string containing the default file path
+	 */
+	private String resetFilePathToDefault() {
+		String text;
+		BufferedWriter wr;
+		try {
+			wr = new BufferedWriter(new FileWriter(filePath, false));
+			wr.close();
+			wr = new BufferedWriter(new FileWriter(filePath));
+			wr.append(DEFAULT_FILE);
+			wr.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			text = DEFAULT_FILE;
 		}
 		return text;
 	}
@@ -822,10 +992,13 @@ class Operation {
 		switch (op) {
 		case ADD:
 			data.removeFromData(task);
-			if (GoogleCalendarUtility.hasInternetConnection()) {
-				GoogleCalendarManagerInterface.getInstance().removeTaskFromServer(task.getgCalId());
-			} else {
+			if(task.getgCalId()!= null && !task.getgCalId().equals("")){	
+				if (GoogleCalendarUtility.hasInternetConnection()) {
+					GoogleCalendarManagerInterface.getInstance().
+						removeTaskFromServer(task.getgCalId());
+				} else {
 				GoogleCalendarUtility.addToOfflineDeletionRecords(task.getgCalId());
+				}	
 			}
 			break;
 		case DELETE:
@@ -845,8 +1018,11 @@ class Operation {
 			temp.setStart_date(prevTask.getStart_date());
 			temp.setEnd_date(prevTask.getEnd_date());
 			temp.setPlace_argument(prevTask.getPlace_argument());
-			if(GoogleCalendarUtility.hasInternetConnection()){
-			GoogleCalendarManager.getInstance().updateGCalEvent(GoogleCalendarUtility.mapTaskToEvent(prevTask));
+			if(task.getgCalId()!= null && !task.getgCalId().equals("")){
+				if(GoogleCalendarUtility.hasInternetConnection()){
+					GoogleCalendarManager.getInstance().
+						updateGCalEvent(GoogleCalendarUtility.mapTaskToEvent(prevTask));
+				}
 			}
 			break;
 		case SETDONE:

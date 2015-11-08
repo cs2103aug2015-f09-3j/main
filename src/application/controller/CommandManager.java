@@ -142,7 +142,7 @@ public class CommandManager {
 	 * @return : today's tasks to be show to the user
 	 */
 	private static String executeTodayCommand(Command cmd) {
-		ArrayList<Task> listToday = DataManager.getInstance().listToday(cmd);
+		ArrayList<Task> listToday = DataManager.getInstance().listToday();
 		String today = TasksFormatter.format(listToday, TasksFormatter.TIMELINE_VIEW_TYPE);
 		return today;
 	}
