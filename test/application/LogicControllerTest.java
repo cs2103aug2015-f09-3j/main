@@ -161,8 +161,7 @@ public class LogicControllerTest {
 
 	@Test
 	public void testUndoTask() throws InvalidCommandException {
-		LogicController.onCommandProcess("add CS1010 homework");
-		LogicController.onCommandProcess("delete CS1010 homework");
+		LogicController.onCommandProcess("add CS1010 project");
 		String undo = "undo";
 		String result = LogicController.onCommandProcess(undo);
 		String expectedResult = "Previous command undone\n";
