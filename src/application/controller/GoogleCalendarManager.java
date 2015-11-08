@@ -1,6 +1,6 @@
 package application.controller;
 
-//@@author  A0125975U
+//@@author  A0125975U-reused
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,33 +86,6 @@ public class GoogleCalendarManager {
 		}
 	}
 	
-	public com.google.api.services.calendar.Calendar getService(){
-		return service;
-	}
-
-
-	public static GoogleCalendarManager getInstance() {
-		if (instance == null) {
-			instance = new GoogleCalendarManager();
-		}
-
-		return instance;
-	}
-	
-	public void performSync() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				performUpSync();
-				performDownSync();
-				syncOfflineDeletionRecords();
-			}
-		}).start();
-	}
-
-	
-	
-	
 	/**
 	 * Creates an authorized Credential object.
 	 *
@@ -143,8 +116,64 @@ public class GoogleCalendarManager {
 		return new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
+	
+	/**
+	 * This function retrieve Event from the Events instance.
+	 * 
+	 * @param events
+	 */
+	private List<Event> retrieveEvents(Events events) {
+		List<Event> items;
+		items = events.getItems();
+		if (items.size() == 0) {
+			System.out.println("No new event, Local is already the latest.");
+		} else {
+			System.out.println("New/Update events found.");
+			for (Event event : items) {
+				try {
+					DateTime start = event.getStart().getDateTime();
+					if (start == null) {
+						start = event.getStart().getDate();
+					}
+					System.out.printf("%s (%s)\n", event.getSummary(), start);
+				} catch (Exception e) {
+					LogManager.getInstance().log(this.getClass().getName(), e.toString());
+				}
+			}
+		}
 
-	// @@author  A0125975U
+		return items;
+	}
+
+	
+	
+	//@@author A0125975U
+	
+	public com.google.api.services.calendar.Calendar getService(){
+		return service;
+	}
+
+
+	public static GoogleCalendarManager getInstance() {
+		if (instance == null) {
+			instance = new GoogleCalendarManager();
+		}
+
+		return instance;
+	}
+	
+	public void performSync() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				performUpSync();
+				performDownSync();
+				syncOfflineDeletionRecords();
+			}
+		}).start();
+	}
+
+	
 
 	private GoogleCalendarManager() {
 		try {
@@ -297,33 +326,7 @@ public class GoogleCalendarManager {
 		}
 	}
 
-	/**
-	 * This function retrieve Event from the Events instance.
-	 * 
-	 * @param events
-	 */
-	private List<Event> retrieveEvents(Events events) {
-		List<Event> items;
-		items = events.getItems();
-		if (items.size() == 0) {
-			System.out.println("No new event, Local is already the latest.");
-		} else {
-			System.out.println("New/Update events found.");
-			for (Event event : items) {
-				try {
-					DateTime start = event.getStart().getDateTime();
-					if (start == null) {
-						start = event.getStart().getDate();
-					}
-					System.out.printf("%s (%s)\n", event.getSummary(), start);
-				} catch (Exception e) {
-					LogManager.getInstance().log(this.getClass().getName(), e.toString());
-				}
-			}
-		}
-
-		return items;
-	}
+	
 
 	
 	/**

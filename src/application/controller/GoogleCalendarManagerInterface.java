@@ -1,5 +1,5 @@
 package application.controller;
-
+//@@author A0125975U
 import java.io.IOException;
 
 import com.google.api.services.calendar.model.Event;
@@ -11,7 +11,7 @@ public class GoogleCalendarManagerInterface {
 	
 	private static GoogleCalendarManagerInterface instance;
 	
-	// @@Google
+	
 	com.google.api.services.calendar.Calendar service;
 	
 	private GoogleCalendarManagerInterface(){

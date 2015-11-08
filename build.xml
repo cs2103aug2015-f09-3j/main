@@ -1,5 +1,5 @@
 
-<!-- this code is adapted from this project https://github.com/pavlobaron/travis-java-playground </!-->
+<!-- @@author A0125975U-reused this code is adapted from this project https://github.com/pavlobaron/travis-java-playground </!-->
 <project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<description>
         For Travis CI.
