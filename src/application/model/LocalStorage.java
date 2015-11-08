@@ -1,5 +1,5 @@
 package application.model;
-//@@author  A0093966L
+//@@author A0093966L
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

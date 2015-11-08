@@ -1,5 +1,6 @@
 package resources;
-//@@author   A0093966L
+//@@author Google Developer reused by A0093966L
+/* Extract from Google Calendar API from https://developers.google.com/google-apps/calendar/quickstart/java */
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
