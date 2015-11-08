@@ -1,4 +1,5 @@
 package application.utils;
+
 //@@author A0125975U-reused
 import java.io.BufferedReader;
 //@@author  A0125975U
@@ -37,11 +38,13 @@ public class GoogleCalendarUtility {
 		}
 
 	}
-	
-	//@@author A0125975U
+
+	// @@author A0125975U
 	/**
 	 * This function maps Task to Event Object.
-	 * @param task : toDoo task model.
+	 * 
+	 * @param task
+	 *            : toDoo task model.
 	 * @return Google Calendar Event object.
 	 */
 	public static Event mapTaskToEvent(Task task) {
@@ -88,7 +91,6 @@ public class GoogleCalendarUtility {
 		return event;
 	}
 
-	
 	/**
 	 * This function maps Event Object to Task Object
 	 * 
@@ -105,7 +107,7 @@ public class GoogleCalendarUtility {
 			tmpTask.setType_argument(event.getExtendedProperties().getShared().get("type"));
 		}
 
-		tmpTask.setPriority_argument(event.getDescription()); 
+		tmpTask.setPriority_argument(event.getDescription());
 
 		tmpTask.setPlace_argument(event.getLocation());
 		tmpTask.setLastServerUpdate(event.getUpdated().getValue());
@@ -146,7 +148,6 @@ public class GoogleCalendarUtility {
 		return tmpTask;
 	}
 
-	
 	/**
 	 * This function take in a arraylist of records, and store the data into the
 	 * file to the records.
@@ -182,33 +183,39 @@ public class GoogleCalendarUtility {
 
 	/**
 	 * This function will add the eventId to its deletion records.
-	 * @param eventId : Google Calendar Event Id.
+	 * 
+	 * @param eventId
+	 *            : Google Calendar Event Id.
 	 */
 	public static void addToOfflineDeletionRecords(String eventId) {
+		if (eventId != null) {
+			try {
 
-		try {
+				File file = new File(GoogleCalendarManager.DELETION_FILE_NAME);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
 
-			File file = new File(GoogleCalendarManager.DELETION_FILE_NAME);
-			if (!file.exists()) {
-				file.createNewFile();
+				FileWriter fileWritter = new FileWriter(file.getName(), true);
+				BufferedWriter bw = new BufferedWriter(fileWritter);
+				bw.write(eventId);
+				bw.newLine();
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+
 			}
-
-			FileWriter fileWritter = new FileWriter(file.getName(), true);
-			BufferedWriter bw = new BufferedWriter(fileWritter);
-			bw.write(eventId);
-			bw.newLine();
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e){
-			
 		}
 
 	}
 
-	//@@author A0125975U-reused
+	// @@author A0125975U-reused
 	/**
-	 * Disclaimer : this method is from : http://www.journaldev.com/833/how-to-delete-a-directoryfolder-in-java-recursion
+	 * Disclaimer : this method is from :
+	 * http://www.journaldev.com/833/how-to-delete-a-directoryfolder-in-java-
+	 * recursion
+	 * 
 	 * @param file
 	 */
 	public static void recursiveDelete(File file) {

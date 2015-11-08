@@ -1,4 +1,5 @@
 package application.controller;
+
 //@@author A0125975U
 import java.io.IOException;
 
@@ -8,24 +9,23 @@ import application.model.Task;
 import application.utils.GoogleCalendarUtility;
 
 public class GoogleCalendarManagerInterface {
-	
+
 	private static GoogleCalendarManagerInterface instance;
-	
-	
+
 	com.google.api.services.calendar.Calendar service;
-	
-	private GoogleCalendarManagerInterface(){
+
+	private GoogleCalendarManagerInterface() {
 		service = GoogleCalendarManager.getInstance().getService();
 	}
-	
-	public static GoogleCalendarManagerInterface getInstance(){
-		if(instance == null){
+
+	public static GoogleCalendarManagerInterface getInstance() {
+		if (instance == null) {
 			instance = new GoogleCalendarManagerInterface();
 		}
-		
+
 		return instance;
 	}
-	
+
 	/**
 	 * Pre-Condition: Internet is up and quickAddMsg is not null. This function
 	 * will call the google quickadd api and return the event created. If
@@ -49,7 +49,7 @@ public class GoogleCalendarManagerInterface {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * remove events from Gooogle Calendar by eventId
 	 * 
@@ -57,20 +57,21 @@ public class GoogleCalendarManagerInterface {
 	 *            : Google Calendar Event Id
 	 */
 	public void removeTaskFromServer(String eventId) {
-		new Thread(new Runnable() {
+		if (eventId != null) {
+			new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					service.events().delete("primary", eventId).execute();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (NullPointerException e){
-					
+				@Override
+				public void run() {
+					try {
+						service.events().delete("primary", eventId).execute();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (NullPointerException e) {
+
+					}
 				}
-			}
-		}).start();
-	} 
-
+			}).start();
+		}
+	}
 
 }
