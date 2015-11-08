@@ -15,9 +15,6 @@ public class LogicControllerTest {
 	LocalStorage file;
 	String curFilePath;
 
-
-
-
 	public LogicControllerTest() {
 		super();
 		DataManager.getInstance().switchToTestingMode("testingLogicController.txt");
@@ -159,7 +156,6 @@ public class LogicControllerTest {
 	}
 
 
-	@Test
 	public void testUndoTask() throws InvalidCommandException {
 		LogicController.onCommandProcess("add CS1010 project");
 		String undo = "undo";
