@@ -65,6 +65,8 @@ public class GoogleCalendarManagerInterface {
 					service.events().delete("primary", eventId).execute();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e){
+					
 				}
 			}
 		}).start();

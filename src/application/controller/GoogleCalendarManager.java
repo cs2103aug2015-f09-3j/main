@@ -42,8 +42,8 @@ public class GoogleCalendarManager {
 	/** Default File name for deletion offline record **/
 	public static final String DELETION_FILE_NAME = "deletionCache.txt";
 
-	/** Application name. */ 
-	private static final String APPLICATION_NAME = "toDoo"; 
+	/** Application name. */
+	private static final String APPLICATION_NAME = "toDoo";
 
 	/** Directory to store user credentials for this application. */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"),
@@ -75,7 +75,7 @@ public class GoogleCalendarManager {
 			System.exit(1);
 		}
 	}
-	
+
 	/**
 	 * Creates an authorized Credential object.
 	 *
@@ -106,7 +106,7 @@ public class GoogleCalendarManager {
 		return new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
 	}
-	
+
 	/**
 	 * This function retrieve Event from the Events instance.
 	 * 
@@ -135,14 +135,11 @@ public class GoogleCalendarManager {
 		return items;
 	}
 
-	
-	
-	//@@author A0125975U
-	
-	public com.google.api.services.calendar.Calendar getService(){
+	// @@author A0125975U
+
+	public com.google.api.services.calendar.Calendar getService() {
 		return service;
 	}
-
 
 	public static GoogleCalendarManager getInstance() {
 		if (instance == null) {
@@ -151,7 +148,7 @@ public class GoogleCalendarManager {
 
 		return instance;
 	}
-	
+
 	public void performSync() {
 		new Thread(new Runnable() {
 			@Override
@@ -163,8 +160,6 @@ public class GoogleCalendarManager {
 		}).start();
 	}
 
-	
-
 	private GoogleCalendarManager() {
 		try {
 			service = getCalendarService();
@@ -174,7 +169,6 @@ public class GoogleCalendarManager {
 
 	}
 
-	
 	/**
 	 * This function syncs records of deletion that happen during offline mode.
 	 * It clears its cache if successful.
@@ -216,8 +210,6 @@ public class GoogleCalendarManager {
 
 		return records;
 	}
-
-	
 
 	/**
 	 * This function retrieves Event from Google Calendar API based on a
@@ -316,9 +308,6 @@ public class GoogleCalendarManager {
 		}
 	}
 
-	
-
-	
 	/**
 	 * 
 	 */
@@ -363,8 +352,6 @@ public class GoogleCalendarManager {
 		}
 	}
 
-	
-
 	/**
 	 * This function updates the Google Calendar Event.
 	 * 
@@ -372,20 +359,21 @@ public class GoogleCalendarManager {
 	 *            : Google Calendar Event
 	 */
 	public void updateGCalEvent(Event event) {
-		EventReminder[] reminderOverrides = new EventReminder[] {
-				new EventReminder().setMethod("email").setMinutes(24 * 60),
-				new EventReminder().setMethod("popup").setMinutes(10) };
-		Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
-				.setOverrides(Arrays.asList(reminderOverrides));
-		event.setReminders(reminders);
+		if (event != null) {
+			EventReminder[] reminderOverrides = new EventReminder[] {
+					new EventReminder().setMethod("email").setMinutes(24 * 60),
+					new EventReminder().setMethod("popup").setMinutes(10) };
+			Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
+					.setOverrides(Arrays.asList(reminderOverrides));
+			event.setReminders(reminders);
 
-		try {
-			service.events().update("primary", event.getId(), event).execute();
-		} catch (IOException e) {
-			LogManager.getInstance().log(this.getClass().getName(), e.toString());
+			try {
+				service.events().update("primary", event.getId(), event).execute();
+			} catch (IOException e) {
+				LogManager.getInstance().log(this.getClass().getName(), e.toString());
+			}
 		}
 	}
-
 
 	/**
 	 * This function perform sync from local to server.
@@ -420,7 +408,8 @@ public class GoogleCalendarManager {
 	}
 
 	/**
-	 * This function syncs all new task that are yet to be sync for the first time.
+	 * This function syncs all new task that are yet to be sync for the first
+	 * time.
 	 */
 	private void performNewTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfUnSyncNonFloatingTasks();
@@ -434,7 +423,7 @@ public class GoogleCalendarManager {
 					new EventReminder().setMethod("popup").setMinutes(10), };
 			Event.Reminders reminders = new Event.Reminders().setUseDefault(false)
 					.setOverrides(Arrays.asList(reminderOverrides));
-			event.setReminders(reminders); 
+			event.setReminders(reminders);
 
 			try {
 				event = service.events().insert("primary", event).execute();
@@ -447,7 +436,5 @@ public class GoogleCalendarManager {
 
 		DataManager.getInstance().updateGCalId(hashmap);
 	}
-
-	
 
 }

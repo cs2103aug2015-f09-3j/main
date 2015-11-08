@@ -200,6 +200,8 @@ public class GoogleCalendarUtility {
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e){
+			
 		}
 
 	}
