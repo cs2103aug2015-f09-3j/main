@@ -1,21 +1,13 @@
 package application.controller;
 
-//@@author  A0125975U-reused
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -32,8 +24,6 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Event.ExtendedProperties;
-import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 
@@ -381,7 +371,7 @@ public class GoogleCalendarManager {
 	 * @param event
 	 *            : Google Calendar Event
 	 */
-	private void updateGCalEvent(Event event) {
+	public void updateGCalEvent(Event event) {
 		EventReminder[] reminderOverrides = new EventReminder[] {
 				new EventReminder().setMethod("email").setMinutes(24 * 60),
 				new EventReminder().setMethod("popup").setMinutes(10) };

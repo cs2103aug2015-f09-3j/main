@@ -822,9 +822,16 @@ class Operation {
 		switch (op) {
 		case ADD:
 			data.removeFromData(task);
+			if (GoogleCalendarUtility.hasInternetConnection()) {
+				GoogleCalendarManagerInterface.getInstance().removeTaskFromServer(task.getgCalId());
+			} else {
+				GoogleCalendarUtility.addToOfflineDeletionRecords(task.getgCalId());
+			}
 			break;
 		case DELETE:
+			task.setgCalId("");
 			data.addToData(task);
+			
 			break;
 		case EDIT:
 			index = data.getTaskList().indexOf(task);
@@ -838,6 +845,9 @@ class Operation {
 			temp.setStart_date(prevTask.getStart_date());
 			temp.setEnd_date(prevTask.getEnd_date());
 			temp.setPlace_argument(prevTask.getPlace_argument());
+			if(GoogleCalendarUtility.hasInternetConnection()){
+			GoogleCalendarManager.getInstance().updateGCalEvent(GoogleCalendarUtility.mapTaskToEvent(prevTask));
+			}
 			break;
 		case SETDONE:
 			index = data.getTaskList().indexOf(task);
