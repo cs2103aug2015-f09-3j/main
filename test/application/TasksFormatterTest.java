@@ -75,10 +75,9 @@ public class TasksFormatterTest {
 		nobodinessTask.setPlace_argument("bukit panjang");
 		nobodinessTask.setType_argument("Meeting");
 		tasks.add(nobodinessTask);
-		tasks.add(nobodinessTask);
 
-		assertEquals("SCHEDULE \n \n" + "16/11 2015\n[06:00PM - 07:00PM]   NOBODINESS DUE\n"+
-				"[06:00PM - 07:00PM]   NOBODINESS DUE\n\n", TasksFormatter.format(tasks, TasksFormatter.TIMELINE_VIEW_TYPE));
+
+		assertEquals("SCHEDULE \n \n" + "16/11 2015\n07:00PM DUE:   NOBODINESS DUE    [Began on: 16/11 1935]   \n\n", TasksFormatter.format(tasks, TasksFormatter.TIMELINE_VIEW_TYPE));
 	}
 
 	@Test
