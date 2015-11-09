@@ -11,6 +11,9 @@ import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String TO_DASH = " - ";
+	private static final String CLOSE_BRACKET = "]   ";
+	private static final String OPEN_BRACKET = "[";
 	private static final String TASKS_FORMATTER_LOG = "TasksFormatter log";
 	private static final String LOCATION_HEADER = "LOCATION: ";
 	private static final String PRIORITY_HEADER = "PRIORITY: ";
@@ -191,7 +194,7 @@ public class TasksFormatter {
 			sb.append(thisDate);
 			sb.append(NEW_LINE);
 			listAllTaskOnDate(sb, df2, df3, sortedByEDate, thisDate);
-			sb.append("\n");
+			sb.append(NEW_LINE);
 		}
 		if (floating.size()>0){
 			sb.append(NEW_LINE + OUTSTANDING_TASKS_INFO);
@@ -216,7 +219,7 @@ public class TasksFormatter {
 				if (task.getStart_date()!=null){
 					String start_time = df3.format(task.getStart_date());
 					String end_time = df3.format(task.getEnd_date());
-					sb.append("[" + start_time + " - " + end_time + "]   ");
+					sb.append(OPEN_BRACKET + start_time + TO_DASH + end_time + CLOSE_BRACKET);
 					sb.append(task.getTextContent() + NEW_LINE);
 				} else {
 					String time = df3.format(task.getEnd_date());
