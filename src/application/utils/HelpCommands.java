@@ -29,10 +29,10 @@ public class HelpCommands {
 	private static final String EDIT_DESC = "Edit a task by typing in keyword, task name and parameter to change";
 	private static final String UNDO_DESC = "Undo the last command entered.";
 	private static final String CHANGE_STORAGE_LOCATION_DESC = "Change the storage location by typing in keyword followed by new location.";
-	private static final String LIST_TO_NOTE = "Type \"done\" to see tasks that are done. By default, list views all undone tasks.";
+	private static final String LIST_TO_NOTE = "Type \"done\" to see tasks that are done. By default, list views undone tasks.";
 	private static final String LIST_DESC = "To see all tasks that are still undone.";
-	private static final String DELETE_TASK_DESC = "Delete a task by typing keyword followed by the task to delete.";
-	private static final String ADD_TASK_DESC = "Add a task by typing in keyword followed by a new task with optional parameters.";
+	private static final String DELETE_TASK_DESC = "Delete a task by typing \"delete\" followed by the task to delete.";
+	private static final String ADD_TASK_DESC = "Add a task by typing in \"add\" followed by task name with optional parameters.";
 	private static final String GOOGLE_ADD_TASK_DESC = "Add a task directly to Google Calendar with optional parameters";
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = "\n";
@@ -74,7 +74,7 @@ public class HelpCommands {
 		sb.append(NEW_LINE);
 		sb.append(String.format(LIST_FORMAT, count++, "detail", DETAIL_VIEW_INST));
 		sb.append(NEW_LINE);
-		sb.append(String.format(LIST_FORMAT, count++, "timeline", TIMELINE_VIEW_INST));
+		sb.append(String.format(LIST_FORMAT, count++, "schedule", TIMELINE_VIEW_INST));
 		sb.append(NEW_LINE);
 		sb.append(String.format(LIST_FORMAT, count++, "place", PLACE_VIEW_INST));
 		sb.append(NEW_LINE);
