@@ -79,7 +79,8 @@ public class Main extends Application {
 	private void createAndShowGUI() {
 		// Check the SystemTray support
 		if (!SystemTray.isSupported()) {
-			System.out.println("SystemTray is not supported");
+			LogManager.getInstance().log(this.getClass().getName(), "SystemTray is not supported");
+		
 			return;
 		}
 		final PopupMenu popup = new PopupMenu();
@@ -95,7 +96,8 @@ public class Main extends Application {
 		try {
 			tray.add(trayIcon);
 		} catch (AWTException e) {
-			System.out.println("TrayIcon could not be added.");
+			LogManager.getInstance().log(this.getClass().getName(), "TrayIcon could not be added.");
+			
 			return;
 		}
 

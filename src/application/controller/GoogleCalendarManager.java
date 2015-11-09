@@ -43,7 +43,7 @@ public class GoogleCalendarManager {
 	public static final String DELETION_FILE_NAME = "deletionCache.txt";
 
 	/** Application name. */
-	private static final String APPLICATION_NAME = "toDoo";
+	private static final String APPLICATION_NAME = "toDoo"; 
 
 	/** Directory to store user credentials for this application. */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"),
@@ -91,7 +91,7 @@ public class GoogleCalendarManager {
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
 				clientSecrets, SCOPES).setDataStoreFactory(DATA_STORE_FACTORY).setAccessType("offline").build();
 		Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-		System.out.println("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+		
 		return credential;
 	}
 
@@ -116,16 +116,16 @@ public class GoogleCalendarManager {
 		List<Event> items;
 		items = events.getItems();
 		if (items.size() == 0) {
-			System.out.println("No new event, Local is already the latest.");
+			
 		} else {
-			System.out.println("New/Update events found.");
+			
 			for (Event event : items) {
 				try {
 					DateTime start = event.getStart().getDateTime();
 					if (start == null) {
 						start = event.getStart().getDate();
 					}
-					System.out.printf("%s (%s)\n", event.getSummary(), start);
+					
 				} catch (Exception e) {
 					LogManager.getInstance().log(this.getClass().getName(), e.toString());
 				}
@@ -297,7 +297,7 @@ public class GoogleCalendarManager {
 	 * This function renews the account credential.
 	 */
 	private void renewAccountCredential() {
-		System.out.println("Renewing");
+		
 		TokenManager.getInstance().clearToken();
 		GoogleCalendarUtility.recursiveDelete(DATA_STORE_DIR);
 		try {
@@ -414,7 +414,7 @@ public class GoogleCalendarManager {
 	private void performNewTaskSync() {
 		ArrayList<Task> lists = DataManager.getInstance().getListOfUnSyncNonFloatingTasks();
 		HashMap<Task, String> hashmap = new HashMap<Task, String>();
-		for (Task task : lists) {
+		for (Task task : lists) { 
 
 			Event event = GoogleCalendarUtility.mapTaskToEvent(task);
 
