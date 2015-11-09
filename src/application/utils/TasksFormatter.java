@@ -24,6 +24,7 @@ public class TasksFormatter {
 	private static final String NEW_LINE = "\n";
 	private static final String TIMELINE_INST = "SCHEDULE \n \n";
 	private static final String NOT_APPLICABLE = "NOT APPLICABLE.";
+	private static final String BEGIN_ON = "Began on: ";
 	public static final int PLAIN_VIEW_TYPE = 1;
 	public static final int DETAIL_VIEW_TYPE = 2;
 	public static final int TIMELINE_VIEW_TYPE = 3;
@@ -51,6 +52,7 @@ public class TasksFormatter {
 
 	private static final String DETAIL_VIEW_HEADER = "    " + String.format(OUTPUT_FORMAT_HEADER, "Description", "Start Date", "End Date", "Location", "Type", "Priority");
 	private static final String EMPTY_STRING = "";
+
 
 
 	/**
@@ -217,10 +219,17 @@ public class TasksFormatter {
 		for (Task task:sortedByEDate){
 			if (thisDate.equals(df2.format(task.getEnd_date()))){
 				if (task.getStart_date()!=null){
-					String start_time = df3.format(task.getStart_date());
-					String end_time = df3.format(task.getEnd_date());
-					sb.append(OPEN_BRACKET + start_time + TO_DASH + end_time + CLOSE_BRACKET);
-					sb.append(task.getTextContent() + NEW_LINE);
+					if (isSameEdate(task.getStart_date(), task.getEnd_date())){
+						String start_time = df3.format(task.getStart_date());
+						String end_time = df3.format(task.getEnd_date());
+						sb.append(OPEN_BRACKET + start_time + TO_DASH + end_time + CLOSE_BRACKET);
+						sb.append(task.getTextContent() + NEW_LINE);
+					} else {
+						String end_time = df3.format(task.getEnd_date());
+						sb.append(end_time+DUE);
+						sb.append(task.getTextContent() + "    " + OPEN_BRACKET + BEGIN_ON + df2.format(task.getStart_date())
+								+ CLOSE_BRACKET + NEW_LINE);
+					}
 				} else {
 					String time = df3.format(task.getEnd_date());
 					sb.append(time+DUE);
