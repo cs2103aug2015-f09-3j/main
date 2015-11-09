@@ -1,5 +1,6 @@
-package resources;
-//@@author A0093966L-reused
+# A0093966Lreused
+###### resources\CalendarQuickstart.java
+``` java
 /* Extract from Google Calendar API from https://developers.google.com/google-apps/calendar/quickstart/java */
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,3 +126,4 @@ public class CalendarQuickstart {
         }
     }
 }
+```
