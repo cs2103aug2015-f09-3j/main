@@ -11,6 +11,9 @@ import application.model.Task;
 
 public class TasksFormatter {
 
+	private static final String TO_DASH = " - ";
+	private static final String CLOSE_BRACKET = "]";
+	private static final String OPEN_BRACKET = "[";
 	private static final String TASKS_FORMATTER_LOG = "TasksFormatter log";
 	private static final String LOCATION_HEADER = "LOCATION: ";
 	private static final String PRIORITY_HEADER = "PRIORITY: ";
@@ -59,9 +62,6 @@ public class TasksFormatter {
 	 */
 	public static String format(ArrayList<Task> lists, int typeOfFormatting) {
 			StringBuilder sb = new StringBuilder();
-			DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
-			DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
-			DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
 		try {
 			switch (typeOfFormatting) {
 
@@ -70,11 +70,11 @@ public class TasksFormatter {
 				break;
 
 			case DETAIL_VIEW_TYPE:
-				showDetailView(lists, sb, df1);
+				showDetailView(lists, sb);
 				break;
 
 			case TIMELINE_VIEW_TYPE:
-				showTimelineView(lists, sb, df2, df3);
+				showTimelineView(lists, sb);
 				break;
 
 			case TYPE_VIEW_TYPE:
@@ -173,7 +173,7 @@ public class TasksFormatter {
 	}
 
 	//return a string of tasks by its date/time
-	private static void showTimelineView(ArrayList<Task> lists, StringBuilder sb, DateFormat df2, DateFormat df3) {
+	private static void showTimelineView(ArrayList<Task> lists, StringBuilder sb) {
 		sb.append(TIMELINE_INST);
 		ArrayList<Task> sortedByEDate = new ArrayList<Task>();
 		ArrayList<Task> floating = new ArrayList<Task>();
@@ -187,10 +187,11 @@ public class TasksFormatter {
 		ArrayList<Date> allDates = new ArrayList<Date>();
 		getAllPossibleEDates(sortedByEDate, allDates);
 		for (Date date:allDates){
+			DateFormat df2 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
 			String thisDate = df2.format(date);
 			sb.append(thisDate);
 			sb.append(NEW_LINE);
-			listAllTaskOnDate(sb, df2, df3, sortedByEDate, thisDate);
+			listAllTaskOnDate(sb, df2, sortedByEDate, thisDate);
 			sb.append("\n");
 		}
 		if (floating.size()>0){
@@ -205,18 +206,19 @@ public class TasksFormatter {
 	/**
 	 * This function adds to StringBuilder the tasks with due date on thisDate
 	 * @param sb - StringBuilder to add string
-	 * @param df2, df3: Different date formats for addition to sb
+	 * @param df2: date format for addition to sb
 	 * @param sortedByEDate: ArrayList<Task> that contains all tasks with end dates
 	 * @param thisDate: the date on which the tasks to list are on.
 	 */
-	private static void listAllTaskOnDate(StringBuilder sb, DateFormat df2, DateFormat df3,
+	private static void listAllTaskOnDate(StringBuilder sb, DateFormat df2,
 			ArrayList<Task> sortedByEDate, String thisDate) {
+		DateFormat df3 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_200);
 		for (Task task:sortedByEDate){
 			if (thisDate.equals(df2.format(task.getEnd_date()))){
 				if (task.getStart_date()!=null){
 					String start_time = df3.format(task.getStart_date());
 					String end_time = df3.format(task.getEnd_date());
-					sb.append("[" + start_time + " - " + end_time + "]   ");
+					sb.append(OPEN_BRACKET + start_time + TO_DASH + end_time + CLOSE_BRACKET);
 					sb.append(task.getTextContent() + NEW_LINE);
 				} else {
 					String time = df3.format(task.getEnd_date());
@@ -238,11 +240,14 @@ public class TasksFormatter {
 			allDates.add(sortedByEDate.get(0).getEnd_date());
 		} else if (sortedByEDate.size() > 1){
 				//allDates.add(sortedByEDate.get(0).getEnd_date());
-				for (int a=1; a<sortedByEDate.size()-1; a++){
-					allDates.add(sortedByEDate.get(a).getEnd_date());
+				for (int a=0; a<sortedByEDate.size()-1; a++){
+					Date endOfTask1 = sortedByEDate.get(a).getEnd_date();
+					allDates.add(endOfTask1);
 					for (int b=a+1; b<sortedByEDate.size(); b++){
-						if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
-							allDates.remove(sortedByEDate.get(a).getEnd_date());
+						Date endOfTask2 = sortedByEDate.get(b).getEnd_date();
+						allDates.add(endOfTask2);
+						if (isSameDate(endOfTask1, endOfTask2)){
+							allDates.remove(endOfTask2);
 						} else {
 							numDates++;
 						}
@@ -255,10 +260,10 @@ public class TasksFormatter {
 	}
 
 	//returns a string with all the relevant details
-	private static void showDetailView(ArrayList<Task> lists, StringBuilder sb, DateFormat df1) {
+	private static void showDetailView(ArrayList<Task> lists, StringBuilder sb) {
 		sb.append(DETAIL_VIEW_HEADER);
-
-		sb.append("\n");
+		sb.append(NEW_LINE);
+		DateFormat df1 = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_101);
 		int count = 1;
 		for(Task task: lists){
 
@@ -295,7 +300,7 @@ public class TasksFormatter {
 	 *            : The two dates to be compared
 	 * @return boolean if the two dates are the same
 	 */
-	private static boolean isSameEdate(Date d1, Date d2) {
+	private static boolean isSameDate(Date d1, Date d2) {
 		assert d1 != null;
 		assert d2 != null;
 		DateFormat df = new SimpleDateFormat(ParserFacade.DATE_FORMAT_TYPE_2);
