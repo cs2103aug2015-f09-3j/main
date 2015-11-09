@@ -22,7 +22,7 @@ public class CommandManager {
 	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = "\n";
-	private static final int ZERO_INT = 0; 
+	private static final int ZERO_INT = 0;
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS_FILE_EXIST = "Existing file in this directory so contents it it will be used";
@@ -38,6 +38,7 @@ public class CommandManager {
 	private static final String EMPTY_FILE_DONE = "There are no undone tasks that match your keyword.";
 	private static final String SET_UNDONE_SUCCESS = "Successfully set undone:";
 	private static final String SHOW_DONE_TASKS = "Tasks that are done: \n";
+	private static final int RESET_COMMAND_TYPE = 0;
 
 	private static ArrayList<Task> history = new ArrayList<Task>();
 	private static int prevCommandType;
@@ -182,6 +183,7 @@ public class CommandManager {
 		} else if(setUndoneSuccess == DataManager.TASK_SET_TO_DONE){
 		    return SET_UNDONE_SUCCESS + cmd.getTextContent();
 		} else if(setUndoneSuccess == DataManager.TASK_UNDONE){
+			prevCommandType = RESET_COMMAND_TYPE;
 			return SET_UNDONE_SUCCESS + cmd.getTextContent();
 		}else{
 			return WRONG_LINE_NUM;
@@ -207,6 +209,7 @@ public class CommandManager {
 			prevCommandType = Command.DONE_COMMAND_TYPE;
 		    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToSetDone;
 		} else if(setDoneSuccess == DataManager.TASK_SET_TO_DONE){
+			prevCommandType = RESET_COMMAND_TYPE;
 		    return SET_DONE_SUCCESS + cmd.getTextContent();
 		}else{
 			return WRONG_LINE_NUM;
@@ -232,6 +235,7 @@ public class CommandManager {
 			prevCommandType = Command.EDIT_COMMAND_TYPE;
 		    return MUL_MATCH_MSG + NEW_LINE + multipleTasksToEdit;
 		} else if (editSuccess == DataManager.TASK_UPDATED){
+			prevCommandType = RESET_COMMAND_TYPE;
 		    return EDIT_SUCCESS + cmd.getTextContent();
 		}else{
 			return WRONG_LINE_NUM;
@@ -270,6 +274,7 @@ public class CommandManager {
 		    	prevCommandType = Command.DELETE_COMMAND_TYPE;
 		      	return MUL_MATCH_MSG + NEW_LINE + NEW_LINE + multipleTasks;
 		     	} else if(deleteSuccess == DataManager.TASK_REMOVED){
+		     		prevCommandType = RESET_COMMAND_TYPE;
 		    		return DELETE_SUCCESS + cmd.getTextContent();
 		    	  }else{
 		    		  return WRONG_LINE_NUM;

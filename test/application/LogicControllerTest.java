@@ -137,11 +137,11 @@ public class LogicControllerTest {
 
 	@Test
 	public void testEditTask() throws InvalidCommandException {
-		String cmd = "add EE2023 homework \\p high";
-		String edit = "edit EE2023 homework \\p low \\place home";
+		String cmd = "add EE2094 homework \\p high";
+		String edit = "edit EE2094 homework \\p low \\place home";
 		LogicController.onCommandProcess(cmd);
 		String result = LogicController.onCommandProcess(edit);
-		String expectedResult = "Successfully edited: EE2023 homework\n";
+		String expectedResult = "Successfully edited: EE2094 homework\n";
 		assertEquals(expectedResult, result);
 	}
 
