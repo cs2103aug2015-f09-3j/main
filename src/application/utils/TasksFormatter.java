@@ -241,14 +241,19 @@ public class TasksFormatter {
 			allDates.add(sortedByEDate.get(0).getEnd_date());
 		} else if (sortedByEDate.size() > 1){
 				//allDates.add(sortedByEDate.get(0).getEnd_date());
-				for (int a=1; a<sortedByEDate.size()-1; a++){
-					allDates.add(sortedByEDate.get(a).getEnd_date());
+				for (int a=1; a<sortedByEDate.size(); a++){
+					Date thisDate = sortedByEDate.get(a).getEnd_date();
+					allDates.add(thisDate);
+					boolean sameDate = false;
 					for (int b=a+1; b<sortedByEDate.size(); b++){
-						if (isSameEdate(sortedByEDate.get(a).getEnd_date(), sortedByEDate.get(b).getEnd_date())){
+						Date checkDate = sortedByEDate.get(b).getEnd_date();
+						if (isSameEdate(thisDate, checkDate)){
 							allDates.remove(sortedByEDate.get(a).getEnd_date());
-						} else {
-							numDates++;
+							sameDate = true;
 						}
+					}
+					if (!sameDate){
+						numDates++;
 					}
 				}
 				if (numDates == 1) {
