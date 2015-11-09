@@ -241,7 +241,7 @@ public class TasksFormatter {
 			allDates.add(sortedByEDate.get(0).getEnd_date());
 		} else if (sortedByEDate.size() > 1){
 				//allDates.add(sortedByEDate.get(0).getEnd_date());
-				for (int a=1; a<sortedByEDate.size(); a++){
+				for (int a=0; a<sortedByEDate.size(); a++){
 					Date thisDate = sortedByEDate.get(a).getEnd_date();
 					allDates.add(thisDate);
 					boolean sameDate = false;
