@@ -108,6 +108,7 @@ public class CommandManager {
 	 * @return : output to be shown to the user
 	 */
 	private static String executeGoogleQuickAddCommand(Command cmd) {
+		prevCommandType = Command.ADD_COMMAND_TYPE;
 		Integer googleAddSuccess;
 		if(GoogleCalendarUtility.hasInternetConnection()){
 			googleAddSuccess= GoogleCalendarManagerInterface.getInstance().quickAddToGCal(cmd.getTextContent());
@@ -129,11 +130,13 @@ public class CommandManager {
 	private static String executeScheduleCommand(Command cmd) {
 		ArrayList<Task> schedule = DataManager.getInstance().listAll(cmd);
 		String sched = TasksFormatter.format(schedule, TasksFormatter.TIMELINE_VIEW_TYPE);
+		prevCommandType = Command.SCHEDULE_COMMAND_TYPE;
 		return sched;
 	}
 
 	private static String executeHelpCommand() {
 		String help = HelpCommands.displayHelp();
+		prevCommandType = Command.HELP_COMMAND_TYPE;
 		return help;
 	}
 
@@ -145,6 +148,7 @@ public class CommandManager {
 	private static String executeTodayCommand(Command cmd) {
 		ArrayList<Task> listToday = DataManager.getInstance().listToday();
 		String today = TasksFormatter.format(listToday, TasksFormatter.TIMELINE_VIEW_TYPE);
+		prevCommandType = Command.LIST_TODAY_COMMAND_TYPE;
 		return today;
 	}
 
@@ -361,6 +365,7 @@ public class CommandManager {
 	 * @return : output to be shown to the user
 	 */
 	private static String executeAddCommand(Command cmd) {
+		prevCommandType = Command.ADD_COMMAND_TYPE;
 		Task taskToAdd = ParserFacade.getInstance().convertAddCommandtoTask(cmd);
 		if(DataManager.getInstance().addNewTask(taskToAdd) == DataManager.TASK_ADDED){
 			return ADDED_SUCCESS + taskToAdd.toString();
