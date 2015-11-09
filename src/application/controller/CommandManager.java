@@ -22,7 +22,7 @@ public class CommandManager {
 	private static final String MUL_MATCH_MSG = "There is more than one match, please choose from the following tasks.";
 	private static final String EMPTY_STRING = "";
 	private static final String NEW_LINE = "\n";
-	private static final int ZERO_INT = 0;
+	private static final int ZERO_INT = 0; 
 	private static final String ADDED_SUCCESS = "Added ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS = "Changed storage location: ";
 	private static final String CHANGED_STORAGE_LOCATION_SUCCESS_FILE_EXIST = "Existing file in this directory so contents it it will be used";
