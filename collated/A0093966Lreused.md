@@ -1,5 +1,5 @@
 # A0093966Lreused
-###### resources\CalendarQuickstart.java
+###### src\resources\CalendarQuickstart.java
 ``` java
 /* Extract from Google Calendar API from https://developers.google.com/google-apps/calendar/quickstart/java */
 import java.io.IOException;

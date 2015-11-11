@@ -1,5 +1,5 @@
 package application;
-//@@ A0130876B
+//@@author A0130876B
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@ A0130876B
+	//@@author A0130876B
 	//Test addition of task with all parameters
 	public void testAdd() throws InvalidCommandException {
 		String result = LogicController.onCommandProcess("add cs2103 v0.2 \\p high \\t school \\sdate 23/10/2015 9:00am \\place soc");
@@ -85,7 +85,7 @@ public class LogicControllerTest {
 		assertEquals(expectedResult, result);
 	}
 
-	//@@ A0130876B
+	//@@author A0130876B
 	/*
 	 * This is a boundary case for the delete method as deleting task that is
 	 * named in full

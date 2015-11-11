@@ -1,5 +1,6 @@
 
-<!-- @@author A0125975U-reused this code is adapted from this project https://github.com/pavlobaron/travis-java-playground </!-->
+<!-- @@author A0125975U-reused </!-->
+<!--this code is adapted from this project https://github.com/pavlobaron/travis-java-playground </!-->
 <project name="travis" default="dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<description>
         For Travis CI.
@@ -25,7 +26,7 @@
 		<pathelement location="${test}" />
 		<pathelement location="${build}/main" />
 		<pathelement location="${build}/test" />
-		
+
 		  <fileset dir="libs/">
 				    <include name="**/*.jar"/>
 			</fileset>
@@ -44,9 +45,9 @@
 			<classpath refid="classpath.src" />
 		</javac>
 
-		
+
 	</target>
-	
+
 	<target name="compile-tests" depends="compile" description="compile-tests">
 
 
@@ -60,9 +61,9 @@
 			</classpath>
 		</javac>
 	</target>
-	
-	
-	
+
+
+
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}/lib" />
 		<jar jarfile="${dist}/lib/travis-${DSTAMP}.jar" basedir="${build}" />
@@ -73,7 +74,7 @@
 			<classpath refid="classpath.test" />
 			<classpath location="${build}/test" />
 
-		
+
 
 
 			<batchtest fork="yes" todir="tres">
@@ -89,4 +90,4 @@
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
 	</target>
-</project> 
+</project>

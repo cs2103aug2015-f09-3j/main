@@ -57,7 +57,7 @@ public class TasksFormatterTest {
 				+ "Meeting         high", TasksFormatter.format(tasks, TasksFormatter.DETAIL_VIEW_TYPE).trim());
 	}
 
-	//@@ A0130876B
+	//@@author A0130876B
 	@Test
 	public void testViewSchedule(){
 
